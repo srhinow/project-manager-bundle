@@ -3,7 +3,7 @@
 /**
  * @copyright  Sven Rhinow 2011-2015
  * @author     sr-tag Sven Rhinow Webentwicklung <http://www.sr-tag.de>
- * @package    invoice_and_offer
+ * @package    project-manager-bundle
  * @license    LGPL
  * @filesource
  */

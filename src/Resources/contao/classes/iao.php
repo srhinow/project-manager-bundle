@@ -10,7 +10,7 @@ use Contao\Database as DB;
  *
  * @copyright  Sven Rhinow 2011-2017
  * @author     sr-tag Sven Rhinow Webentwicklung <http://www.sr-tag.de>
- * @package    invoice_and_offer
+ * @package    project-manager-bundle
  * @license    LGPL
  * @filesource
  */
@@ -18,7 +18,7 @@ use Contao\Database as DB;
 
 /**
  * Class iao
- * Provide methods to handle invoice_and_offer-module.
+ * Provide methods to handle project-manager-bundle-module.
  */
 class iao extends \Backend
 {

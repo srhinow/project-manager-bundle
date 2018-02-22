@@ -4,7 +4,7 @@
  * PHP version 5
  * @copyright  sr-tag.de 2011-2017
  * @author     Sven Rhinow
- * @package    invoice_and_offer
+ * @package    project-manager-bundle
  * @license    LGPL
  * @filesource
  */

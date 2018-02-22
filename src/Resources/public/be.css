@@ -1,30 +1,29 @@
+#tl_navigation .tl_level_1_group .group-iao {
+    background: url('./icons/blackboard_steps.png') 0 0 no-repeat;
+}
+.cte_type {
+    font-size:0.9rem;
+}
 .cte_type.status1 {
-color:#CC5555;
-font-size:10px;
+    color:#CC5555;
 }
 .cte_type.status2 {
-color:#077F00;
-font-size:10px;
+    color:#077F00;
 }
 .cte_type.status3 {
-color:#FFB900;
-font-size:10px;
+    color:#FFB900;
 }
 .cte_type.status4 {
   color: #FFA100;
-  font-size:10px;
 }
 .cte_type.status5 {
-  color: #0038D3;
-  font-size:10px;
+    color: #0038D3;
 }
 .cte_type.agreement_status1{
-  color: #077F00;
-  font-size:10px;
+    color: #077F00;
 }
 .cte_type.agreement_status2{
   color: #CC5555;
-  font-size:10px;
 }
 .header_generate_pdf{
   background:url("icons/iconPDF.gif") no-repeat left center;

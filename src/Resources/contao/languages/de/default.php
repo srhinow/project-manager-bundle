@@ -1,8 +1,8 @@
 <?php
 /**
- * TL_ROOT/system/modules/invoice_and_offer/languages/de/default.php
+ * TL_ROOT/vendor/srhinow/project-manager-bundle/languages/de/default.php
  *
- * Contao extension: invoice_and_offer
+ * Contao extension: project-manager-bundle
  * Deutsch translation file
  *
  * Copyright : &copy; Sven Rhinow <sven@sr-tag.de>

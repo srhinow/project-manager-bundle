@@ -9,7 +9,7 @@ namespace iao;
  *
  * Copyright (c) 2016 Sven Rhinow
  *
- * @package invoice_and_offer
+ * @package project-manager-bundle
  * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL
  */
 

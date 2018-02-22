@@ -1,8 +1,8 @@
 <?php
 /**
- * TL_ROOT/system/modules/invoice_and_offer/languages/de/modules.php
+ * TL_ROOT/vendor/srhinow/project-manager-bundle/languages/de/modules.php
  *
- * Contao extension: invoice_and_offer
+ * Contao extension: project-manager-bundle
  * Deutsch translation file
  *
  * Copyright : &copy; Sven Rhinow <sven@sr-tag.de>
@@ -18,7 +18,7 @@
 /**
  * Back end modules
  */
- $GLOBALS['TL_LANG']['MOD']['iao']  = 'kleines Büro';
+ $GLOBALS['TL_LANG']['MOD']['iao']  = 'Projekt-Verwaltung';
  $GLOBALS['TL_LANG']['MOD']['iao_projects']	= array('Projekte', 'Verwalten Sie hier Ihre Projekte.');
  $GLOBALS['TL_LANG']['MOD']['iao_offer']	= array('alle Angebote', 'Verwalten Sie hier Ihre Angebote.');
  $GLOBALS['TL_LANG']['MOD']['iao_invoice']	= array('alle Rechnungen', 'Verwalten Sie hier Ihre Rechnungen.');

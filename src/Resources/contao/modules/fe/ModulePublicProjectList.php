@@ -4,7 +4,7 @@
  * PHP version 5
  * @copyright  Sven Rhinow Webentwicklung 2014 <http://www.sr-tag.de>
  * @author     Sven Rhinow
- * @package    invoice_and_offer
+ * @package    project-manager-bundle
  * @license	   LGPL
  * @filesource
  */
@@ -13,7 +13,7 @@
 /**
  * Class ModulePublicProjectList
  *
- * Frontend module "invoice_and_offer"
+ * Frontend module "project-manager-bundle"
  */
 class ModulePublicProjectList extends Module
 {

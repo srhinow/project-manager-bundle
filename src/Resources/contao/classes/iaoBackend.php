@@ -13,7 +13,7 @@ use Contao\BackendUser as User;
  * Parent class for iaoBackend modules.
  * @copyright  Sven Rhinow 2011-2017
  * @author     sr-tag Sven Rhinow Webentwicklung <http://www.sr-tag.de>
- * @package    invoice_and_offer
+ * @package    project-manager-bundle
  */
 abstract class iaoBackend extends \iao\iao
 {

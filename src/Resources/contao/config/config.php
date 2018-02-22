@@ -4,18 +4,17 @@
  * PHP version 5
  * @copyright  sr-tag.de 2011-2017
  * @author     Sven Rhinow
- * @package    invoice_and_offer
+ * @package    project-manager-bundle
  * @license    LGPL
  * @filesource
  */
 
 /**
- * invoice_and_offer Version
+ * project-manager-bundle Version
  */
-@define('IAO_VERSION', '1.2');
-@define('IAO_BUILD', '18');
-@define('IAO_PATH','system/modules/invoice_and_offer');
-@define('IAO_PDFCLASS_FILE', IAO_PATH.'classes/iaoPDF.php');
+@define('IAO_PATH','vendor/srhinow/project-manager-bundle');
+@define('PMB_PUBLIC_FOLDER','bundles/srhinowprojectmanager');
+@define('IAO_PDFCLASS_FILE', IAO_PATH.'/classes/iaoPDF.php');
 
 /**
  * DEFAULT IAO VALUES 
@@ -32,56 +31,58 @@ $GLOBALS['BE_MOD']['iao'] = array
 	'iao_projects' => array
 	(
 		'tables' => array('tl_iao_projects','tl_iao_agreements','tl_iao_invoice','tl_iao_invoice_items','tl_iao_offer','tl_iao_offer_items','tl_iao_credit','tl_iao_credit_items','tl_iao_reminder'),
-		'icon'   => IAO_PATH.'/html/icons/blackboard_steps.png',
-		'stylesheet' => IAO_PATH.'/html/be.css',
+		'icon'   => 'bundles/srhinowprojectmanager/icons/blackboard_steps.png',
+		'stylesheet' => PMB_PUBLIC_FOLDER.'/be.css',
 	),
 	'iao_offer' => array
 	(
 		'tables' => array('tl_iao_offer','tl_iao_offer_items'),
-		'icon'   => IAO_PATH.'/html/icons/16-file-page.png',
-		'stylesheet' => IAO_PATH.'/html/be.css',
+		'icon'   => 'bundles/srhinowprojectmanager/icons/16-file-page.png',
+        'stylesheet' => PMB_PUBLIC_FOLDER.'/be.css',
 		'importOffer'=> array('iao_offer', 'importOffer'),
 		'exportOffer'=> array('iao_offer', 'exportOffer')
 	),
 	'iao_invoice' => array
 	(
 		'tables' => array('tl_iao_invoice','tl_iao_invoice_items'),
-		'icon'   => IAO_PATH.'/html/icons/kontact_todo.png',
-		'stylesheet' => IAO_PATH.'/html/be.css',
+		'icon'   => 'bundles/srhinowprojectmanager/icons/kontact_todo.png',
+        'stylesheet' => PMB_PUBLIC_FOLDER.'/be.css',
 		'importInvoices'=> array('iao_invoice', 'importInvoices'),
 		'exportInvoices'=> array('iao_invoice', 'exportInvoices')
 	),
 	'iao_credit' => array
 	(
 		'tables' => array('tl_iao_credit','tl_iao_credit_items'),
-		'icon'   => IAO_PATH.'/html/icons/16-tag-pencil.png',
-		'stylesheet' => IAO_PATH.'/html/be.css'
+		'icon'   => 'bundles/srhinowprojectmanager/icons/16-tag-pencil.png',
+        'stylesheet' => PMB_PUBLIC_FOLDER.'/be.css',
 	),
 	'iao_reminder' => array
 	(
 		'tables' => array('tl_iao_reminder'),
-		'icon'   => IAO_PATH.'/html/icons/warning.png',
-		'stylesheet' => IAO_PATH.'/html/be.css',
+		'icon'   => 'bundles/srhinowprojectmanager/icons/warning.png',
+        'stylesheet' => PMB_PUBLIC_FOLDER.'/be.css',
 		'checkReminder'=> array('iao_reminder', 'checkReminder'),
 	),
 	'iao_agreements' => array
 	(
 		'tables' => array('tl_iao_agreements'),
-		'icon'   => IAO_PATH.'/html/icons/clock_history_frame.png',
-		'stylesheet' => IAO_PATH.'/html/be.css',
+		'icon'   => 'bundles/srhinowprojectmanager/icons/clock_history_frame.png',
+        'stylesheet' => PMB_PUBLIC_FOLDER.'/be.css',
 	),
 	'iao_customer' => array
 	(
 		'tables'	=> array('tl_member'),
 		'callback'	=> 'ModuleCustomerMember',
-		'icon'		=> IAO_PATH.'/html/icons/users.png'
+		'icon'		=> 'bundles/srhinowprojectmanager/icons/users.png',
+        'stylesheet' => PMB_PUBLIC_FOLDER.'/be.css',
 	),
 
 	'iao_setup' => array
 	(
 		'callback'	=> 'ModuleIAOSetup',
 		'tables'	=> array(),
-		'icon'		=> IAO_PATH.'/html/icons/process.png',
+		'icon'		=> 'bundles/srhinowprojectmanager/process.png',
+        'stylesheet' => PMB_PUBLIC_FOLDER.'/be.css',
 	)
 );
 

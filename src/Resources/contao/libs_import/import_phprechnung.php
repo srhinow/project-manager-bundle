@@ -7,10 +7,10 @@
  *
  * Class import_phprechnung
  *
- * Provide methods to handle invoice_and_offer-module.
+ * Provide methods to handle project-manager-bundle-module.
  * @copyright  Sven Rhinow 2013
  * @author     sr-tag Sven Rhinow Webentwicklung <http://www.sr-tag.de>
- * @package    invoice_and_offer
+ * @package    project-manager-bundle
  * @license    LGPL
  *
  */

@@ -3,7 +3,7 @@
 /**
  * @copyright  Sven Rhinow 2011-2017
  * @author     sr-tag Sven Rhinow Webentwicklung <http://www.sr-tag.de>
- * @package    invoice_and_offer
+ * @package    project-manager-bundle
  * @license    LGPL
  * @filesource
  */
@@ -64,32 +64,32 @@ $GLOBALS['TL_DCA']['tl_iao_projects'] = array
 			(
 				'label'  => &$GLOBALS['TL_LANG']['tl_iao_projects']['offer'],
 				'href'   => 'table=tl_iao_offer&onlyproj=1',
-				'icon'   => IAO_PATH.'/html/icons/16-file-page.png',
+                'icon'   => 'bundles/srhinowprojectmanager/icons/16-file-page.png',
 			),
 			'invoice' => array
 			(
 				'label'  => &$GLOBALS['TL_LANG']['tl_iao_projects']['invoice'],
 				'href'   => 'table=tl_iao_invoice&onlyproj=1',
-				'icon'   => IAO_PATH.'/html/icons/kontact_todo.png',
+                'icon'   => 'bundles/srhinowprojectmanager/icons/kontact_todo.png',
 			),
 			'credit' => array
 			(
 				'label'  => &$GLOBALS['TL_LANG']['tl_iao_projects']['credit'],
 				'href'   => 'table=tl_iao_credit&onlyproj=1',
-				'icon'   => IAO_PATH.'/html/icons/16-tag-pencil.png',
+                'icon'   => 'bundles/srhinowprojectmanager/icons/16-tag-pencil.png',
 			),
 			'reminder' => array
 			(
 				'label'  => &$GLOBALS['TL_LANG']['tl_iao_projects']['reminder'],
 				'href'   => 'table=tl_iao_reminder&onlyproj=1',
-				'icon'   => IAO_PATH.'/html/icons/warning.png',
+                'icon'   => 'bundles/srhinowprojectmanager/icons/warning.png',
 
 			),
 			'agreements' => array
 			(
 				'label'  => &$GLOBALS['TL_LANG']['tl_iao_projects']['agreements'],
 				'href'   => 'table=tl_iao_agreements&onlyproj=1',
-				'icon'   => IAO_PATH.'/html/icons/clock_history_frame.png',
+                'icon'   => 'bundles/srhinowprojectmanager/icons/clock_history_frame.png',
 			),
 			'edit' => array
 			(

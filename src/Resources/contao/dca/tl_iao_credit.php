@@ -6,7 +6,7 @@ use Contao\Database as DB;
 /**
  * @copyright  Sven Rhinow 2011-2018
  * @author     sr-tag Sven Rhinow Webentwicklung <http://www.sr-tag.de>
- * @package    invoice_and_offer
+ * @package    project-manager-bundle
  * @license    LGPL
  * @filesource
  */

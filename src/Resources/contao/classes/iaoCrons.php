@@ -1,7 +1,7 @@
 <?
 /**
  * PHP version 5
- * @package    invoice_and_offer
+ * @package    project-manager-bundle
  * @license    LGPL
  * @filesource
  */

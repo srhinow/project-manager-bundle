@@ -4,7 +4,7 @@
  *
  * @copyright  Sven Rhinow 2011-2014
  * @author     sr-tag Sven Rhinow Webentwicklung <http://www.sr-tag.de>
- * @package    invoice_and_offer
+ * @package    project-manager-bundle
  * @license    LGPL
  * @filesource
  */
@@ -12,7 +12,7 @@
 
 /**
  * Class iao_invoice
- * Provide methods to handle invoice_and_offer-module.
+ * Provide methods to handle project-manager-bundle-module.
  */
 class iao_invoice extends Backend
 {

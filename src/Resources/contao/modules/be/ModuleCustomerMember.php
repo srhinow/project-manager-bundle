@@ -3,10 +3,12 @@
 /**
  * @copyright  Sven Rhinow 2011-2014
  * @author     sr-tag Sven Rhinow Webentwicklung <http://www.sr-tag.de>
- * @package    invoice_and_offer
+ * @package    project-manager-bundle
  * @license    LGPL
  * @filesource
  */
+
+use iao\iao;
 
 /**
  * Class ModuleCustomerMember
@@ -21,7 +23,7 @@ class ModuleCustomerMember extends BackendModule
 	public function generate()
 	{
 		$this->import('BackendUser', 'User');
-		$this->import('iao');
+		$this->import('iao\iao','iao');
 		$this->settings = $this->iao->getSettings($GLOBALS['IAO']['default_settings_id']);
 
 		$GLOBALS['TL_DCA'][$this->table]['config']['onsubmit_callback'][] = array('tl_iao_member', 'setCustomerGroup');

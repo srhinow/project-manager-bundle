@@ -4,7 +4,7 @@
  *
  * @copyright  Sven Rhinow 2011-2014
  * @author     sr-tag Sven Rhinow Webentwicklung <http://www.sr-tag.de>
- * @package    invoice_and_offer
+ * @package    project-manager-bundle
  * @license    LGPL
  * @filesource
  */
@@ -119,7 +119,7 @@ class ModuleIAOSetup extends BackendModule
 		// Check whether the current user has access to the current module
 		if (!$this->User->isAdmin && !$this->User->hasAccess($module, 'iao_modules'))
 		{
-			$this->log('invoice_and_offer module "' . $module . '" was not allowed for user "' . $this->User->username . '"', 'ModuleIsotopeSetup getIsotopeModule()', TL_ERROR);
+			$this->log('project-manager-bundle module "' . $module . '" was not allowed for user "' . $this->User->username . '"', 'ModuleIsotopeSetup getIsotopeModule()', TL_ERROR);
 			$this->redirect($this->Environment->script.'?act=error');
 		}
 
