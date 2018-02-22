@@ -1,21 +1,20 @@
-Author: Sven Rhinow
-Web: https://github.com/srhinow/project-manager-bundle
-License: LPGL
-Version: 1.0.1
-
-icons: http://dryicons.com
-icons: cc3 http://www.fatcow.com/free-icons
------------------------------
-deutsch
------------------------------
-
 # Mit diesem Contao-Bundle haben sie die Möglichkeit Ihre Projekte zu verwalten.
 
-Es ist eine Weiterentwicklung des bis Contao 3.5 erstellten Erweiterung "invoice_and_offer" 
+>Author: Sven Rhinow
 
-Es enthält folgende Funktionen:
+>Web: https://github.com/srhinow/project-manager-bundle
 
-## Backend:
+>License: LPGL Version: 1.0.1
+
+
+
+
+
+Es ist eine Weiterentwicklung des bis Contao 3.5 erstellten Erweiterung "invoice_and_offer"
+
+## Es enthält folgende Funktionen:
+
+### Backend:
 - Angebote, Rechnungen, Gutschriften und Verträge können zu Projekten zugeordnet werden
 - neue Rechnung, Angebote, Gutschriften werden aus einem Projekt aufgerufen, vorbefüllt
 - Texte vor und nach den Posten als Template abspeichern.
@@ -39,7 +38,13 @@ Es enthält folgende Funktionen:
 - bei den Posten ebenfalls in allen drei Bereichen, können die Felder per VorlagenAuswahl vorausgefüllt werden
 - durchsuchbare Selectfelder der Kunden und Postenvorlagen wie ab Contao 2.11.x in den Core-Modulen
 
-## Frontend:
+### Frontend:
 - Für die Projekt-Referenzen auf der Website kann man ein Frontend-Modul einbinden, welches alle Projekte die mit dem selectfeld "in Referenzen aufnehmen" gesetzt sind, anzeigt. Für die Anzeige der Referenzen stehen in den Projekt-Einstellungen noch verschiedene Felder wie Beschreibung,Bild etc bereit.
 - Für den Zugangsgeschützten Bereich des jeweiligen Kunden können Rechnung, Angebote, Gutschriften können als Liste angenommen=gruen, nicht angenommen= rot angezeigt werden
   und die jeweilige PDF-Datei kann im Frontend aufgerufen werden.
+
+## verwendete Icons
+
+>icons: http://dryicons.com
+
+>icons: cc3 http://www.fatcow.com/free-icons
