@@ -4,7 +4,7 @@
   "keywords": ["contao", "invoice", "credit", "offer", "reminder", "agreements","projects","manager"],
   "type": "contao-bundle",
   "homepage": "https://github.com/srhinow/project-manager-bundle",
-  "license": "GPL-3.0+",
+  "license": "LPGL Version: 1.0.1",
   "authors":[
     {
       "name":"Sven Rhinow",
