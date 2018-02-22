@@ -4,7 +4,7 @@
 
 >Web: https://github.com/srhinow/project-manager-bundle
 
->License: LPGL Version: 1.0.1
+>License: LPGL-3.0
 
 
 
