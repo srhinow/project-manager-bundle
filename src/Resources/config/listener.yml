@@ -1,0 +1,6 @@
+services:
+    srhinow_projectmanager.listener.insert_tags:
+        class: Srhinow\ProjectManagerBundle\EventListener\InsertTagsListener
+        arguments:
+            - "@contao.framework"
+public: true
