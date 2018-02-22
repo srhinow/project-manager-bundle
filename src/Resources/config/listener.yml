@@ -3,4 +3,4 @@ services:
         class: Srhinow\ProjectManagerBundle\EventListener\InsertTagsListener
         arguments:
             - "@contao.framework"
-public: true
+        public: true
