@@ -52,10 +52,10 @@ class ModuleIAOSetup extends BackendModule
 						$GLOBALS['BE_MOD']['iao']['iao_setup']['tables'] += $arrConfig['tables'];
 					}
 
-					$this->arrModules[$GLOBALS['TL_LANG']['IMD'][$strGroup]][$strModule] = array
+					$this->arrModules[$GLOBALS['TL_LANG']['PMB'][$strGroup]][$strModule] = array
 					(
-						'name' => ($GLOBALS['TL_LANG']['IMD'][$strModule][0] ? $GLOBALS['TL_LANG']['IMD'][$strModule][0] : $strModule),
-						'description' => $GLOBALS['TL_LANG']['IMD'][$strModule][1],
+						'name' => ($GLOBALS['TL_LANG']['PMB'][$strModule][0] ? $GLOBALS['TL_LANG']['PMB'][$strModule][0] : $strModule),
+						'description' => $GLOBALS['TL_LANG']['PMB'][$strModule][1],
 						'icon' => $arrConfig['icon']
 					);
 				}
@@ -63,9 +63,9 @@ class ModuleIAOSetup extends BackendModule
 		}
 
 		// Open module
-		if ($this->Input->get('mod') != '')
+		if (\Input::get ('mod') != '')
 		{
-			return $this->getIAOModule($this->Input->get('mod'));
+			return $this->getIAOModule(\Input::get('mod'));
 		}
 
 		// Table set but module missing, fix the saveNcreate link
@@ -75,7 +75,7 @@ class ModuleIAOSetup extends BackendModule
 			{
 				foreach( $arrGroup as $strModule => $arrConfig )
 				{
-					if (is_array($arrConfig['tables']) && in_array($this->Input->get('table'), $arrConfig['tables']))
+					if (is_array($arrConfig['tables']) && in_array(\Input::get('table'), $arrConfig['tables']))
 					{
 						$this->redirect($this->addToUrl('mod=' . $strModule));
 					}
@@ -94,8 +94,8 @@ class ModuleIAOSetup extends BackendModule
 	{
 
 		$this->Template->modules = $this->arrModules;
-		$this->Template->script = $this->Environment->script;
-		$this->Template->welcome = sprintf($GLOBALS['TL_LANG']['IAO']['config_module'], IAO_VERSION . '.' . IAO_BUILD);
+		$this->Template->script = \Contao\Environment::get('script').'/contao';
+		$this->Template->welcome = sprintf($GLOBALS['TL_LANG']['PMB']['config_module'], IAO_VERSION . '.' . IAO_BUILD);
 	}
 
 
@@ -180,10 +180,6 @@ class ModuleIAOSetup extends BackendModule
 			}
 
 			$dataContainer = 'DC_' . $GLOBALS['TL_DCA'][$strTable]['config']['dataContainer'];
-
-			if (version_compare(VERSION,'3','>=')) 	require_once(sprintf('%s/system/modules/core/drivers/%s.php', TL_ROOT, $dataContainer));
-			else require_once(sprintf('%s/system/drivers/%s.php', TL_ROOT, $dataContainer));
-
 			$dc = new $dataContainer($strTable);
 		}
 

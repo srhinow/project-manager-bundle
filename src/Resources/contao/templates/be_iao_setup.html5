@@ -1,19 +1,23 @@
+<div class="pmb_config_wrapper">
+    <h1 id="tl_welcome"><?php echo $this->welcome; ?></h1>
 
-<h1 id="tl_welcome"><?php echo $this->welcome; ?></h1>
+    <div id="pmb_overview">
+    <?php foreach ($this->modules as $strGroup=>$arrModules): ?>
 
-<div id="tl_soverview">
+        <h2><?php echo $strGroup; ?></h2>
+        <?php foreach ($arrModules as $strModule=>$arrModule): ?>
 
-<div id="tl_moverview">
-<?php foreach ($this->modules as $strGroup=>$arrModules): ?>
+        <div class="pmb_module_desc">
+            <h3>
+                <i class="icon" <?php if ($arrModule['icon']): ?> style="background-image:url('<?php echo $arrModule['icon']; ?>')"<?php endif; ?>></i>
+                <a href="<?php echo $this->script; ?>?do=iao_setup&mod=<?php echo $strModule; ?>" class="navigation <?php echo $strModule; ?>"><?php echo $arrModule['name']; ?></a>
+            </h3>
+            <p><?php echo $arrModule['description']; ?></p>
+        </div>
+        <?php endforeach;?>
 
-<h2><?php echo $strGroup; ?></h2>
-<?php foreach ($arrModules as $strModule=>$arrModule): ?>
-
-<div class="tl_module_desc">
-<h3><a href="<?php echo $this->script; ?>?do=iao_setup&mod=<?php echo $strModule; ?>" class="navigation <?php echo $strModule; ?>"<?php if ($arrModule['icon']): ?> style="background-image:url('<?php echo $arrModule['icon']; ?>')"<?php endif; ?>><?php echo $arrModule['name']; ?></a></h3>
-<?php echo $arrModule['description']; ?>
+    <?php endforeach; ?>
+    </div>
 </div>
-<?php endforeach; endforeach; ?>
-</div>
 
-</div>
+

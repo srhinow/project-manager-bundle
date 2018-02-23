@@ -55,3 +55,28 @@
     color:#000;
     padding: 0 10px;
 }
+/** Config-Overview */
+.pmb_config_wrapper{
+    margin: 2%;
+}
+.pmb_config_wrapper h1{
+    margin-bottom:20px;
+}
+.pmb_config_wrapper h2{
+    margin:10px 0;
+    padding-top:10px;
+    border-top:1px solid #ddd;
+}
+.pmb_config_wrapper h3{
+    margin-bottom: 5px;
+}
+.pmb_config_wrapper i.icon{
+    background-repeat: no-repeat;
+    background-position: 0 0;
+    width:16px;
+    height: 16px;
+    display: inline-block;
+}
+.pmb_module_desc p{
+    line-height: 1.2rem;
+}

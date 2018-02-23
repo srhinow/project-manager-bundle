@@ -12,6 +12,8 @@
 /**
  * project-manager-bundle Version
  */
+@define('IAO_VERSION', '1.0');
+@define('IAO_BUILD', '3');
 @define('IAO_PATH','vendor/srhinow/project-manager-bundle');
 @define('PMB_PUBLIC_FOLDER','bundles/srhinowprojectmanager');
 @define('IAO_PDFCLASS_FILE', IAO_PATH.'/classes/iaoPDF.php');
@@ -32,13 +34,11 @@ $GLOBALS['BE_MOD']['iao'] = array
 	(
 		'tables' => array('tl_iao_projects','tl_iao_agreements','tl_iao_invoice','tl_iao_invoice_items','tl_iao_offer','tl_iao_offer_items','tl_iao_credit','tl_iao_credit_items','tl_iao_reminder'),
 		'icon'   => 'bundles/srhinowprojectmanager/icons/blackboard_steps.png',
-		'stylesheet' => PMB_PUBLIC_FOLDER.'/be.css',
 	),
 	'iao_offer' => array
 	(
 		'tables' => array('tl_iao_offer','tl_iao_offer_items'),
 		'icon'   => 'bundles/srhinowprojectmanager/icons/16-file-page.png',
-        'stylesheet' => PMB_PUBLIC_FOLDER.'/be.css',
 		'importOffer'=> array('iao_offer', 'importOffer'),
 		'exportOffer'=> array('iao_offer', 'exportOffer')
 	),
@@ -46,7 +46,6 @@ $GLOBALS['BE_MOD']['iao'] = array
 	(
 		'tables' => array('tl_iao_invoice','tl_iao_invoice_items'),
 		'icon'   => 'bundles/srhinowprojectmanager/icons/kontact_todo.png',
-        'stylesheet' => PMB_PUBLIC_FOLDER.'/be.css',
 		'importInvoices'=> array('iao_invoice', 'importInvoices'),
 		'exportInvoices'=> array('iao_invoice', 'exportInvoices')
 	),
@@ -54,27 +53,23 @@ $GLOBALS['BE_MOD']['iao'] = array
 	(
 		'tables' => array('tl_iao_credit','tl_iao_credit_items'),
 		'icon'   => 'bundles/srhinowprojectmanager/icons/16-tag-pencil.png',
-        'stylesheet' => PMB_PUBLIC_FOLDER.'/be.css',
 	),
 	'iao_reminder' => array
 	(
 		'tables' => array('tl_iao_reminder'),
 		'icon'   => 'bundles/srhinowprojectmanager/icons/warning.png',
-        'stylesheet' => PMB_PUBLIC_FOLDER.'/be.css',
 		'checkReminder'=> array('iao_reminder', 'checkReminder'),
 	),
 	'iao_agreements' => array
 	(
 		'tables' => array('tl_iao_agreements'),
 		'icon'   => 'bundles/srhinowprojectmanager/icons/clock_history_frame.png',
-        'stylesheet' => PMB_PUBLIC_FOLDER.'/be.css',
 	),
 	'iao_customer' => array
 	(
 		'tables'	=> array('tl_member'),
 		'callback'	=> 'ModuleCustomerMember',
 		'icon'		=> 'bundles/srhinowprojectmanager/icons/users.png',
-        'stylesheet' => PMB_PUBLIC_FOLDER.'/be.css',
 	),
 
 	'iao_setup' => array
@@ -82,10 +77,12 @@ $GLOBALS['BE_MOD']['iao'] = array
 		'callback'	=> 'ModuleIAOSetup',
 		'tables'	=> array(),
 		'icon'		=> 'bundles/srhinowprojectmanager/process.png',
-        'stylesheet' => PMB_PUBLIC_FOLDER.'/be.css',
 	)
 );
 
+if ('BE' === TL_MODE) {
+    $GLOBALS['TL_CSS'][] = PMB_PUBLIC_FOLDER.'/be.css|static';
+}
 /**
  * Setup Modules
  */
@@ -96,17 +93,17 @@ $GLOBALS['IAO_MOD'] = array
 		'iao_settings' => array
 		(
 			'tables'					=> array('tl_iao_settings'),
-			'icon'						=> IAO_PATH.'/html/icons/construction.png',
+			'icon'						=> PMB_PUBLIC_FOLDER.'/icons/construction.png',
 		),
 		'iao_tax_rates' => array
 		(
 			'tables'					=> array('tl_iao_tax_rates'),
-			'icon'						=> IAO_PATH.'/html/icons/calculator.png',
+			'icon'						=> PMB_PUBLIC_FOLDER.'/icons/calculator.png',
 		),
 		'iao_item_units' => array
 		(
 			'tables'					=> array('tl_iao_item_units'),
-			'icon'						=> IAO_PATH.'/html/icons/category.png',
+			'icon'						=> PMB_PUBLIC_FOLDER.'/icons/category.png',
 		),
 	),
 	'templates' => array
@@ -114,12 +111,12 @@ $GLOBALS['IAO_MOD'] = array
 		'iao_templates' => array
 		(
 			'tables' => array('tl_iao_templates'),
-			'icon'   => IAO_PATH.'/html/icons/text_templates_16.png'
+			'icon'   => PMB_PUBLIC_FOLDER.'/icons/text_templates_16.png'
 		),
 		'iao_templates_items' => array
 		(
 			'tables' => array('tl_iao_templates_items'),
-			'icon'   => IAO_PATH.'/html/icons/templates_items_16.png'
+			'icon'   => PMB_PUBLIC_FOLDER.'/icons/templates_items_16.png'
 		)
 	)
 );
