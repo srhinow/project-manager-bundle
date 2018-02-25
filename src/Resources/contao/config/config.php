@@ -13,7 +13,7 @@
  * project-manager-bundle Version
  */
 @define('IAO_VERSION', '1.0');
-@define('IAO_BUILD', '3');
+@define('IAO_BUILD', '4');
 @define('IAO_PATH','vendor/srhinow/project-manager-bundle');
 @define('PMB_PUBLIC_FOLDER','bundles/srhinowprojectmanager');
 @define('IAO_PDFCLASS_FILE', IAO_PATH.'/classes/iaoPDF.php');
@@ -23,6 +23,7 @@
 */
 $GLOBALS['IAO']['default_settings_id'] = 1;
 $GLOBALS['IAO']['default_agreement_cycle'] = '+1 year';
+$GLOBALS['IAO']['csv_seperators'] = ['comma'=>',', 'semicolon'=>';', 'tabulator'=>'\t', 'linebreak'=>'\n'];
 
 /**
  * back-end modules
@@ -34,6 +35,8 @@ $GLOBALS['BE_MOD']['iao'] = array
 	(
 		'tables' => array('tl_iao_projects','tl_iao_agreements','tl_iao_invoice','tl_iao_invoice_items','tl_iao_offer','tl_iao_offer_items','tl_iao_credit','tl_iao_credit_items','tl_iao_reminder'),
 		'icon'   => 'bundles/srhinowprojectmanager/icons/blackboard_steps.png',
+        'importInvoices'=> array('iao\ExportImport\Invoice', 'importInvoices'),
+        'exportInvoices'=> array('iao\ExportImport\Invoice', 'exportInvoices')
 	),
 	'iao_offer' => array
 	(
@@ -46,8 +49,8 @@ $GLOBALS['BE_MOD']['iao'] = array
 	(
 		'tables' => array('tl_iao_invoice','tl_iao_invoice_items'),
 		'icon'   => 'bundles/srhinowprojectmanager/icons/kontact_todo.png',
-		'importInvoices'=> array('iao_invoice', 'importInvoices'),
-		'exportInvoices'=> array('iao_invoice', 'exportInvoices')
+        'importInvoices'=> array('iao\ExportImport\Invoice', 'importInvoices'),
+        'exportInvoices'=> array('iao\ExportImport\Invoice', 'exportInvoices')
 	),
 	'iao_credit' => array
 	(
