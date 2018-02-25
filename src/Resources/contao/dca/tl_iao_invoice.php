@@ -559,22 +559,24 @@ $GLOBALS['TL_DCA']['tl_iao_invoice'] = array
 			'eval'                    => array('fieldType'=>'radio', 'files'=>false, 'filesOnly'=>false, 'class'=>'mandatory'),
 			'sql'					  => "text NULL"
 		),
+        'csv_export_dir' => array
+        (
+            'label'                 => &$GLOBALS['TL_LANG']['tl_iao_invoice']['csv_export_dir'],
+            'eval'                  => array('mandatory'=>true, 'required'=>true, 'fieldType'=>'radio'),
+        ),
 		'csv_source' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_iao_offer']['csv_source'],
+			'label'                   => &$GLOBALS['TL_LANG']['tl_iao_invoice']['csv_source'],
 			'eval'                    => array('fieldType'=>'radio', 'files'=>true, 'filesOnly'=>true, 'extensions'=>'csv', 'class'=>'mandatory'),
 			'sql'					  => "text NULL"
 		),
 		'csv_posten_source' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_iao_offer']['csv_posten_source'],
+			'label'                   => &$GLOBALS['TL_LANG']['tl_iao_invoice']['csv_posten_source'],
 			'eval'                    => array('fieldType'=>'radio', 'files'=>true, 'filesOnly'=>true, 'extensions'=>'csv', 'class'=>'mandatory'),
 			'sql'					  => "text NULL"
 		),
 		// -- Backport C2 SQL-Import
-		'sendEmail' => array(
-				'sql' 					=> "varchar(64) NOT NULL default '0'"
-		),
 		'sendEmail' => array(
 				'sql' 					=> "varchar(64) NOT NULL default '0'"
 		),
