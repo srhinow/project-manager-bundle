@@ -1,7 +1,13 @@
 <?php
+namespace iao\Dca;
+
+use iao\iaoBackend;
+use Contao\Database as DB;
+use Contao\BackendUser as User;
+use Contao\Image;
 
 /**
- * @copyright  Sven Rhinow 2011-2015
+ * @copyright  Sven Rhinow 2011-2018
  * @author     sr-tag Sven Rhinow Webentwicklung <http://www.sr-tag.de>
  * @package    project-manager-bundle
  * @license    LGPL
@@ -22,7 +28,7 @@ $GLOBALS['TL_DCA']['tl_iao_templates_items'] = array
 		'enableVersioning'            => false,
 		'onload_callback' => array
 		(
-			array('tl_iao_templates_items', 'checkPermission')
+			array('iao\Dca\TemplateItems', 'checkPermission')
 		),
 		'sql' => array
 		(
@@ -79,7 +85,7 @@ $GLOBALS['TL_DCA']['tl_iao_templates_items'] = array
 				'label'               => &$GLOBALS['TL_LANG']['tl_iao_templates_items']['editheader'],
 				'href'                => 'act=edit',
 				'icon'                => 'header.gif',
-				'button_callback'     => array('tl_iao_templates_items', 'editHeader'),
+				'button_callback'     => array('iao\Dca\TemplateItems', 'editHeader'),
 				'attributes'          => 'class="edit-header"'
 			),
 			'copy' => array
@@ -183,7 +189,7 @@ $GLOBALS['TL_DCA']['tl_iao_templates_items'] = array
 			'filter'                  => true,
 			'flag'                    => 1,
 			'inputType'               => 'select',
-            'options_callback'        => array('tl_iao_templates_items', 'getItemUnitsOptions'),
+            'options_callback'        => array('iao\Dca\TemplateItems', 'getItemUnitsOptions'),
 			'eval'                    => array('tl_class'=>'w50','includeBlankOption'=>true,'submitOnChange'=>false),
 			'sql'					  => "varchar(64) NOT NULL default ''"
 		),
@@ -224,7 +230,7 @@ $GLOBALS['TL_DCA']['tl_iao_templates_items'] = array
 			'filter'                  => true,
 			'flag'                    => 1,
 			'inputType'               => 'select',
-            'options_callback'        => array('tl_iao_templates_items', 'getTaxRatesOptions'),
+            'options_callback'        => array('iao\Dca\TemplateItems', 'getTaxRatesOptions'),
 			'eval'                    => array('tl_class'=>'w50'),
 			'sql'					  => "int(10) unsigned NOT NULL default '19'"
 		),
@@ -264,20 +270,18 @@ $GLOBALS['TL_DCA']['tl_iao_templates_items'] = array
 
 
 /**
- * Class tl_iao_templates_items
+ * Class iao\Dca\TemplateItems
  */
-class tl_iao_templates_items extends \iao\iaoBackend
+class TemplateItems extends iaoBackend
 {
 
-	/**
-	 * Import the back end user object
-	 */
+    /**
+     * TemplateItems constructor.
+     */
 	public function __construct()
 	{
 		parent::__construct();
-		$this->import('BackendUser', 'User');
 	}
-
 
 	/**
 	 * Check permissions to edit table tl_iao_templates_items
@@ -299,7 +303,8 @@ class tl_iao_templates_items extends \iao\iaoBackend
 	 */
 	public function editHeader($row, $href, $label, $title, $icon, $attributes)
 	{
-		return ($this->User->isAdmin || count(preg_grep('/^tl_iao_templates_items::/', $this->User->alexf)) > 0) ? '<a href="'.$this->addToUrl($href.'&amp;id='.$row['id']).'" title="'.specialchars($title).'"'.$attributes.'>'.$this->generateImage($icon, $label).'</a> ' : '';
+	    $User = User::getInstance();
+		return ($User->isAdmin || count(preg_grep('/^tl_iao_templates_items::/', $User->alexf)) > 0) ? '<a href="'.$this->addToUrl($href.'&amp;id='.$row['id']).'" title="'.specialchars($title).'"'.$attributes.'>'.Image::getHtml($icon, $label).'</a> ' : '';
 	}
 
 	/**
@@ -309,8 +314,7 @@ class tl_iao_templates_items extends \iao\iaoBackend
 	 */
 	public function listEntries($arrRow)
 	{
-		$this->import('Database');
-		$result = $this->Database->prepare("SELECT `firstname`,`lastname`,`company` FROM `tl_member`  WHERE id=?")
+		$result = DB::getInstance()->prepare("SELECT `firstname`,`lastname`,`company` FROM `tl_member`  WHERE id=?")
 						->limit(1)
 						->execute($arrRow['member']);
 		$row = $result->fetchAssoc();
@@ -335,23 +339,17 @@ class tl_iao_templates_items extends \iao\iaoBackend
 	 */
 	public function toggleIcon($row, $href, $label, $title, $icon, $attributes)
 	{
-		$this->import('BackendUser', 'User');
-
-		if (strlen($this->Input->get('tid')))
+		if (strlen(\Input::get('tid')))
 		{
-			$this->toggleVisibility($this->Input->get('tid'), ($this->Input->get('state')));
+			$this->toggleVisibility(\Input::get('tid'), (\Input::get('state')));
 			$this->redirect($this->getReferer());
 		}
 
-
 		$href .= '&amp;tid='.$row['id'].'&amp;state='.($row['status']==1 ? 2 : 1);
 
-		if ($row['status']==2)
-		{
-			$icon = 'logout.gif';
-		}
+		if ($row['status'] == 2)  $icon = 'logout.gif';
 
-		return '<a href="'.$this->addToUrl($href).'" title="'.$GLOBALS['TL_LANG']['tl_iao_templates_items']['toggle'].'"'.$attributes.'>'.$this->generateImage($icon, $label).'</a> ';
+		return '<a href="'.$this->addToUrl($href).'" title="'.$GLOBALS['TL_LANG']['tl_iao_templates_items']['toggle'].'"'.$attributes.'>'.Image::getHtml($icon, $label).'</a> ';
 	}
 
 	/**
@@ -362,17 +360,21 @@ class tl_iao_templates_items extends \iao\iaoBackend
 	public function toggleVisibility($intId, $blnVisible)
 	{
 		// Check permissions to edit
-		$this->Input->setGet('id', $intId);
-		$this->Input->setGet('act', 'toggle');
+        \Input::setGet('id', $intId);
+        \Input::setGet('act', 'toggle');
+
+        $logger = static::getContainer()->get('monolog.logger.contao');
 
 		// Check permissions to publish
-		if (!$this->User->isAdmin && !$this->User->hasAccess('tl_iao_templates_items::status', 'alexf'))
+        $User = User::getInstance();
+		if (!$User->isAdmin && !$User->hasAccess('tl_iao_templates_items::status', 'alexf'))
 		{
-			$this->log('Not enough permissions to publish/unpublish comment ID "'.$intId.'"', 'tl_iao_templates_items toggleActivity', TL_ERROR);
+			$logger->log('Not enough permissions to publish/unpublish comment ID "'.$intId.'"', 'tl_iao_templates_items toggleActivity', TL_ERROR);
 			$this->redirect('contao/main.php?act=error');
 		}
 
-		$this->createInitialVersion('tl_iao_templates_items', $intId);
+        $objVersions = new \Versions('tl_iao_templates_items', $intId);
+        $objVersions->initialize();
 
 		// Trigger the save_callback
 		if (is_array($GLOBALS['TL_DCA']['tl_iao_templates_items']['fields']['status']['save_callback']))
@@ -385,9 +387,9 @@ class tl_iao_templates_items extends \iao\iaoBackend
 		}
 
 		// Update the database
-		$this->Database->prepare("UPDATE tl_iao_templates_items SET status='" . ($blnVisible==1 ? '1' : '2') . "' WHERE id=?")
+		DB::getInstance()->prepare("UPDATE tl_iao_templates_items SET status='" . ($blnVisible==1 ? '1' : '2') . "' WHERE id=?")
 						->execute($intId);
 
-		$this->createNewVersion('tl_iao_templates_items', $intId);
+		$objVersions->create();
 	}
 }

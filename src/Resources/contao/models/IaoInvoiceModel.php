@@ -2,7 +2,9 @@
 /**
  * Run in a custom namespace, so the class can be replaced
  */
-namespace iao;
+namespace Srhinow;
+
+use Contao\Model;
 
 /**
  * Reads and writes Invoices
@@ -29,7 +31,7 @@ namespace iao;
  */
 
 
-class IaoInvoiceModel extends \Model
+class IaoInvoiceModel extends Model
 {
 	/**
 	 * Table name

@@ -2,7 +2,9 @@
 /**
  * Run in a custom namespace, so the class can be replaced
  */
-namespace iao;
+namespace Srhinow;
+
+use Contao\Model;
 
 /**
  * Reads and writes Templates Items
@@ -30,7 +32,7 @@ namespace iao;
  */
 
 
-class IaoTemplatesItemsModel extends \Model
+class IaoTemplatesItemsModel extends Model
 {
 	/**
 	 * Table name

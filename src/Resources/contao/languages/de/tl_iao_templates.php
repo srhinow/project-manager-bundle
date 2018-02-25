@@ -22,3 +22,12 @@ $GLOBALS['TL_LANG']['tl_iao_templates']['new'] = array('Neue Vorlage','Eine neue
 $GLOBALS['TL_LANG']['tl_iao_templates']['edit'] = array('Vorlage bearbeiten','Vorlage ID %s bearbeiten');
 $GLOBALS['TL_LANG']['tl_iao_templates']['copy'] = array('Vorlage duplizieren','Vorlage ID %s duplizieren');
 $GLOBALS['TL_LANG']['tl_iao_templates']['delete'] = array('Vorlage löschen','Vorlage ID %s löschen');
+
+$GLOBALS['TL_LANG']['tl_iao_templates']['template_options'] = array(
+    'invoice_before_text'=>'Rechnung Text vor Positionen',
+    'invoice_after_text'=>'Rechnung Text nach Positionen',
+    'offer_before_text'=>'Angebot Text vor Positionen',
+    'offer_after_text'=>'Angebot Text nach Positionen',
+    'credit_before_text'=>'Gutschrift Text vor Positionen',
+    'credit_after_text'=>'Gutschrift Text nach Positionen',
+    );

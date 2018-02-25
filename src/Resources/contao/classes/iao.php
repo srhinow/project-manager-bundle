@@ -5,6 +5,8 @@
 namespace iao;
 
 use Contao\Database as DB;
+use Contao\Backend;
+use Srhinow\IaoInvoiceModel;
 
 /**
  *
@@ -20,7 +22,7 @@ use Contao\Database as DB;
  * Class iao
  * Provide methods to handle project-manager-bundle-module.
  */
-class iao extends \Backend
+class iao extends Backend
 {
     /**
      * get current settings
@@ -337,7 +339,7 @@ class iao extends \Backend
         if(strlen($objPdfTemplate->path) < 1 || !file_exists(TL_ROOT . '/' . $objPdfTemplate->path) ) return;  // template file not found
 
 
-        $pdf = new \iaoPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true);
+        $pdf = new iaoPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true);
         $pdf->setSourceFile( TL_ROOT . '/' .$objPdfTemplate->path);          // Set PDF template
 
         // Set document information
@@ -417,7 +419,7 @@ class iao extends \Backend
         //wenn type oder id fehlen abbrechen
         if((int) $id < 1 || strlen($type) < 1) return;
 
-        $dataObj = $this->Database->prepare('SELECT * FROM `tl_iao_'.$type.'` WHERE `id`=?')->limit(1)->execute($id);
+        $dataObj = DB::getInstance()->prepare('SELECT * FROM `tl_iao_'.$type.'` WHERE `id`=?')->limit(1)->execute($id);
         if($dataObj->numRows < 1) return;
         $row = $dataObj->row();
 
@@ -473,7 +475,7 @@ class iao extends \Backend
         if(strlen($objPdfTemplate->path) < 1 || !file_exists(TL_ROOT . '/' . $objPdfTemplate->path) ) return;  // template file not found
 
 
-        $pdf = new \iaoPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true);
+        $pdf = new iaoPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true);
         $pdf->setSourceFile( TL_ROOT . '/' .$objPdfTemplate->path);          // Set PDF template
 
         // Set document information
@@ -579,7 +581,7 @@ class iao extends \Backend
         $this->loadLanguageFile('tl_iao_'.$type.'_items');
 
         //hole alle zum Elternelemente gehoerende Eintraege
-        $resultObj = $this->Database->prepare('SELECT * FROM `tl_iao_'.$type.'_items` WHERE `pid`=? AND `published`= ? ORDER BY `sorting`')
+        $resultObj = DB::getInstance()->prepare('SELECT * FROM `tl_iao_'.$type.'_items` WHERE `pid`=? AND `published`= ? ORDER BY `sorting`')
             ->execute($id,1);
 
         // wenn keine vorhanden dann leeres array zurueck
@@ -597,7 +599,7 @@ class iao extends \Backend
             $resultObj->text = $this->changeTags($resultObj->text);
 
             // get units from DB-Table
-            $unitObj = $this->Database->prepare('SELECT * FROM `tl_iao_item_units` WHERE `value`=?')
+            $unitObj = DB::getInstance()->prepare('SELECT * FROM `tl_iao_item_units` WHERE `value`=?')
                 ->limit(1)
                 ->execute($resultObj->amountStr);
 
@@ -630,7 +632,7 @@ class iao extends \Backend
                 $posten['summe']['netto'] += $netto;
             }
 
-            $parentObj = $this->Database->prepare('SELECT * FROM `tl_iao_'.$type.'` WHERE `id`=?')
+            $parentObj = DB::getInstance()->prepare('SELECT * FROM `tl_iao_'.$type.'` WHERE `id`=?')
                 ->limit(1)
                 ->execute($id);
 
@@ -656,7 +658,7 @@ class iao extends \Backend
     {
         if($reminderId)
         {
-            $this->reminderObj = $this->Database->prepare('SELECT `r`.*, `i`.`price_netto` `netto`, `i`.`price_brutto` `brutto` FROM `tl_iao_reminder` `r` LEFT JOIN `tl_iao_invoice` `i` ON `r`.`invoice_id` = `i`.`id`  WHERE `r`.`id`=?')
+            $this->reminderObj = DB::getInstance()->prepare('SELECT `r`.*, `i`.`price_netto` `netto`, `i`.`price_brutto` `brutto` FROM `tl_iao_reminder` `r` LEFT JOIN `tl_iao_invoice` `i` ON `r`.`invoice_id` = `i`.`id`  WHERE `r`.`id`=?')
                 ->limit(1)
                 ->execute($reminderId);
 
@@ -706,7 +708,7 @@ class iao extends \Backend
         $status = 1; //erinnerung
         $this->import('Database');
 
-        $statusObj = $this->Database->prepare('SELECT count(*) as c FROM `tl_iao_reminder` WHERE `invoice_id`=? AND `published`=1 ORDER BY `id` DESC')
+        $statusObj = DB::getInstance()->prepare('SELECT count(*) as c FROM `tl_iao_reminder` WHERE `invoice_id`=? AND `published`=1 ORDER BY `id` DESC')
             ->execute($invoiceId);
 
         if($statusObj->numRows > 0) return  $statusObj->c;
@@ -720,7 +722,7 @@ class iao extends \Backend
     public function fillReminderFields($invoiceID = 0, $reminderObj)
     {
 
-        $objMember = $this->Database->prepare('SELECT `m`.*,`i`.`price_brutto`,`i`.`address_text`,`i`.`invoice_id_str` FROM `tl_iao_invoice` as `i` LEFT JOIN `tl_member` as `m` ON `i`.member = `m`.`id` WHERE `i`.`id`=?')
+        $objMember = DB::getInstance()->prepare('SELECT `m`.*,`i`.`price_brutto`,`i`.`address_text`,`i`.`invoice_id_str` FROM `tl_iao_invoice` as `i` LEFT JOIN `tl_member` as `m` ON `i`.member = `m`.`id` WHERE `i`.`id`=?')
             ->limit(1)
             ->execute($invoiceID);
 
@@ -734,7 +736,7 @@ class iao extends \Backend
             $address_text .='<p>'.$objMember->postal.' '.$objMember->city.'</p>';
         }
 
-        $testStepObj = $this->Database->prepare('SELECT `step`,`sum` FROM `tl_iao_reminder` WHERE `invoice_id`=? AND `id`!=? ORDER BY `id` DESC')
+        $testStepObj = DB::getInstance()->prepare('SELECT `step`,`sum` FROM `tl_iao_reminder` WHERE `invoice_id`=? AND `id`!=? ORDER BY `id` DESC')
             ->limit(1)
             ->execute($invoiceID,$reminderObj->id);
 
@@ -767,7 +769,7 @@ class iao extends \Backend
             'postage' =>  $postage
         );
 
-        $this->Database->prepare('UPDATE `tl_iao_reminder` %s WHERE `id`=?')
+        DB::getInstance()->prepare('UPDATE `tl_iao_reminder` %s WHERE `id`=?')
             ->set($set)
             ->execute($reminderObj->id);
 
@@ -781,13 +783,32 @@ class iao extends \Backend
             'text_finish' => $text_finish
         );
 
-        $this->Database->prepare('UPDATE `tl_iao_reminder` %s WHERE `id`=?')
+        DB::getInstance()->prepare('UPDATE `tl_iao_reminder` %s WHERE `id`=?')
             ->set($set)
             ->execute($reminderObj->id);
 
         //update invoice-data with current reminder-step
-        $this->Database->prepare('UPDATE `tl_iao_invoice` SET `reminder_id` = ?  WHERE `id`=?')
+        DB::getInstance()->prepare('UPDATE `tl_iao_invoice` SET `reminder_id` = ?  WHERE `id`=?')
             ->execute($reminderObj->id, $invoiceID);
     }
 
+    /**
+     * get the next periode-date
+     * @param object
+     * @return integer
+     */
+    public function  getPeriodeDate($reminderObj)
+    {
+        $lastReminderObj = DB::getInstance()->prepare('SELECT * FROM `tl_iao_reminder` WHERE `invoice_id`=? AND `id`!=? ORDER BY `id` DESC')
+            ->limit(1)
+            ->execute($reminderObj->invoice_id,$reminderObj->id);
+
+        $lastPeriodeDate = ($lastReminderObj->periode_date) ? $lastReminderObj->periode_date : time();
+        $time = ($reminderObj->periode_date == 0) ? $lastPeriodeDate : $reminderObj->periode_date;
+        $step = (!strlen($reminderObj->step)) ? 1 : $reminderObj->step;
+        $dur = (int) ($GLOBALS['TL_CONFIG']['iao_reminder_'.$step.'_duration']) > 0 ? (int) $GLOBALS['TL_CONFIG']['iao_reminder_'.$step.'_duration'] : 14;
+        $nextDate = ($this->noWE($time,$dur) > time()) ? $this->noWE($time,$dur) : $this->noWE(time(),$dur);
+
+        return $nextDate;
+    }
 }

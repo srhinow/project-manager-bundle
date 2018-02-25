@@ -1,7 +1,12 @@
 <?php
+namespace iao\Dca;
+
+use iao\iaoBackend;
+use Contao\Image;
+use Contao\DataContainer;
 
 /**
- * @copyright  Sven Rhinow 2011-2017
+ * @copyright  Sven Rhinow 2011-2018
  * @author     sr-tag Sven Rhinow Webentwicklung <http://www.sr-tag.de>
  * @package    project-manager-bundle
  * @license    LGPL
@@ -21,7 +26,7 @@ $GLOBALS['TL_DCA']['tl_iao_settings'] = array
 		'enableVersioning'            => true,
 		'onload_callback'		=> array
 		(
-			array('tl_iao_settings', 'checkPermission'),
+			array('iao\Dca\Settings', 'checkPermission'),
 		),
 		'sql' => array
 		(
@@ -533,39 +538,38 @@ $GLOBALS['TL_DCA']['tl_iao_settings'] = array
 
 
 /**
- * Class tl_iao_settings
+ * Class iao\Dca\Settings
  */
-class tl_iao_settings extends \iao\iaoBackend
+class Settings extends iaoBackend
 {
 
 	protected $settings = array();
 
-	/**
-	 * Import the back end user object
-	 */
+    /**
+     * Settings constructor.
+     */
 	public function __construct()
 	{
 		parent::__construct();
-		$this->import('BackendUser', 'User');
 	}
-	
-	/**
-	 * Check permissions to edit table tl_iao_settings
-	 */
+
+    /**
+     * Check permissions to edit table tl_iao_settings
+     */
 	public function checkPermission()
 	{
 		$this->checkIaoSettingsPermission('tl_iao_settings');
 	}
 
 
-	/**
-	 * Return the link picker wizard
-	 * @param object
-	 * @return string
-	 */
+    /**
+     * Return the link picker wizard
+     * @param DataContainer $dc
+     * @return string
+     */
 	public function pagePicker(DataContainer $dc)
 	{
-		$strField = 'ctrl_' . $dc->field . (($this->Input->get('act') == 'editAll') ? '_' . $dc->id : '');
-		return ' ' . $this->generateImage('pickpage.gif', $GLOBALS['TL_LANG']['MSC']['pagepicker'], 'style="vertical-align:top; cursor:pointer;" onclick="Backend.pickPage(\'' . $strField . '\')"');
+		$strField = 'ctrl_' . $dc->field . ((\Contao\Input::get('act') == 'editAll') ? '_' . $dc->id : '');
+		return ' ' . Image::getHtml('pickpage.gif', $GLOBALS['TL_LANG']['MSC']['pagepicker'], 'style="vertical-align:top; cursor:pointer;" onclick="Backend.pickPage(\'' . $strField . '\')"');
 	}
 }

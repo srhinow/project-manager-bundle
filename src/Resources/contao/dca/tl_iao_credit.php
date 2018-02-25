@@ -1,7 +1,13 @@
 <?php
-namespace iao;
+namespace iao\Dca;
 
+use iao\iaoBackend;
+use Srhinow\IaoTemplatesModel;
+use Srhinow\IaoCreditModel;
+use Srhinow\IaoProjectsModel;
 use Contao\Database as DB;
+use Contao\Image;
+use Contao\BackendUser as User;
 
 /**
  * @copyright  Sven Rhinow 2011-2018
@@ -28,13 +34,13 @@ $GLOBALS['TL_DCA']['tl_iao_credit'] = array
 		'enableVersioning'            => false,
 		'onload_callback' => array
 		(
-			array('iao\iaoDcaCredit', 'generateCreditPDF'),
-			array('iao\iaoDcaCredit', 'checkPermission'),
+			array('iao\Dca\Credit', 'generateCreditPDF'),
+			array('iao\Dca\Credit', 'checkPermission'),
 		),
 		'oncreate_callback' => array
 		(
-			array('iao\iaoDcaCredit', 'preFillFields'),
-			array('iao\iaoDcaCredit', 'setMemmberfieldsFromProject'),
+			array('iao\Dca\Credit', 'preFillFields'),
+			array('iao\Dca\Credit', 'setMemmberfieldsFromProject'),
 		),
 		'sql' => array
 		(
@@ -60,7 +66,7 @@ $GLOBALS['TL_DCA']['tl_iao_credit'] = array
 		(
 			'fields'                  => array('title','credit_id_str'),
 			'format'                  => '%s (%s)',
-			'label_callback'          => array('iao\iaoDcaCredit', 'listEntries'),
+			'label_callback'          => array('iao\Dca\Credit', 'listEntries'),
 		),
 		'global_operations' => array
 		(
@@ -86,7 +92,7 @@ $GLOBALS['TL_DCA']['tl_iao_credit'] = array
 				'label'               => &$GLOBALS['TL_LANG']['tl_iao_credit']['editheader'],
 				'href'                => 'act=edit',
 				'icon'                => 'header.gif',
-				'button_callback'     => array('iao\iaoDcaCredit', 'editHeader'),
+				'button_callback'     => array('iao\Dca\Credit', 'editHeader'),
 				// 'attributes'          => 'class="edit-header"'
 			),
 			'copy' => array
@@ -113,14 +119,14 @@ $GLOBALS['TL_DCA']['tl_iao_credit'] = array
 			(
 				'label'               => &$GLOBALS['TL_LANG']['tl_iao_credit']['toggle'],
 				'icon'                => 'ok.gif',
-				'button_callback'     => array('iao\iaoDcaCredit', 'toggleIcon')
+				'button_callback'     => array('iao\Dca\Credit', 'toggleIcon')
 			),
 			'pdf' => array
 			(
 				'label'               => &$GLOBALS['TL_LANG']['tl_iao_credit']['pdf'],
 				'href'                => 'key=pdf',
 				'icon'                => 'iconPDF.gif',
-				'button_callback'     => array('iao\iaoDcaCredit', 'showPDFButton')
+				'button_callback'     => array('iao\Dca\Credit', 'showPDFButton')
 			)
 		)
 	),
@@ -173,7 +179,7 @@ $GLOBALS['TL_DCA']['tl_iao_credit'] = array
 			'sorting'                 => true,
 			'flag'                    => 11,
 			'inputType'               => 'select',
-			'options_callback'        => array('iao\iaoDcaCredit', 'getSettingOptions'),
+			'options_callback'        => array('iao\Dca\Credit', 'getSettingOptions'),
 			'eval'                    => array('tl_class'=>'w50','includeBlankOption'=>false, 'chosen'=>true),
 			'sql'                     => "int(10) unsigned NOT NULL default '0'"
 		),
@@ -194,7 +200,7 @@ $GLOBALS['TL_DCA']['tl_iao_credit'] = array
 			'eval'                    => array('rgxp'=>'datim', 'doNotCopy'=>true, 'datepicker'=>$this->getDatePickerString(), 'tl_class'=>'w50 wizard'),
 			'load_callback' => array
 			(
-				array('iao\iaoDcaCredit', 'generateCreditTstamp')
+				array('iao\Dca\Credit', 'generateCreditTstamp')
 			),
 			'sql'                     => "int(10) unsigned NOT NULL default '0'"
 		),
@@ -206,7 +212,7 @@ $GLOBALS['TL_DCA']['tl_iao_credit'] = array
 			'eval'                    => array('rgxp'=>'date', 'doNotCopy'=>true, 'datepicker'=>$this->getDatePickerString(), 'tl_class'=>'w50 wizard'),
 			'load_callback' => array
 			(
-				array('iao\iaoDcaCredit', 'generateExpiryDate')
+				array('iao\Dca\Credit', 'generateExpiryDate')
 			),
 			'sql'                     => "varchar(255) NOT NULL default ''"
 		),
@@ -218,7 +224,7 @@ $GLOBALS['TL_DCA']['tl_iao_credit'] = array
 			'eval'                    => array('rgxp'=>'alnum', 'doNotCopy'=>true, 'spaceToUnderscore'=>true, 'maxlength'=>128, 'tl_class'=>'w50'),
 			'save_callback' => array
 			(
-				array('iao\iaoDcaCredit', 'setFieldCreditNumber')
+				array('iao\Dca\Credit', 'setFieldCreditNumber')
 			),
 			'sql'					  => "int(10) unsigned NOT NULL default '0'"
 		),
@@ -230,7 +236,7 @@ $GLOBALS['TL_DCA']['tl_iao_credit'] = array
 			'eval'                    => array('doNotCopy'=>true, 'spaceToUnderscore'=>true, 'maxlength'=>128, 'tl_class'=>'w50'),
 			'save_callback' => array
 			(
-				array('iao\iaoDcaCredit', 'createCreditNumberStr')
+				array('iao\Dca\Credit', 'createCreditNumberStr')
 			),
 			'sql'					  => "varchar(255) NOT NULL default ''"
 		),
@@ -250,11 +256,11 @@ $GLOBALS['TL_DCA']['tl_iao_credit'] = array
 			'sorting'                 => true,
 			'flag'                    => 11,
 			'inputType'               => 'select',
-			'options_callback'        => array('iao\iaoDcaCredit', 'getMemberOptions'),
+			'options_callback'        => array('iao\Dca\Credit', 'getMemberOptions'),
 			'eval'                    => array('tl_class'=>'w50','includeBlankOption'=>true,'submitOnChange'=>true, 'chosen'=>true),
 			'save_callback' => array
 			(
-				array('iao\iaoDcaCredit', 'fillAdressText')
+				array('iao\Dca\Credit', 'fillAdressText')
 			),
 			'sql'					  => "varbinary(128) NOT NULL default ''"
 		),
@@ -276,11 +282,11 @@ $GLOBALS['TL_DCA']['tl_iao_credit'] = array
 			'sorting'                 => true,
 			'flag'                    => 11,
 			'inputType'               => 'select',
-			'options_callback'        => array('iao\iaoDcaCredit', 'getBeforeTemplate'),
+			'options_callback'        => array('iao\Dca\Credit', 'getBeforeTemplate'),
 			'eval'                    => array('tl_class'=>'w50','includeBlankOption'=>true,'submitOnChange'=>true),
 			'save_callback' => array
 			(
-				array('iao\iaoDcaCredit', 'fillBeforeTextFromTemplate')
+				array('iao\Dca\Credit', 'fillBeforeTextFromTemplate')
 			),
 			'sql'					  => "int(10) unsigned NOT NULL default '0'"
 		),
@@ -302,11 +308,11 @@ $GLOBALS['TL_DCA']['tl_iao_credit'] = array
 			'sorting'                 => true,
 			'flag'                    => 11,
 			'inputType'               => 'select',
-			'options_callback'        => array('iao\iaoDcaCredit', 'getAfterTemplate'),
+			'options_callback'        => array('iao\Dca\Credit', 'getAfterTemplate'),
 			'eval'                    => array('tl_class'=>'w50','includeBlankOption'=>true,'submitOnChange'=>true),
 			'save_callback' => array
 			(
-				array('iao\iaoDcaCredit', 'fillAfterTextFromTemplate')
+				array('iao\Dca\Credit', 'fillAfterTextFromTemplate')
 			),
 			'sql'					  => "int(10) unsigned NOT NULL default '0'"
 		),
@@ -393,18 +399,17 @@ $GLOBALS['TL_DCA']['tl_iao_credit'] = array
  * Class iaoDcaCredit
  * @package iao
  */
-class iaoDcaCredit  extends \iao\iaoBackend
+class Credit  extends iaoBackend
 {
 
 	protected $settings = array();
 
 	/**
-	 * Import the back end user object
+	 * Constructor
 	 */
 	public function __construct()
 	{
 		parent::__construct();
-		$this->import('BackendUser', 'User');
 	}
 
 	/**
@@ -627,7 +632,8 @@ class iaoDcaCredit  extends \iao\iaoBackend
 	 */
 	public function editHeader($row, $href, $label, $title, $icon, $attributes)
 	{
-		return ($this->User->isAdmin || count(preg_grep('/^tl_iao_credit::/', $this->User->alexf)) > 0) ? '<a href="'.$this->addToUrl($href.'&amp;id='.$row['id']).'" title="'.specialchars($title).'"'.$attributes.'>'.$this->generateImage($icon, $label).'</a> ' : '';
+        $User = User::getInstance();
+	    return ($User->isAdmin || count(preg_grep('/^tl_iao_credit::/', $User->alexf)) > 0) ? '<a href="'.$this->addToUrl($href.'&amp;id='.$row['id']).'" title="'.specialchars($title).'"'.$attributes.'>'.Image::getHtml($icon, $label).'</a> ' : '';
 	}
 
 	/**
@@ -651,14 +657,15 @@ class iaoDcaCredit  extends \iao\iaoBackend
 	public function showPDFButton($row, $href, $label, $title, $icon)
 	{
 		$settings = $this->getSettings($row['setting_id']);
+        $User = User::getInstance();
 
-		if (!$this->User->isAdmin)	return '';
+		if (!$User->isAdmin || count(preg_grep('/^tl_iao_credit::/', $User->alexf)))	return '';
 
 	    $objPdfTemplate = 	\FilesModel::findByUuid($settings['iao_credit_pdf']);	
-		if(strlen($objPdfTemplate->path) < 1 || !file_exists(TL_ROOT . '/' . $objPdfTemplate->path) ) return;  // template file not found
+		if(strlen($objPdfTemplate->path) < 1 || !file_exists(TL_ROOT . '/' . $objPdfTemplate->path) ) return '';  // template file not found
 
 		$href = 'contao/main.php?do=iao_credit&amp;key=pdf&amp;id='.$row['id'];
-		return '<a href="'.$href.'" title="'.specialchars($title).'">'.$this->generateImage($icon, $label).'</a> ';
+		return '<a href="'.$href.'" title="'.specialchars($title).'">'.\Image::getHtml($icon, $label).'</a> ';
 	}
 
 	/**
@@ -786,8 +793,6 @@ class iaoDcaCredit  extends \iao\iaoBackend
 	 */
 	public function toggleIcon($row, $href, $label, $title, $icon, $attributes)
 	{
-		$this->import('BackendUser', 'User');
-
 		if (strlen($this->Input->get('tid')))
 		{
 			$this->toggleVisibility($this->Input->get('tid'), ($this->Input->get('state')));
@@ -816,9 +821,11 @@ class iaoDcaCredit  extends \iao\iaoBackend
 		$this->Input->setGet('act', 'toggle');
 
 		// Check permissions to publish
-		if (!$this->User->isAdmin && !$this->User->hasAccess('tl_iao_credit::status', 'alexf'))
+        $User = User::getInstance();
+		if (!$User->isAdmin && !$User->hasAccess('tl_iao_credit::status', 'alexf'))
 		{
-			$this->log('Not enough permissions to publish/unpublish comment ID "'.$intId.'"', 'tl_iao_credit toggleActivity', TL_ERROR);
+            $logger = static::getContainer()->get('monolog.logger.contao');
+		    $logger->log('Not enough permissions to publish/unpublish comment ID "'.$intId.'"', 'tl_iao_credit toggleActivity', TL_ERROR);
 			$this->redirect('contao/main.php?act=error');
 		}
 

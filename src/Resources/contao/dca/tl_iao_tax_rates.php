@@ -1,7 +1,10 @@
 <?php
+namespace iao\Dca;
+
+use iao\iaoBackend;
 
 /**
- * @copyright  Sven Rhinow 2011-2017
+ * @copyright  Sven Rhinow 2011-2018
  * @author     sr-tag Sven Rhinow Webentwicklung <http://www.sr-tag.de>
  * @package    project-manager-bundle
  * @license    LGPL
@@ -21,7 +24,7 @@ $GLOBALS['TL_DCA']['tl_iao_tax_rates'] = array
 		'enableVersioning'            => true,
 		'onload_callback'		=> array
 		(
-			array('tl_iao_tax_rates', 'checkPermission'),
+			array('\iao\Dca\TaxRates', 'checkPermission'),
 		),
 		'sql' => array
 		(
@@ -149,16 +152,15 @@ $GLOBALS['TL_DCA']['tl_iao_tax_rates'] = array
 /**
  * Class tl_iao_tax_rates
  */
-class tl_iao_tax_rates extends \iao\iaoBackend
+class TaxRates extends iaoBackend
 {
 
-	/**
-	 * Import the back end user object
-	 */
+    /**
+     * TaxRates constructor.
+     */
 	public function __construct()
 	{
 		parent::__construct();
-		$this->import('BackendUser', 'User');
 	}
 	
 	/**

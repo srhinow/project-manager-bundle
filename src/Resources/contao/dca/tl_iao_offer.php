@@ -1,7 +1,13 @@
 <?php
-namespace iao;
+namespace iao\Dca;
 
+use iao\iaoBackend as iaoBackend;
+use Srhinow\IaoTemplatesModel;
+use Srhinow\IaoOfferModel;
+use Srhinow\IaoProjectsModel;
 use Contao\Database as DB;
+use Contao\BackendUser as User;
+
 /**
  * @copyright  Sven Rhinow 2011-2013
  * @author     sr-tag Sven Rhinow Webentwicklung <http://www.sr-tag.de>
@@ -27,14 +33,14 @@ $GLOBALS['TL_DCA']['tl_iao_offer'] = array
 		'enableVersioning'            => false,
 		'onload_callback' => array
 		(
-			array('iao\iaoDcaOffer', 'generateOfferPDF'),
-			array('iao\iaoDcaOffer', 'checkPermission'),
-			array('iao\iaoDcaOffer', 'updateExpiryToTstmp')
+			array('iao\Dca\Offer', 'generateOfferPDF'),
+			array('iao\Dca\Offer', 'checkPermission'),
+			array('iao\Dca\Offer', 'updateExpiryToTstmp')
 		),
 		'oncreate_callback' => array
 		(
-			array('iao\iaoDcaOffer', 'preFillFields'),
-			array('iao\iaoDcaOffer', 'setMemmberfieldsFromProject'),
+			array('iao\Dca\Offer', 'preFillFields'),
+			array('iao\Dca\Offer', 'setMemmberfieldsFromProject'),
 		),
 		'sql' => array
 		(
@@ -60,7 +66,7 @@ $GLOBALS['TL_DCA']['tl_iao_offer'] = array
 		(
 			'fields'                  => array('title','offer_id_str'),
 			'format'                  => '%s (%s)',
-			'label_callback'          => array('iao\iaoDcaOffer', 'listEntries'),
+			'label_callback'          => array('iao\Dca\Offer', 'listEntries'),
 		),
 		'global_operations' => array
 		(
@@ -100,7 +106,7 @@ $GLOBALS['TL_DCA']['tl_iao_offer'] = array
 				'label'               => &$GLOBALS['TL_LANG']['tl_iao_offer']['editheader'],
 				'href'                => 'act=edit',
 				'icon'                => 'header.gif',
-				'button_callback'     => array('iao\iaoDcaOffer', 'editHeader'),
+				'button_callback'     => array('iao\Dca\Offer', 'editHeader'),
 				// 'attributes'          => 'class="edit-header"'
 			),
 			'copy' => array
@@ -127,21 +133,21 @@ $GLOBALS['TL_DCA']['tl_iao_offer'] = array
 				'label'               => &$GLOBALS['TL_LANG']['tl_iao_offer']['invoice'],
 				'href'                => 'key=addInvoice',
 				'icon'                => 'system/modules/invoice_and_offer/html/icons/kontact_todo.png',
-				'button_callback'     => array('iao\iaoDcaOffer', 'addInvoice')
+				'button_callback'     => array('iao\Dca\Offer', 'addInvoice')
 			),
 			'toggle' => array
 			(
 				'label'               => &$GLOBALS['TL_LANG']['tl_iao_credit']['toggle'],
 				'icon'                => 'ok.gif',
 				#'attributes'          => 'onclick="Backend.getScrollOffset(); return AjaxRequest.toggleVisibility(this, %s);"',
-				'button_callback'     => array('iao\iaoDcaOffer', 'toggleIcon')
+				'button_callback'     => array('iao\Dca\Offer', 'toggleIcon')
 			),
 			'pdf' => array
 			(
 				'label'               => &$GLOBALS['TL_LANG']['tl_iao_offer']['pdf'],
 				'href'                => 'do=iao_offer&key=pdf',
 				'icon'                => 'iconPDF.gif',
-				'button_callback'     => array('iao\iaoDcaOffer', 'showPDFButton')
+				'button_callback'     => array('iao\Dca\Offer', 'showPDFButton')
 			)
 		)
 	),
@@ -179,7 +185,7 @@ $GLOBALS['TL_DCA']['tl_iao_offer'] = array
 			'relation'                => array('type'=>'belongsTo', 'load'=>'eager'),
             'save_callback' => array
             (
-                array('iao\iaoDcaOffer', 'fillMemberAndAddressFields')
+                array('iao\Dca\Offer', 'fillMemberAndAddressFields')
             ),
 		),
 		'tstamp' => array
@@ -198,7 +204,7 @@ $GLOBALS['TL_DCA']['tl_iao_offer'] = array
 			'sorting'                 => true,
 			'flag'                    => 11,
 			'inputType'               => 'select',
-			'options_callback'        => array('iao\iaoDcaOffer', 'getSettingOptions'),
+			'options_callback'        => array('iao\Dca\Offer', 'getSettingOptions'),
 			'eval'                    => array('tl_class'=>'w50','includeBlankOption'=>false, 'chosen'=>true),
 			'sql'                     => "int(10) unsigned NOT NULL default '0'"
 		),
@@ -219,7 +225,7 @@ $GLOBALS['TL_DCA']['tl_iao_offer'] = array
 			'eval'                    => array('rgxp'=>'datim', 'doNotCopy'=>true, 'datepicker'=>$this->getDatePickerString(), 'tl_class'=>'w50 wizard'),
 			'load_callback' => array
 			(
-				array('iao\iaoDcaOffer', 'generateOfferTstamp')
+				array('iao\Dca\Offer', 'generateOfferTstamp')
 			),
 			'sql'                     => "int(10) unsigned NOT NULL default '0'"
 		),
@@ -231,7 +237,7 @@ $GLOBALS['TL_DCA']['tl_iao_offer'] = array
 			'eval'                    => array('rgxp'=>'date', 'doNotCopy'=>true, 'datepicker'=>$this->getDatePickerString(), 'tl_class'=>'w50 wizard'),
 			'load_callback' => array
 			(
-				array('iao\iaoDcaOffer', 'generateExpiryDate')
+				array('iao\Dca\Offer', 'generateExpiryDate')
 			),
 			'sql'                     => "varchar(255) NOT NULL default ''"
 		),
@@ -244,7 +250,7 @@ $GLOBALS['TL_DCA']['tl_iao_offer'] = array
 			'eval'                    => array('rgxp'=>'alnum', 'doNotCopy'=>true, 'spaceToUnderscore'=>true, 'maxlength'=>128, 'tl_class'=>'w50'),
 			'save_callback' => array
 			(
-				array('iao\iaoDcaOffer', 'setFieldOfferNumber')
+				array('iao\Dca\Offer', 'setFieldOfferNumber')
 			),
 			'sql'					  => "int(10) unsigned NOT NULL default '0'"
 		),
@@ -257,7 +263,7 @@ $GLOBALS['TL_DCA']['tl_iao_offer'] = array
 			'eval'                    => array('doNotCopy'=>true, 'spaceToUnderscore'=>true, 'maxlength'=>128, 'tl_class'=>'w50'),
 			'save_callback' => array
 			(
-				array('iao\iaoDcaOffer', 'setFieldOfferNumberStr')
+				array('iao\Dca\Offer', 'setFieldOfferNumberStr')
 			),
 			'sql'					  => "varchar(255) NOT NULL default ''"
 		),
@@ -280,11 +286,11 @@ $GLOBALS['TL_DCA']['tl_iao_offer'] = array
 			'flag'                    => 11,
 			'inputType'               => 'select',
 			// 'foreignKey'              => 'tl_member.company',
-			'options_callback'        => array('iao\iaoDcaOffer', 'getMemberOptions'),
+			'options_callback'        => array('iao\Dca\Offer', 'getMemberOptions'),
 			'eval'                    => array('tl_class'=>'w50','includeBlankOption'=>true,'submitOnChange'=>true, 'chosen'=>true),
 			'save_callback' => array
 			(
-				array('iao\iaoDcaOffer', 'fillAddressSaveCallback')
+				array('iao\Dca\Offer', 'fillAddressSaveCallback')
 			),
 			'sql'					  => "varbinary(128) NOT NULL default ''"
 		),
@@ -305,11 +311,11 @@ $GLOBALS['TL_DCA']['tl_iao_offer'] = array
 			'sorting'                 => true,
 			'flag'                    => 11,
 			'inputType'               => 'select',
-			'options_callback'        => array('iao\iaoDcaOffer', 'getBeforeTemplate'),
+			'options_callback'        => array('iao\Dca\Offer', 'getBeforeTemplate'),
 			'eval'                    => array('tl_class'=>'w50','includeBlankOption'=>true,'submitOnChange'=>true, 'chosen'=>true),
 			'save_callback' => array
 			(
-				array('iao\iaoDcaOffer', 'fillBeforeText')
+				array('iao\Dca\Offer', 'fillBeforeText')
 			),
 			'sql'					  => "int(10) unsigned NOT NULL default '0'"
 		),
@@ -330,11 +336,11 @@ $GLOBALS['TL_DCA']['tl_iao_offer'] = array
 			'sorting'                 => true,
 			'flag'                    => 11,
 			'inputType'               => 'select',
-			'options_callback'        => array('iao\iaoDcaOffer', 'getAfterTemplate'),
+			'options_callback'        => array('iao\Dca\Offer', 'getAfterTemplate'),
 			'eval'                    => array('tl_class'=>'w50','includeBlankOption'=>true,'submitOnChange'=>true, 'chosen'=>true),
 			'save_callback' => array
 			(
-				array('iao\iaoDcaOffer', 'fillAfterText')
+				array('iao\Dca\Offer', 'fillAfterText')
 			),
 			'sql'					  => "int(10) unsigned NOT NULL default '0'"
 		),
@@ -434,7 +440,7 @@ $GLOBALS['TL_DCA']['tl_iao_offer'] = array
 /**
  * Class tl_iao_offer
  */
-class iaoDcaOffer extends iaoBackend
+class Offer extends iaoBackend
 {
 
 	protected $settings = array();
@@ -719,7 +725,8 @@ class iaoDcaOffer extends iaoBackend
 	 */
 	public function editHeader($row, $href, $label, $title, $icon, $attributes)
 	{
-		return ($this->User->isAdmin || count(preg_grep('/^tl_iao_offer::/', $this->User->alexf)) > 0) ? '<a href="'.$this->addToUrl($href.'&amp;id='.$row['id']).'" title="'.specialchars($title).'"'.$attributes.'>'.$this->generateImage($icon, $label).'</a> ' : '';
+        $User = User::getInstance();
+	    return ($User->isAdmin || count(preg_grep('/^tl_iao_offer::/', $User->alexf)) > 0) ? '<a href="'.$this->addToUrl($href.'&amp;id='.$row['id']).'" title="'.specialchars($title).'"'.$attributes.'>'.\Image::getHtml($icon, $label).'</a> ' : '';
 	}
 
 	/**
@@ -733,10 +740,9 @@ class iaoDcaOffer extends iaoBackend
 	 */
     public function addInvoice($row, $href, $label, $title, $icon)
     {
-		if (!$this->User->isAdmin)
-		{
-			return '';
-		}
+        $settings = $this->getSettings($row['setting_id']);
+        $User = User::getInstance();
+        if (!$User->isAdmin) return false;
 
 		if (\Input::get('key') == 'addInvoice' && \Input::get('id') == $row['id'])
 		{
@@ -834,9 +840,10 @@ class iaoDcaOffer extends iaoBackend
 	public function showPDFButton($row, $href, $label, $title, $icon)
 	{
 		$settings = $this->getSettings($row['setting_id']);
+        $User = User::getInstance();
 
 		// wenn kein Admin dann kein PDF-Link	
-		if (!$this->User->isAdmin) return '';
+		if (!$User->isAdmin || count(preg_grep('/^tl_iao_offer::/', $User->alexf)) > 0) return '';
 
 		// Wenn keine PDF-Vorlage dann kein PDF-Link
 	    $objPdfTemplate = 	\FilesModel::findByUuid($settings['iao_offer_pdf']);			
@@ -972,8 +979,6 @@ class iaoDcaOffer extends iaoBackend
 	 */
 	public function toggleIcon($row, $href, $label, $title, $icon, $attributes)
 	{
-		$this->import('BackendUser', 'User');
-
 		if (strlen(\Input::get('tid')))
 		{
 			$this->toggleVisibility(\Input::get('tid'), (\Input::get('state')));
@@ -1002,9 +1007,11 @@ class iaoDcaOffer extends iaoBackend
 		$this->Input->setGet('act', 'toggle');
 
 		// Check permissions to publish
-		if (!$this->User->isAdmin && !$this->User->hasAccess('tl_iao_offer::status', 'alexf'))
+        $User = User::getInstance();
+		if (!$User->isAdmin && !$User->hasAccess('tl_iao_offer::status', 'alexf'))
 		{
-			$this->log('Not enough permissions to publish/unpublish comment ID "'.$intId.'"', 'tl_iao_offer toggleActivity', TL_ERROR);
+            $logger = static::getContainer()->get('monolog.logger.contao');
+            $logger->log('Not enough permissions to publish/unpublish comment ID "'.$intId.'"', 'tl_iao_offer toggleActivity', TL_ERROR);
 			$this->redirect('contao/main.php?act=error');
 		}
 

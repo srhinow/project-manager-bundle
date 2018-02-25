@@ -1,7 +1,14 @@
 <?php
+namespace iao\Dca;
+
+use iao\iaoBackend;
+use Contao\Database as DB;
+use Contao\BackendUser as User;
+use Contao\DataContainer;
+use Contao\Image;
 
 /**
- * @copyright  Sven Rhinow 2011-2015
+ * @copyright  Sven Rhinow 2011-2018
  * @author     sr-tag Sven Rhinow Webentwicklung <http://www.sr-tag.de>
  * @package    project-manager-bundle
  * @license    LGPL
@@ -16,7 +23,7 @@ $this->loadLanguageFile('tl_content');
 
 
 /**
- * Table tl_iao_credit_items
+ * Table iao\Dca\CreditItems
  */
 $GLOBALS['TL_DCA']['tl_iao_credit_items'] = array
 (
@@ -29,13 +36,13 @@ $GLOBALS['TL_DCA']['tl_iao_credit_items'] = array
 		'enableVersioning'	=> true,
 		'onload_callback'		=> array
 		(
-			array('tl_iao_credit_items','setIaoSettings'),
-			array('tl_iao_credit_items', 'checkPermission'),
+			array('iao\Dca\CreditItems','setIaoSettings'),
+			array('iao\Dca\CreditItems', 'checkPermission'),
 		),
 		'onsubmit_callback'	=> array
 		(
-			array('tl_iao_credit_items','saveAllPricesToParent'),
-			array('tl_iao_credit_items','saveNettoAndBrutto')
+			array('iao\Dca\CreditItems','saveAllPricesToParent'),
+			array('iao\Dca\CreditItems','saveNettoAndBrutto')
 		),
 		'sql' => array
 		(
@@ -57,7 +64,7 @@ $GLOBALS['TL_DCA']['tl_iao_credit_items'] = array
 			'flag'                    => 1,
 			'headerFields'            => array('title', 'tstamp', 'price','member','price_netto','price_brutto'),
 			'panelLayout'             => '',
-			'child_record_callback'   => array('tl_iao_credit_items', 'listItems')
+			'child_record_callback'   => array('iao\Dca\CreditItems', 'listItems')
 		),
 		'label' => array
 		(
@@ -78,7 +85,7 @@ $GLOBALS['TL_DCA']['tl_iao_credit_items'] = array
 				'label'               => &$GLOBALS['TL_LANG']['tl_iao_credit_items']['pdf'],
 				'href'                => 'key=pdf&id='.$_GET['id'],
 				'class'               => 'header_generate_pdf',
-				'button_callback'     => array('tl_iao_credit_items', 'showPDFButton')
+				'button_callback'     => array('iao\Dca\CreditItems', 'showPDFButton')
 			)
 		),
 		'operations' => array
@@ -113,7 +120,7 @@ $GLOBALS['TL_DCA']['tl_iao_credit_items'] = array
 				'label'               => &$GLOBALS['TL_LANG']['tl_iao_credit_items']['toggle'],
 				'icon'                => 'visible.gif',
 				'attributes'          => 'onclick="Backend.getScrollOffset(); return AjaxRequest.toggleVisibility(this, %s);"',
-				'button_callback'     => array('tl_iao_credit_items', 'toggleIcon')
+				'button_callback'     => array('iao\Dca\CreditItems', 'toggleIcon')
 			),
 			'show' => array
 			(
@@ -126,7 +133,7 @@ $GLOBALS['TL_DCA']['tl_iao_credit_items'] = array
 				'label'               => &$GLOBALS['TL_LANG']['tl_iao_credit_items']['postentemplate'],
 				'href'                => 'key=addPostenTemplate',
 				'icon'                => 'system/modules/invoice_and_offer/html/icons/posten_templates_16.png',
-				'button_callback'     => array('tl_iao_credit_items', 'addPostenTemplate')
+				'button_callback'     => array('iao\Dca\CreditItems', 'addPostenTemplate')
 			)
 		)
 	),
@@ -182,11 +189,11 @@ $GLOBALS['TL_DCA']['tl_iao_credit_items'] = array
 			'sorting'                 => true,
 			'flag'                    => 11,
 			'inputType'               => 'select',
-			'options_callback'        => array('tl_iao_credit_items', 'getPostenTemplate'),
+			'options_callback'        => array('iao\Dca\CreditItems', 'getPostenTemplate'),
 			'eval'                    => array('tl_class'=>'w50','includeBlankOption'=>true,'submitOnChange'=>true, 'chosen'=>true),
 			'save_callback' => array
 			(
-				array('tl_iao_credit_items', 'fillPostenFields')
+				array('iao\Dca\CreditItems', 'fillPostenFields')
 			),
 			'sql'					=> "int(10) unsigned NOT NULL default '0'"
 		),
@@ -248,7 +255,7 @@ $GLOBALS['TL_DCA']['tl_iao_credit_items'] = array
 			'filter'                  => true,
 			'flag'                    => 1,
 			'inputType'               => 'select',
-			'options_callback'        => array('tl_iao_credit_items', 'getItemUnitsOptions'),
+			'options_callback'        => array('iao\Dca\CreditItems', 'getItemUnitsOptions'),
             'eval'                    => array('tl_class'=>'w50','includeBlankOption'=>true,'submitOnChange'=>false),
             'sql'					  => "varchar(64) NOT NULL default ''"
 		),
@@ -288,7 +295,7 @@ $GLOBALS['TL_DCA']['tl_iao_credit_items'] = array
 			'filter'                  => true,
 			'flag'                    => 1,
 			'inputType'               => 'select',
-			'options_callback'        => array('tl_iao_credit_items', 'getTaxRatesOptions'),
+			'options_callback'        => array('iao\Dca\CreditItems', 'getTaxRatesOptions'),
 			'eval'                    => array('tl_class'=>'w50'),
 			'sql'					  => "int(10) unsigned NOT NULL default '19'"
 		),
@@ -300,6 +307,7 @@ $GLOBALS['TL_DCA']['tl_iao_credit_items'] = array
 			'flag'                    => 1,
 			'inputType'               => 'select',
 			'options'                 => $GLOBALS['TL_LANG']['tl_iao_credit_items']['vat_incl_percents'],
+            'eval'                    => array('tl_class'=>'w50'),
 			'sql'					  => "int(10) unsigned NOT NULL default '1'"
 		),
 		'published' => array
@@ -323,20 +331,20 @@ $GLOBALS['TL_DCA']['tl_iao_credit_items'] = array
 
 
 /**
- * Class tl_iao_credit_items
+ * Class CreditItems
+ * @package iao\Dca
  */
-class tl_iao_credit_items extends \iao\iaoBackend
+class CreditItems extends iaoBackend
 {
 
 	protected $settings = array();
 
-	/**
-	 * Import the back end user object
-	 */
+    /**
+     * iao\Dca\CreditItems constructor.
+     */
 	public function __construct()
 	{
 		parent::__construct();
-		$this->import('BackendUser', 'User');
 	}
 
 	/**
@@ -346,7 +354,7 @@ class tl_iao_credit_items extends \iao\iaoBackend
 	{
 		if($dc->id)
 		{
-			$dbObj = $this->Database->prepare('SELECT `p`.* FROM `tl_iao_credit` `p` LEFT JOIN `tl_iao_credit_items` `i` ON `p`.`id`= `i`.`pid` WHERE `i`.`id`=?')
+			$dbObj = DB::getInstance()->prepare('SELECT `p`.* FROM `tl_iao_credit` `p` LEFT JOIN `tl_iao_credit_items` `i` ON `p`.`id`= `i`.`pid` WHERE `i`.`id`=?')
 							->limit(1)
 							->execute($dc->id);
 
@@ -354,17 +362,24 @@ class tl_iao_credit_items extends \iao\iaoBackend
 		}
 	}
 
+    /**
+     * @param $href
+     * @param $label
+     * @param $title
+     * @param $class
+     * @return string
+     */
  	public function showPDFButton($href, $label, $title, $class)
 	{
 		return '&nbsp; :: &nbsp;<a href="contao/main.php?do=iao_credit&table=tl_iao_credit&'.$href.'" title="'.specialchars($title).'" class="'.$class.'">'.$label.'</a> ';
 	}
 
 	/**
-	 * Check permissions to edit table tl_iao_credit_items
+	 * Check permissions to edit table iao\Dca\CreditItems
 	 */
 	public function checkPermission()
 	{
-		$this->checkIaoModulePermission('tl_iao_credit_items');
+		$this->checkIaoModulePermission('iao\Dca\CreditItems');
 	}
 
 	/**
@@ -378,20 +393,20 @@ class tl_iao_credit_items extends \iao\iaoBackend
 		{
 			return '<div class="pdf-devider"><span>PDF-Trenner</span></div>';
 		}
-	else
-	{
-			$time = time();
-			$key = ($arrRow['published']) ? ' published' : ' unpublished';
-			$vat = ($arrRow['vat_incl']==1) ? 'netto' : 'brutto';
-			$pagebreak = ($arrRow['pagebreak_after']==1) ? ' pagebreak' : '';
+        else
+        {
+            $time = time();
+            $key = ($arrRow['published']) ? ' published' : ' unpublished';
+            $vat = ($arrRow['vat_incl']==1) ? 'netto' : 'brutto';
+            $pagebreak = ($arrRow['pagebreak_after']==1) ? ' pagebreak' : '';
 
-			return '<div class="cte_type' . $key . $pagebreak . '">
-			<strong>' . $arrRow['headline'] . '</strong>
-			<br />Netto: '.number_format($arrRow['price_netto'],2,',','.') .$this->settings['iao_currency_symbol'].'
-			<br />Brutto: ' . number_format($arrRow['price_brutto'],2,',','.') .$this->settings['iao_currency_symbol']. ' (inkl. '.$arrRow['vat'].'% MwSt.)
-			<br />'.$arrRow['text'].'
-			</div>' . "\n";
-	}
+            return '<div class="cte_type' . $key . $pagebreak . '">
+            <strong>' . $arrRow['headline'] . '</strong>
+            <br />Netto: '.number_format($arrRow['price_netto'],2,',','.') .$this->settings['iao_currency_symbol'].'
+            <br />Brutto: ' . number_format($arrRow['price_brutto'],2,',','.') .$this->settings['iao_currency_symbol']. ' (inkl. '.$arrRow['vat'].'% MwSt.)
+            <br />'.$arrRow['text'].'
+            </div>' . "\n";
+        }
 	}
 
 	/**
@@ -405,7 +420,7 @@ class tl_iao_credit_items extends \iao\iaoBackend
 		// Return if there is no active record (override all)
 		if (!$dc->activeRecord) return;
 
-		$itemObj = $this->Database->prepare('SELECT `price`,`count`,`vat`,`vat_incl` FROM `tl_iao_credit_items` WHERE `pid`=? AND published =?')
+		$itemObj = DB::getInstance()->prepare('SELECT `price`,`count`,`vat`,`vat_incl` FROM `tl_iao_credit_items` WHERE `pid`=? AND published =?')
 								  ->execute($dc->activeRecord->pid,1);
 
 		if($itemObj->numRows > 0)
@@ -429,7 +444,7 @@ class tl_iao_credit_items extends \iao\iaoBackend
 					$allBrutto += $priceSum;
 				}
 
-				$this->Database->prepare('UPDATE `tl_iao_credit` SET `price_netto`=?, `price_brutto`=? WHERE `id`=?')
+				DB::getInstance()->prepare('UPDATE `tl_iao_credit` SET `price_netto`=?, `price_brutto`=? WHERE `id`=?')
 				->limit(1)
 				->execute($allNetto, $allBrutto, $dc->activeRecord->pid);
 
@@ -468,7 +483,7 @@ class tl_iao_credit_items extends \iao\iaoBackend
 			$Brutto = $priceSum;
 		}
 
-		$this->Database->prepare('UPDATE `tl_iao_credit_items` SET `price_netto`=?, `price_brutto`=? WHERE `id`=?')
+		DB::getInstance()->prepare('UPDATE `tl_iao_credit_items` SET `price_netto`=?, `price_brutto`=? WHERE `id`=?')
 			->limit(1)
 			->execute($Netto, $Brutto, $dc->id);
 	}
@@ -492,11 +507,12 @@ class tl_iao_credit_items extends \iao\iaoBackend
 			$this->redirect($this->getReferer());
 		}
 
-		// Check permissions AFTER checking the tid, so hacking attempts are logged
-		if (!$this->User->isAdmin && !$this->User->hasAccess('tl_iao_credit_items::published', 'alexf'))
-		{
-			return '';
-		}
+        // Check permissions AFTER checking the tid, so hacking attempts are logged
+        $User = User::getInstance();
+        if (!$User->isAdmin && !$User->hasAccess('iao\Dca\CreditItems::published', 'alexf'))
+        {
+            return '';
+        }
 
 		$href .= '&amp;tid='.$row['id'].'&amp;state='.($row['published'] ? '' : 1);
 
@@ -505,7 +521,7 @@ class tl_iao_credit_items extends \iao\iaoBackend
 			$icon = 'invisible.gif';
 		}
 
-		return '<a href="'.$this->addToUrl($href).'" title="'.specialchars($title).'"'.$attributes.'>'.$this->generateImage($icon, $label).'</a> ';
+		return '<a href="'.$this->addToUrl($href).'" title="'.specialchars($title).'"'.$attributes.'>'.\Image::getHtml($icon, $label).'</a> ';
 	}
 
 
@@ -519,21 +535,24 @@ class tl_iao_credit_items extends \iao\iaoBackend
 		// Check permissions to edit
 		$this->Input->setGet('id', $intId);
 		$this->Input->setGet('act', 'toggle');
-		$this->checkPermission();
 
 		// Check permissions to publish
-		if (!$this->User->isAdmin && !$this->User->hasAccess('tl_iao_credit_items::published', 'alexf'))
+        $User = User::getInstance();
+		if (!$User->isAdmin && !$User->hasAccess('iao\Dca\CreditItems::published', 'alexf'))
 		{
-			$this->log('Not enough permissions to publish/unpublish event ID "'.$intId.'"', 'tl_iao_credit_items toggleVisibility', TL_ERROR);
+            $logger = static::getContainer()->get('monolog.logger.contao');
+            $logger->log('Not enough permissions to publish/unpublish event ID "'.$intId.'"', 'iao\Dca\CreditItems toggleVisibility', TL_ERROR);
+
 			$this->redirect('contao/main.php?act=error');
 		}
 
-		$this->createInitialVersion('tl_iao_credit_items', $intId);
+        $objVersions = new \Versions('tl_iao_credit_items', $intId);
+        $objVersions->initialize();
 
 		// Trigger the save_callback
-		if (is_array($GLOBALS['TL_DCA']['tl_iao_credit_items']['fields']['published']['save_callback']))
+		if (is_array($GLOBALS['TL_DCA']['iao\Dca\CreditItems']['fields']['published']['save_callback']))
 		{
-			foreach ($GLOBALS['TL_DCA']['tl_iao_credit_items']['fields']['published']['save_callback'] as $callback)
+			foreach ($GLOBALS['TL_DCA']['iao\Dca\CreditItems']['fields']['published']['save_callback'] as $callback)
 			{
 				$this->import($callback[0]);
 				$blnVisible = $this->$callback[0]->$callback[1]($blnVisible, $this);
@@ -541,10 +560,10 @@ class tl_iao_credit_items extends \iao\iaoBackend
 		}
 
 		// Update the database
-		$this->Database->prepare("UPDATE tl_iao_credit_items SET tstamp=". time() .", published='" . ($blnVisible ? 1 : '') . "' WHERE id=?")
+		DB::getInstance()->prepare("UPDATE iao\Dca\CreditItems SET tstamp=". time() .", published='" . ($blnVisible ? 1 : '') . "' WHERE id=?")
 		->execute($intId);
 
-		$this->createNewVersion('tl_iao_credit_items', $intId);
+        $objVersions->create();
 
 		// Update the RSS feed (for some reason it does not work without sleep(1))
 		sleep(1);
@@ -562,14 +581,15 @@ class tl_iao_credit_items extends \iao\iaoBackend
 	 */
 	public function addPostenTemplate($row, $href, $label, $title, $icon, $attributes)
 	{
-		if (!$this->User->isAdmin)
+
+	    if (!User::getInstance()->isAdmin)
 		{
 			return '';
 		}
 
 		if (\Input::get('key') == 'addPostenTemplate' && \Input::get('ptid') == $row['id'])
 		{
-			$result = $this->Database->prepare('SELECT * FROM `tl_iao_credit_items` WHERE `id`=?')
+			$result = DB::getInstance()->prepare('SELECT * FROM `tl_iao_credit_items` WHERE `id`=?')
 						->limit(1)
 						->execute($row['id']);
 
@@ -594,7 +614,7 @@ class tl_iao_credit_items extends \iao\iaoBackend
 				'position' => 'credit',
 			);
 
-			$newposten = $this->Database->prepare('INSERT INTO `tl_iao_templates_items` %s')
+			$newposten = DB::getInstance()->prepare('INSERT INTO `tl_iao_templates_items` %s')
 							->set($postenset)
 							->execute();
 
@@ -604,19 +624,19 @@ class tl_iao_credit_items extends \iao\iaoBackend
 		}
 
 		$href.='&amp;ptid='.$row['id'];
-		return '<a href="'.$this->addToUrl($href).'" title="'.specialchars($title).'"'.$attributes.'>'.$this->generateImage($icon, $label).'</a> ';
+		return '<a href="'.$this->addToUrl($href).'" title="'.specialchars($title).'"'.$attributes.'>'.Image::getHtml($icon, $label).'</a> ';
 	}
 
-	/**
-	 * get all credit-posten-templates
-	 * @param object
-	 * @throws Exception
-	 */
+    /**
+     * get all credit-posten-templates
+     * @param DataContainer $dc
+     * @return array
+     */
 	public function getPostenTemplate(DataContainer $dc)
 	{
 		$varValue= array();
 
-		$all = $this->Database->prepare('SELECT `id`,`headline` FROM `tl_iao_templates_items` WHERE `position`=?')
+		$all = DB::getInstance()->prepare('SELECT `id`,`headline` FROM `tl_iao_templates_items` WHERE `position`=?')
 				->execute('credit');
 
 		while($all->next())
@@ -627,17 +647,19 @@ class tl_iao_credit_items extends \iao\iaoBackend
 		return $varValue;
 	}
 
-	/**
-	 * fill Text before
-	 * @param object
-	 * @throws Exception
-	 */
+    /**
+     * fill Text before
+     * @param $varValue
+     * @param DataContainer $dc
+     * @return mixed
+     */
+
 	public function fillPostenFields($varValue, DataContainer $dc)
 	{
 
 		if(strlen($varValue)<=0) return $varValue;
 
-		$result = $this->Database->prepare('SELECT * FROM `tl_iao_templates_items` WHERE `id`=?')
+		$result = DB::getInstance()->prepare('SELECT * FROM `tl_iao_templates_items` WHERE `id`=?')
 					->limit(1)
 					->execute($varValue);
 
@@ -662,7 +684,7 @@ class tl_iao_credit_items extends \iao\iaoBackend
 			'vat_incl' => $result->vat_incl
 		);
 
-		$this->Database->prepare('UPDATE `tl_iao_credit_items` %s WHERE `id`=?')
+		DB::getInstance()->prepare('UPDATE `tl_iao_credit_items` %s WHERE `id`=?')
 				->set($postenset)
 				->execute($dc->id);
 

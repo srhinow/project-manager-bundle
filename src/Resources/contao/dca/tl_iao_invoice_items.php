@@ -1,14 +1,19 @@
 <?php
+namespace iao\Dca;
+
+use iao\iaoBackend;
+use Contao\Database as DB;
+use Contao\BackendUser as User;
+use Contao\DataContainer;
+use Contao\Image;
 
 /**
- * @copyright  Sven Rhinow 2011-2015
+ * @copyright  Sven Rhinow 2011-2018
  * @author     sr-tag Sven Rhinow Webentwicklung <http://www.sr-tag.de>
  * @package    project-manager-bundle
  * @license    LGPL
  * @filesource
  */
-
-
 /**
  * Load tl_content language file
  */
@@ -29,14 +34,14 @@ $GLOBALS['TL_DCA']['tl_iao_invoice_items'] = array
 		'enableVersioning'            => true,
 		'onload_callback'		=> array
 		(
-			array('tl_iao_invoice_items','setIaoSettings'),
-			array('tl_iao_invoice_items', 'checkPermission'),
+			array('iao\Dca\InvoiceItems','setIaoSettings'),
+			array('iao\Dca\InvoiceItems', 'checkPermission'),
 		),
 		'onsubmit_callback'	    => array
 		(
-		    array('tl_iao_invoice_items','saveAllPricesToParent'),
-		    array('tl_iao_invoice_items','saveNettoAndBrutto'),
-		    array('tl_iao_invoice_items','updateRemaining')
+		    array('iao\Dca\InvoiceItems','saveAllPricesToParent'),
+		    array('iao\Dca\InvoiceItems','saveNettoAndBrutto'),
+		    array('iao\Dca\InvoiceItems','updateRemaining')
 		),
 		'sql' => array
 		(
@@ -58,7 +63,7 @@ $GLOBALS['TL_DCA']['tl_iao_invoice_items'] = array
 			'flag'                    => 1,
 			'headerFields'            => array('title', 'tstamp', 'price','member','price_netto','price_brutto'),
 			'panelLayout'             => '',
-			'child_record_callback'   => array('tl_iao_invoice_items', 'listItems')
+			'child_record_callback'   => array('iao\Dca\InvoiceItems', 'listItems')
 		),
 		'label' => array
 		(
@@ -79,7 +84,7 @@ $GLOBALS['TL_DCA']['tl_iao_invoice_items'] = array
 				'label'               => &$GLOBALS['TL_LANG']['tl_iao_invoice_items']['pdf'],
 				'href'                => 'key=pdf&id='.$_GET['id'],
 				'class'               => 'header_generate_pdf',
-				'button_callback'     => array('tl_iao_invoice_items', 'showPDFButton')
+				'button_callback'     => array('iao\Dca\InvoiceItems', 'showPDFButton')
 			)
 		),
 		'operations' => array
@@ -114,7 +119,7 @@ $GLOBALS['TL_DCA']['tl_iao_invoice_items'] = array
 				'label'               => &$GLOBALS['TL_LANG']['tl_iao_invoice_items']['toggle'],
 				'icon'                => 'visible.gif',
 				'attributes'          => 'onclick="Backend.getScrollOffset(); return AjaxRequest.toggleVisibility(this, %s);"',
-				'button_callback'     => array('tl_iao_invoice_items', 'toggleIcon')
+				'button_callback'     => array('iao\Dca\InvoiceItems', 'toggleIcon')
 			),
 			'show' => array
 			(
@@ -127,7 +132,7 @@ $GLOBALS['TL_DCA']['tl_iao_invoice_items'] = array
 				'label'               => &$GLOBALS['TL_LANG']['tl_iao_invoice_items']['postentemplate'],
 				'href'                => 'key=addPostenTemplate',
 				'icon'                => 'system/modules/invoice_and_offer/html/icons/posten_templates_16.png',
-				'button_callback'     => array('tl_iao_invoice_items', 'addPostenTemplate')
+				'button_callback'     => array('iao\Dca\InvoiceItems', 'addPostenTemplate')
 			),
 		)
 	),
@@ -231,7 +236,7 @@ $GLOBALS['TL_DCA']['tl_iao_invoice_items'] = array
 			'filter'                  => true,
 			'flag'                    => 1,
 			'inputType'               => 'select',
-			'options_callback'        => array('tl_iao_invoice_items', 'getItemUnitsOptions'),
+			'options_callback'        => array('iao\Dca\InvoiceItems', 'getItemUnitsOptions'),
             'eval'                    => array('tl_class'=>'w50','submitOnChange'=>false),
 			'sql'					  => "varchar(64) NOT NULL default ''"
 		),
@@ -270,7 +275,7 @@ $GLOBALS['TL_DCA']['tl_iao_invoice_items'] = array
 			'filter'                  => true,
 			'flag'                    => 1,
 			'inputType'               => 'select',
-			'options_callback'        => array('tl_iao_invoice_items', 'getTaxRatesOptions'),
+			'options_callback'        => array('iao\Dca\InvoiceItems', 'getTaxRatesOptions'),
 			'eval'                    => array('tl_class'=>'w50'),
 			'sql'					  => "int(10) unsigned NOT NULL default '19'"
 		),
@@ -291,11 +296,11 @@ $GLOBALS['TL_DCA']['tl_iao_invoice_items'] = array
 			'sorting'                 => true,
 			'flag'                    => 11,
 			'inputType'               => 'select',
-			'options_callback'        => array('tl_iao_invoice_items', 'getPostenTemplate'),
+			'options_callback'        => array('iao\Dca\InvoiceItems', 'getPostenTemplate'),
 			'eval'                    => array('tl_class'=>'w50','includeBlankOption'=>true,'submitOnChange'=>true, 'chosen'=>true),
 			'save_callback' => array
 			(
-				array('tl_iao_invoice_items', 'fillPostenFields')
+				array('iao\Dca\InvoiceItems', 'fillPostenFields')
 			),
 			'sql'					=> "int(10) unsigned NOT NULL default '0'"
 		),
@@ -322,18 +327,17 @@ $GLOBALS['TL_DCA']['tl_iao_invoice_items'] = array
 /**
  * Class tl_iao_invoice_items
  */
-class tl_iao_invoice_items extends \iao\iaoBackend
+class InvoiceItems extends iaoBackend
 {
 
 	protected $settings = array();
 
-	/**
-	 * Import the back end user object
-	 */
+    /**
+     * InvoiceItems constructor.
+     */
 	public function __construct()
 	{
 		parent::__construct();
-		$this->import('BackendUser', 'User');
 	}
 
 	/**
@@ -342,9 +346,10 @@ class tl_iao_invoice_items extends \iao\iaoBackend
 	public function setIaoSettings()
 	{
 		$id = \Input::get('id');
+
 		if($id)
 		{
-			$dbObj = $this->Database->prepare('SELECT * FROM `tl_iao_invoice` WHERE `id`=?')
+			$dbObj = DB::getInstance()->prepare('SELECT * FROM `tl_iao_invoice` WHERE `id`=?')
 							->limit(1)
 							->execute($id);
 
@@ -352,6 +357,13 @@ class tl_iao_invoice_items extends \iao\iaoBackend
 		}
 	}
 
+    /**
+     * @param $href
+     * @param $label
+     * @param $title
+     * @param $class
+     * @return string|void
+     */
  	public function showPDFButton($href, $label, $title, $class)
 	{
 	    $objPdfTemplate = 	\FilesModel::findByUuid($this->settings['iao_invoice_pdf']);			
@@ -411,7 +423,7 @@ class tl_iao_invoice_items extends \iao\iaoBackend
 			return;
 		}
 
-		$itemObj = $this->Database->prepare('SELECT `price`,`count`,`vat`,`vat_incl`,`operator` FROM `tl_iao_invoice_items` WHERE `pid`=? AND published =?')
+		$itemObj = DB::getInstance()->prepare('SELECT `price`,`count`,`vat`,`vat_incl`,`operator` FROM `tl_iao_invoice_items` WHERE `pid`=? AND published =?')
 									->execute($dc->activeRecord->pid,1);
 
 
@@ -449,7 +461,7 @@ class tl_iao_invoice_items extends \iao\iaoBackend
 					$allBrutto += $Brutto;
 				}
 
-		    	$this->Database->prepare('UPDATE `tl_iao_invoice` SET `price_netto`=?, `price_brutto`=? WHERE `id`=?')
+		    	DB::getInstance()->prepare('UPDATE `tl_iao_invoice` SET `price_netto`=?, `price_brutto`=? WHERE `id`=?')
 				->limit(1)
 				->execute($allNetto, $allBrutto, $dc->activeRecord->pid);
 			}
@@ -471,7 +483,7 @@ class tl_iao_invoice_items extends \iao\iaoBackend
 		}
 
 		//von den Haupteinstellungen holen ob diese MwSt befreit ist, dann Brutto und Netto gleich setzen.
-		$invoiceObj = $this->Database->prepare('SELECT * FROM `tl_iao_invoice` WHERE `id`=?')
+		$invoiceObj = DB::getInstance()->prepare('SELECT * FROM `tl_iao_invoice` WHERE `id`=?')
 					 ->limit(1)
 					 ->execute($dc->activeRecord->pid);
 
@@ -499,7 +511,7 @@ class tl_iao_invoice_items extends \iao\iaoBackend
 	    $nettoSum = round($Netto,2) * $dc->activeRecord->count;
 	    $bruttoSum = round($Brutto,2) * $dc->activeRecord->count;
 
-		$this->Database->prepare('UPDATE `tl_iao_invoice_items` SET `price_netto`=?, `price_brutto`=? WHERE `id`=?')
+		DB::getInstance()->prepare('UPDATE `tl_iao_invoice_items` SET `price_netto`=?, `price_brutto`=? WHERE `id`=?')
 			->limit(1)
 			->execute($nettoSum, $bruttoSum, $dc->id);
 	}
@@ -512,7 +524,7 @@ class tl_iao_invoice_items extends \iao\iaoBackend
 	public function pagePicker(DataContainer $dc)
 	{
 		$strField = 'ctrl_' . $dc->field . (($this->Input->get('act') == 'editAll') ? '_' . $dc->id : '');
-		return ' ' . $this->generateImage('pickpage.gif', $GLOBALS['TL_LANG']['MSC']['pagepicker'], 'style="vertical-align:top; cursor:pointer;" onclick="Backend.pickPage(\'' . $strField . '\')"');
+		return ' ' . Image::getHtml('pickpage.gif', $GLOBALS['TL_LANG']['MSC']['pagepicker'], 'style="vertical-align:top; cursor:pointer;" onclick="Backend.pickPage(\'' . $strField . '\')"');
 	}
 
 	/**
@@ -527,14 +539,16 @@ class tl_iao_invoice_items extends \iao\iaoBackend
 	 */
 	public function toggleIcon($row, $href, $label, $title, $icon, $attributes)
 	{
-		if (strlen($this->Input->get('tid')))
+        $User = User::getInstance();
+
+	    if (strlen(\Input::get('tid')))
 		{
-			$this->toggleVisibility($this->Input->get('tid'), ($this->Input->get('state') == 1));
+			$this->toggleVisibility(\Input::get('tid'), (\Input::get('state') == 1));
 			$this->redirect($this->getReferer());
 		}
 
 		// Check permissions AFTER checking the tid, so hacking attempts are logged
-		if (!$this->User->isAdmin && !$this->User->hasAccess('tl_iao_invoice_items::published', 'alexf'))
+		if (!$User->isAdmin && !$User->hasAccess('tl_iao_invoice_items::published', 'alexf'))
 		{
 			return '';
 		}
@@ -546,7 +560,7 @@ class tl_iao_invoice_items extends \iao\iaoBackend
 			$icon = 'invisible.gif';
 		}
 
-		return '<a href="'.$this->addToUrl($href).'" title="'.specialchars($title).'"'.$attributes.'>'.$this->generateImage($icon, $label).'</a> ';
+		return '<a href="'.$this->addToUrl($href).'" title="'.specialchars($title).'"'.$attributes.'>'.Image::getHtml($icon, $label).'</a> ';
 	}
 
 	/**
@@ -562,13 +576,17 @@ class tl_iao_invoice_items extends \iao\iaoBackend
 		$this->checkPermission();
 
 		// Check permissions to publish
-		if (!$this->User->isAdmin && !$this->User->hasAccess('tl_iao_invoice_items::published', 'alexf'))
+        $User = User::getInstance();
+		if (!$User->isAdmin && !$User->hasAccess('tl_iao_invoice_items::published', 'alexf'))
 		{
-			$this->log('Not enough permissions to publish/unpublish event ID "'.$intId.'"', 'tl_iao_invoice_items toggleVisibility', TL_ERROR);
+            $logger = static::getContainer()->get('monolog.logger.contao');
+            $logger->log('Not enough permissions to publish/unpublish event ID "'.$intId.'"', 'tl_iao_invoice_items toggleVisibility', TL_ERROR);
+
 			$this->redirect('contao/main.php?act=error');
 		}
 
-		$this->createInitialVersion('tl_iao_invoice_items', $intId);
+        $objVersions = new \Versions('tl_iao_invoice_items', $intId);
+        $objVersions->initialize();
 
 		// Trigger the save_callback
 		if (is_array($GLOBALS['TL_DCA']['tl_iao_invoice_items']['fields']['published']['save_callback']))
@@ -581,10 +599,10 @@ class tl_iao_invoice_items extends \iao\iaoBackend
 		}
 
 		// Update the database
-		$this->Database->prepare("UPDATE tl_iao_invoice_items SET tstamp=". time() .", published='" . ($blnVisible ? 1 : '') . "' WHERE id=?")
+		DB::getInstance()->prepare("UPDATE tl_iao_invoice_items SET tstamp=". time() .", published='" . ($blnVisible ? 1 : '') . "' WHERE id=?")
 						->execute($intId);
 
-		$this->createNewVersion('tl_iao_invoice_items', $intId);
+        $objVersions->create();
 
 		// Update the RSS feed (for some reason it does not work without sleep(1))
 		sleep(1);
@@ -601,14 +619,13 @@ class tl_iao_invoice_items extends \iao\iaoBackend
 	 */
 	public function addPostenTemplate($row, $href, $label, $title, $icon, $attributes)
 	{
-		if (!$this->User->isAdmin)
-		{
-			return '';
-		}
+		$User = User::getInstance();
+
+        if (!$User->isAdmin) return '';
 
 		if (\Input::get('key') == 'addPostenTemplate' && \Input::get('ptid') == $row['id'])
 		{
-			$result = $this->Database->prepare('SELECT * FROM `tl_iao_invoice_items` WHERE `id`=?')
+			$result = DB::getInstance()->prepare('SELECT * FROM `tl_iao_invoice_items` WHERE `id`=?')
 							->limit(1)
 							->execute($row['id']);
 
@@ -634,7 +651,7 @@ class tl_iao_invoice_items extends \iao\iaoBackend
 				'position' => 'invoice',
 			);
 
-			$newposten = $this->Database->prepare('INSERT INTO `tl_iao_templates_items` %s')
+			$newposten = DB::getInstance()->prepare('INSERT INTO `tl_iao_templates_items` %s')
 							->set($postenset)
 							->execute();
 
@@ -645,19 +662,19 @@ class tl_iao_invoice_items extends \iao\iaoBackend
 
 		$href.='&amp;ptid='.$row['id'];
 
-		return '<a href="'.$this->addToUrl($href).'" title="'.specialchars($title).'"'.$attributes.'>'.$this->generateImage($icon, $label).'</a> ';
+		return '<a href="'.$this->addToUrl($href).'" title="'.specialchars($title).'"'.$attributes.'>'.Image::getHtml($icon, $label).'</a> ';
 	}
 
-	/**
-	 * get all invoice-posten-templates
-	 * @param object
-	 * @throws Exception
-	 */
+    /**
+     * get all invoice-posten-templates
+     * @param DataContainer $dc
+     * @return array
+     */
 	public function getPostenTemplate(DataContainer $dc)
 	{
 		$varValue= array();
 
-		$all = $this->Database->prepare('SELECT `id`,`headline` FROM `tl_iao_templates_items` WHERE `position`=?')
+		$all = DB::getInstance()->prepare('SELECT `id`,`headline` FROM `tl_iao_templates_items` WHERE `position`=?')
 				->execute('invoice');
 
 		while($all->next())
@@ -667,17 +684,18 @@ class tl_iao_invoice_items extends \iao\iaoBackend
 		return $varValue;
 	}
 
-	/**
-	 * fill Text before
-	 * @param object
-	 * @throws Exception
-	 */
+    /**
+     * fill Text before
+     * @param $varValue
+     * @param DataContainer $dc
+     * @return mixed
+     */
 	public function fillPostenFields($varValue, DataContainer $dc)
 	{
 
 		if(strlen($varValue)<=0) return $varValue;
 
-		$result = $this->Database->prepare('SELECT * FROM `tl_iao_templates_items` WHERE `id`=?')
+		$result = DB::getInstance()->prepare('SELECT * FROM `tl_iao_templates_items` WHERE `id`=?')
 					->limit(1)
 					->execute($varValue);
 
@@ -702,7 +720,7 @@ class tl_iao_invoice_items extends \iao\iaoBackend
 			'vat_incl' => $result->vat_incl
 		);
 
-		$this->Database->prepare('UPDATE `tl_iao_invoice_items` %s WHERE `id`=?')
+		DB::getInstance()->prepare('UPDATE `tl_iao_invoice_items` %s WHERE `id`=?')
 				->set($postenset)
 				->execute($dc->id);
 
@@ -712,19 +730,20 @@ class tl_iao_invoice_items extends \iao\iaoBackend
 	}
 
 
-	/**
-	* calculate and update fields
-	*/
+    /**
+     * calculate and update fields
+     * @param DataContainer $dc
+     */
 	public function updateRemaining(DataContainer $dc)
 	{
-		$itemObj =	$this->Database->prepare('SELECT SUM(`price_netto`) as `brutto_sum` FROM `tl_iao_invoice_items` WHERE `pid`=? AND `published`=?')
+		$itemObj =	DB::getInstance()->prepare('SELECT SUM(`price_netto`) as `brutto_sum` FROM `tl_iao_invoice_items` WHERE `pid`=? AND `published`=?')
 									->execute($dc->activeRecord->pid, 1);
 
 		$sumObj = $itemObj->fetchRow();
 
 		if($itemObj->numRows > 0)
 		{
-			$parentObj = $this->Database->prepare('SELECT `paid_on_dates` FROM `tl_iao_invoice` WHERE `id`=?')
+			$parentObj = DB::getInstance()->prepare('SELECT `paid_on_dates` FROM `tl_iao_invoice` WHERE `id`=?')
 										->limit(1)
 										->execute($dc->activeRecord->pid);
 
@@ -750,7 +769,8 @@ class tl_iao_invoice_items extends \iao\iaoBackend
 				'status' => $status,
 				'paid_on_date' => $paid_on_date
 			);
-			$this->Database->prepare('UPDATE `tl_iao_invoice` %s WHERE `id`=?')
+
+			DB::getInstance()->prepare('UPDATE `tl_iao_invoice` %s WHERE `id`=?')
 						->set($set)
 						->execute($dc->id);
 		}

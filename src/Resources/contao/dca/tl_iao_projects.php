@@ -124,7 +124,7 @@ $GLOBALS['TL_DCA']['tl_iao_projects'] = array
 	'palettes' => array
 	(
 		'__selector__'                => array('in_reference','finished'),
-		'default'                     => '{settings_legend},setting_id;{project_legend},title,member,url,notice;{finshed_legend},finished;{reference_legend},in_reference'
+		'default'                     => '{settings_legend},setting_id;{project_legend},title,member,url;notice;{finshed_legend},finished;{reference_legend},in_reference'
 	),
 
 	// Subpalettes
@@ -263,7 +263,7 @@ $GLOBALS['TL_DCA']['tl_iao_projects'] = array
 			'exclude'                 => true,
 			'search'                  => true,
 			'inputType'               => 'text',
-			'eval'                    => array('mandatory'=>false, 'maxlength'=>255),
+			'eval'                    => array('mandatory'=>false, 'maxlength'=>255,'tl_class'=>'w50'),
 			'sql'                     => "varchar(255) NOT NULL default ''"
 		),
 		'finished' => array
@@ -291,7 +291,7 @@ $GLOBALS['TL_DCA']['tl_iao_projects'] = array
 			'search'		  => true,
 			'filter'                  => false,
 			'inputType'               => 'textarea',
-			'eval'                    => array('mandatory'=>false, 'cols'=>'10','rows'=>'10','style'=>'height:100px','rte'=>false),
+			'eval'                    => array('mandatory'=>false, 'cols'=>'10','rows'=>'10','style'=>'height:100px','rte'=>false,'tl_css'=>'clr m12 long'),
 			'sql'					  => "text NULL"
 		),
 		'singleSRC' => array
@@ -358,7 +358,7 @@ class tl_iao_projects  extends \iao\iaoBackend
 	 */
 	public function editHeader($row, $href, $label, $title, $icon, $attributes)
 	{
-		return ($this->User->isAdmin || count(preg_grep('/^tl_iao_projects::/', $this->User->alexf)) > 0) ? '<a href="'.$this->addToUrl($href.'&amp;id='.$row['id']).'" title="'.specialchars($title).'"'.$attributes.'>'.$this->generateImage($icon, $label).'</a> ' : '';
+		return ($this->User->isAdmin || count(preg_grep('/^tl_iao_projects::/', $this->User->alexf)) > 0) ? '<a href="'.$this->addToUrl($href.'&amp;id='.$row['id']).'" title="'.specialchars($title).'"'.$attributes.'>'.Image::getHtml($icon, $label).'</a> ' : '';
 	}
 
     /**

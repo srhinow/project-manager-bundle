@@ -2,7 +2,9 @@
 /**
  * Run in a custom namespace, so the class can be replaced
  */
-namespace iao;
+namespace Srhinow;
+
+use Contao\Model;
 
 /**
  * Reads and writes Credit Items
@@ -30,7 +32,7 @@ namespace iao;
  */
 
 
-class IaoCreditItemsModel extends \Model
+class IaoCreditItemsModel extends Model
 {
 	/**
 	 * Table name

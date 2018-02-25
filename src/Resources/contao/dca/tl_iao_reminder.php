@@ -1,4 +1,16 @@
 <?php
+namespace iao\Dca;
+
+use iao\iaoBackend as iaoBackend;
+use iao\iaoPDF;
+use Srhinow\IaoReminderModel;
+use Srhinow\IaoInvoiceModel;
+use Contao\Database as DB;
+use Contao\BackendUser as User;
+use Contao\DataContainer;
+use Contao\Image;
+
+
 /**
  * @copyright  Sven Rhinow 2011-2013
  * @author     sr-tag Sven Rhinow Webentwicklung <http://www.sr-tag.de>
@@ -6,10 +18,6 @@
  * @license    LGPL
  * @filesource
  */
-
-namespace iao;
-
-use Contao\Database as DB;
 
 /**
  * Table tl_iao_reminder
@@ -27,15 +35,15 @@ $GLOBALS['TL_DCA']['tl_iao_reminder'] = array
 		'enableVersioning'		=> false,
 		'onload_callback'		=> array
 		(
-			array('iao\iaoDcaReminder', 'generateInvoicePDF'),
-			array('iao\iaoDcaReminder', 'checkPermission'),
+			array('iao\Dca\Reminder', 'generateInvoicePDF'),
+			array('iao\Dca\Reminder', 'checkPermission'),
 		),
 		'onsubmit_callback'	=> array(
-        	array('iao\iaoDcaReminder','setTextFinish')
+        	array('iao\Dca\Reminder','setTextFinish')
 		),
 		'ondelete_callback'	=> array
 		(
-			array('iao\iaoDcaReminder', 'onDeleteReminder')
+			array('iao\Dca\Reminder', 'onDeleteReminder')
 		),
 		'sql' => array
 		(
@@ -61,7 +69,7 @@ $GLOBALS['TL_DCA']['tl_iao_reminder'] = array
 		(
 			'fields'                  => array('title','invoice_id'),
 			'format'                  => '%s (%s)',
-			'label_callback'          => array('iao\iaoDcaReminder', 'listEntries'),
+			'label_callback'          => array('iao\Dca\Reminder', 'listEntries'),
 		),
 		'global_operations' => array
 		(
@@ -113,14 +121,14 @@ $GLOBALS['TL_DCA']['tl_iao_reminder'] = array
 				'label'               => &$GLOBALS['TL_LANG']['tl_iao_reminder']['toggle'],
 				'icon'                => 'ok.gif',
 				#'attributes'          => 'onclick="Backend.getScrollOffset(); return AjaxRequest.toggleVisibility(this, %s);"',
-				'button_callback'     => array('iao\iaoDcaReminder', 'toggleIcon')
+				'button_callback'     => array('iao\Dca\Reminder', 'toggleIcon')
 			),
 			'pdf' => array
 			(
 				'label'               => &$GLOBALS['TL_LANG']['tl_iao_reminder']['pdf'],
 				'href'                => 'key=pdf',
 				'icon'                => 'iconPDF.gif',
-				'button_callback'     => array('iao\iaoDcaReminder', 'showPDFButton')
+				'button_callback'     => array('iao\Dca\Reminder', 'showPDFButton')
 			)
 		)
 	),
@@ -169,7 +177,7 @@ $GLOBALS['TL_DCA']['tl_iao_reminder'] = array
 			'sorting'                 => true,
 			'flag'                    => 11,
 			'inputType'               => 'select',
-			'options_callback'        => array('iao\iaoDcaReminder', 'getSettingOptions'),
+			'options_callback'        => array('iao\Dca\Reminder', 'getSettingOptions'),
 			'eval'                    => array('tl_class'=>'w50','includeBlankOption'=>false, 'chosen'=>true),
 			'sql'                     => "int(10) unsigned NOT NULL default '0'"
 		),
@@ -197,7 +205,7 @@ $GLOBALS['TL_DCA']['tl_iao_reminder'] = array
 			'label'						=> &$GLOBALS['TL_LANG']['tl_iao_reminder']['text_finish'],
 			'exclude'					=> true,
 			'eval'						=> array('tl_class'=>'clr'),
-			'input_field_callback'		=> array('iao\iaoDcaReminder','getTextFinish'),
+			'input_field_callback'		=> array('iao\Dca\Reminder','getTextFinish'),
 			'sql'					  => "mediumtext NULL"
 		),
 		'reminder_tstamp' => array
@@ -208,7 +216,7 @@ $GLOBALS['TL_DCA']['tl_iao_reminder'] = array
 			'eval'                    => array('doNotCopy'=>true,'rgxp'=>'datim', 'datepicker'=>$this->getDatePickerString(), 'tl_class'=>'w50 wizard'),
 			'load_callback' => array
 			(
-				array('iao\iaoDcaReminder', 'generateReminderTstamp')
+				array('iao\Dca\Reminder', 'generateReminderTstamp')
 			),
 			'sql'                     => "int(10) unsigned NOT NULL default '0'"
 		),
@@ -234,11 +242,11 @@ $GLOBALS['TL_DCA']['tl_iao_reminder'] = array
 			'filter'                  => true,
 			'flag'                    => 1,
 			'inputType'               => 'select',
-			'options_callback'        => array('iao\iaoDcaReminder', 'getInvoices'),
+			'options_callback'        => array('iao\Dca\Reminder', 'getInvoices'),
                         'eval'			  => array('tl_class'=>'w50','includeBlankOption'=>true,'submitOnChange'=>true, 'chosen'=>true),
 			'save_callback' => array
 			(
-				array('iao\iaoDcaReminder', 'fillFields')
+				array('iao\Dca\Reminder', 'fillFields')
 			),
 			'sql'					  => "int(10) unsigned NOT NULL default '0'"
 		),
@@ -250,11 +258,11 @@ $GLOBALS['TL_DCA']['tl_iao_reminder'] = array
 			'sorting'                 => true,
 			'flag'                    => 11,
 			'inputType'               => 'select',
-			'options_callback'        => array('iao\iaoDcaReminder', 'getMemberOptions'),
+			'options_callback'        => array('iao\Dca\Reminder', 'getMemberOptions'),
 			'eval'                    => array('tl_class'=>'w50','includeBlankOption'=>true,'submitOnChange'=>true, 'chosen'=>true),
 			'save_callback' => array
 			(
-				array('iao\iaoDcaReminder', 'fillAdressText')
+				array('iao\Dca\Reminder', 'fillAdressText')
 			),
 			'sql'					  => "varbinary(128) NOT NULL default ''"
 		),
@@ -289,7 +297,7 @@ $GLOBALS['TL_DCA']['tl_iao_reminder'] = array
                         'eval'			  => array('tl_class'=>'w50'),
                         'save_callback' => array
 			(
-				array('iao\iaoDcaReminder', 'updateStatus')
+				array('iao\Dca\Reminder', 'updateStatus')
 			),
 			'sql'					  => "char(1) NOT NULL default ''"
 		),
@@ -304,7 +312,7 @@ $GLOBALS['TL_DCA']['tl_iao_reminder'] = array
 			'eval'                    => array('tl_class'=>'w50','includeBlankOption'=>true,'submitOnChange'=>true),
 			'save_callback' => array
 			(
-				array('iao\iaoDcaReminder', 'fillStepFields')
+				array('iao\Dca\Reminder', 'fillStepFields')
 			),
 			'sql'					  => "varchar(255) NOT NULL default ''"
 		),
@@ -368,18 +376,17 @@ $GLOBALS['TL_DCA']['tl_iao_reminder'] = array
 /**
  * Class tl_iao_reminder
  */
-class iaoDcaReminder extends \iao\iaoBackend
+class Reminder extends iaoBackend
 {
 
 	protected $settings = array();
-	
-	/**
-	 * Import the back end user object
-	 */
+
+    /**
+     * Reminder constructor.
+     */
 	public function __construct()
 	{
 		parent::__construct();
-		$this->import('BackendUser', 'User');
 	}
 
 
@@ -397,7 +404,7 @@ class iaoDcaReminder extends \iao\iaoBackend
 	 * @param $dc object
 	 * @return integer
 	 */
-	public function  generateExecuteDate($varValue, \DataContainer $dc)
+	public function  generateExecuteDate($varValue, DataContainer $dc)
 	{
 		$altdate = ($dc->activeRecord->invoice_tstamp) ? $dc->activeRecord->invoice_tstamp : time();
 		return ($varValue==0) ? $altdate : $varValue;
@@ -414,14 +421,14 @@ class iaoDcaReminder extends \iao\iaoBackend
 		return ($varValue == 0) ? time() : $varValue;
 	}
 
-	/**
-	 * fill Adress-Text
-     * @param $varValue integer
-	 * @param $dc object
-	 * @throws \Exception
-     * @return integer
-	 */
-	public function fillFields($varValue, \DataContainer $dc)
+    /**
+     * fill Adress-Text
+     * @param $varValue
+     * @param DataContainer $dc
+     * @return mixed
+     * @throws \Exception
+     */
+	public function fillFields($varValue, DataContainer $dc)
 	{
         $objDB = IaoReminderModel::findById($dc->id);
         if(!is_object($objDB)) throw new \Exception('Error in fillFields in tl_iao_reminder');
@@ -437,11 +444,11 @@ class iaoDcaReminder extends \iao\iaoBackend
 
 
     /**
-	 * get all invoices
-	 * @param object
+     * get all invoices
+     * @param DataContainer $dc
      * @return array
-	 */
-	public function getInvoices(\DataContainer $dc)
+     */
+	public function getInvoices(DataContainer $dc)
 	{
 		$settings = $this->getSettings($dc->activeRecord->setting_id);
         $varValue= array();
@@ -505,11 +512,11 @@ class iaoDcaReminder extends \iao\iaoBackend
 	}
 
     /**
-     * @param \DataContainer $dc
+     * @param DataContainer $dc
      * @return string
      * @throws \Exception
      */
-	public function getTextFinish(\DataContainer $dc)
+	public function getTextFinish(DataContainer $dc)
 	{
         $obj = IaoReminderModel::findById($dc->id);
         if(!is_object($obj)) throw new \Exception('getTextFinish() ist fehlgeschlagen.');
@@ -525,10 +532,10 @@ class iaoDcaReminder extends \iao\iaoBackend
 	}
 
     /**
-     * @param \DataContainer $dc
+     * @param DataContainer $dc
      * @throws \Exception
      */
-	public function setTextFinish(\DataContainer $dc)
+	public function setTextFinish(DataContainer $dc)
 	{
 			$objReminder = IaoReminderModel::findById($dc->id);
             if(!is_object($objReminder)) throw new \Exception('setTextFinish() ist fehlgeschlagen.');
@@ -538,7 +545,7 @@ class iaoDcaReminder extends \iao\iaoBackend
 
 			$set = ['text_finish' => $text_finish];
 
-			$this->Database->prepare('UPDATE `tl_iao_reminder` %s WHERE `id`=?')
+			DB::getInstance()->prepare('UPDATE `tl_iao_reminder` %s WHERE `id`=?')
 							->set($set)
 							->execute($dc->id);
 	}
@@ -573,32 +580,33 @@ class iaoDcaReminder extends \iao\iaoBackend
 	 */
 	public function editHeader($row, $href, $label, $title, $icon, $attributes)
 	{
-		return ($this->User->isAdmin || count(preg_grep('/^tl_iao_reminder::/', $this->User->alexf)) > 0) ? '<a href="'.$this->addToUrl($href.'&amp;id='.$row['id']).'" title="'.specialchars($title).'"'.$attributes.'>'.$this->generateImage($icon, $label).'</a> ' : '';
+		return (User::getInstance()->isAdmin || count(preg_grep('/^tl_iao_reminder::/', $this->User->alexf)) > 0) ? '<a href="'.$this->addToUrl($href.'&amp;id='.$row['id']).'" title="'.specialchars($title).'"'.$attributes.'>'.Image::getHtml($icon, $label).'</a> ' : '';
 	}
 
-	/**
-	* wenn GET-Parameter passen dann wird eine PDF erzeugt
-	*
-	*/
-	public function generateInvoicePDF(\DataContainer $dc)
+    /**
+     * wenn GET-Parameter passen dann wird eine PDF erzeugt
+     * @param DataContainer $dc
+     */
+	public function generateInvoicePDF(DataContainer $dc)
 	{	    if(\Input::get('key') == 'pdf' && (int) \Input::get('id') > 0) $this->generateReminderPDF((int) \Input::get('id'), 'reminder');
 	}
 
-	/**
-	 * Generate a "PDF" button and return it as string
-	 * @param array
-	 * @param string
-	 * @param string
-	 * @param string
-	 * @param string
-	 * @return string
-	 */
+    /**
+     * Generate a "PDF" button and return it as string
+     * @param $row
+     * @param $href
+     * @param $label
+     * @param $title
+     * @param $icon
+     * @return bool|string
+     */
 	public function showPDF($row, $href, $label, $title, $icon)
 	{
 		$settings = $this->getSettings($row['setting_id']);
+        $styles = '';
 
 		// wenn kein Admin dann kein PDF-Link	
-		if (!$this->User->isAdmin)
+		if (!User::getInstance()->isAdmin)
 		{
 			return false;
 		}
@@ -707,7 +715,7 @@ class iaoDcaReminder extends \iao\iaoBackend
 			// Stop script execution
 			exit();
 		}
-		return '<a href="'.$this->addToUrl($href.'&amp;id='.$row['id']).'" title="'.specialchars($title).'">'.$this->generateImage($icon, $label).'</a> ';
+		return '<a href="'.$this->addToUrl($href.'&amp;id='.$row['id']).'" title="'.specialchars($title).'">'.image::getHtml($icon, $label).'</a> ';
 
 	}
 
@@ -728,16 +736,17 @@ class iaoDcaReminder extends \iao\iaoBackend
 		if (!$this->User->isAdmin)	return false;
 
 		$href = 'contao/main.php?do=iao_reminder&amp;key=pdf&amp;id='.$row['id'];
-		return '<a href="'.$href.'" title="'.specialchars($title).'">'.$this->generateImage($icon, $label).'</a> ';
+		return '<a href="'.$href.'" title="'.specialchars($title).'">'.Image::getHtml($icon, $label).'</a> ';
 	}
 
-	/**
-	 * Autogenerate an article alias if it has not been set yet
-	 * @param mixed
-	 * @param object
-	 * @return string
-	 */
-	public function generateReminderNumber($varValue, \DataContainer $dc)
+    /**
+     * Autogenerate an article alias if it has not been set yet
+     * @param $varValue
+     * @param DataContainer $dc
+     * @return int|mixed|null|string
+     * @throws \Exception
+     */
+	public function generateReminderNumber($varValue, DataContainer $dc)
 	{
 		$autoNr = false;
 		$varValue = (int) $varValue;
@@ -748,7 +757,7 @@ class iaoDcaReminder extends \iao\iaoBackend
 		if($varValue == 0)
 		{
 			$autoNr = true;
-			$objNr = $this->Database->prepare("SELECT `invoice_id` FROM `tl_iao_reminder` ORDER BY `invoice_id` DESC")
+			$objNr = DB::getInstance()->prepare("SELECT `invoice_id` FROM `tl_iao_reminder` ORDER BY `invoice_id` DESC")
 									->limit(1)
 									->execute();
 
@@ -759,7 +768,7 @@ class iaoDcaReminder extends \iao\iaoBackend
 		}
 		else
 		{
-			$objNr = $this->Database->prepare("SELECT `invoice_id` FROM `tl_iao_reminder` WHERE `id`=? OR `invoice_id`=?")
+			$objNr = DB::getInstance()->prepare("SELECT `invoice_id` FROM `tl_iao_reminder` WHERE `id`=? OR `invoice_id`=?")
 									->limit(1)
 									->execute($dc->id,$varValue);
 
@@ -819,8 +828,6 @@ class iaoDcaReminder extends \iao\iaoBackend
 	 */
 	public function toggleIcon($row, $href, $label, $title, $icon, $attributes)
 	{
-		$this->import('BackendUser', 'User');
-
 		if (strlen(\Input::get('tid')))
 		{
 			$this->toggleVisibility(\Input::get('tid'), (\Input::get('state')));
@@ -835,7 +842,7 @@ class iaoDcaReminder extends \iao\iaoBackend
 				$icon = 'logout.gif';
 		}
 
-		return '<a href="'.$this->addToUrl($href).'" title="'.$GLOBALS['TL_LANG']['tl_iao_reminder']['toggle'].'"'.$attributes.'>'.$this->generateImage($icon, $label).'</a> ';
+		return '<a href="'.$this->addToUrl($href).'" title="'.$GLOBALS['TL_LANG']['tl_iao_reminder']['toggle'].'"'.$attributes.'>'.Image::getHtml($icon, $label).'</a> ';
 	}
 
 	/**
@@ -846,17 +853,19 @@ class iaoDcaReminder extends \iao\iaoBackend
 	public function toggleVisibility($intId, $blnVisible)
 	{
 		// Check permissions to edit
-		$this->Input->setGet('id', $intId);
-		$this->Input->setGet('act', 'toggle');
+		\Input::setGet('id', $intId);
+		\Input::setGet('act', 'toggle');
+		$User = User::getInstance();
+        $logger = static::getContainer()->get('monolog.logger.contao');
 
 		// Check permissions to publish
-		if (!$this->User->isAdmin && !$this->User->hasAccess('tl_iao_reminder::status', 'alexf'))
+		if (!$User->isAdmin && !$User->hasAccess('tl_iao_reminder::status', 'alexf'))
 		{
-			$this->log('Not enough permissions to publish/unpublish comment ID "'.$intId.'"', 'tl_iao_reminder toggleActivity', TL_ERROR);
+            $logger->log('Not enough permissions to publish/unpublish comment ID "'.$intId.'"', 'tl_iao_reminder toggleActivity', TL_ERROR);
 			$this->redirect('contao/main.php?act=error');
 		}
 
-		$this->createInitialVersion('tl_iao_reminder', $intId);
+        $logger->create();
 
 		// Trigger the save_callback
 		if (is_array($GLOBALS['TL_DCA']['tl_iao_reminder']['fields']['status']['save_callback']))
@@ -871,48 +880,47 @@ class iaoDcaReminder extends \iao\iaoBackend
 		$visibility = $blnVisible==1 ? '1' : '2';
 
 		// Update the database
-		$this->Database->prepare("UPDATE tl_iao_reminder SET status=? WHERE id=?")
+		DB::getInstance()->prepare("UPDATE tl_iao_reminder SET status=? WHERE id=?")
 					   ->execute($visibility, $intId);
 
 		//get reminder-Data
-		$remindObj = $this->Database->prepare('SELECT * FROM `tl_iao_reminder` WHERE `id`=?')
+		$remindObj = DB::getInstance()->prepare('SELECT * FROM `tl_iao_reminder` WHERE `id`=?')
 									->limit(1)
 									->execute($intId);
 
 		if($remindObj->numRows)
 		{
-			$dbObj = $this->Database->prepare("UPDATE `tl_iao_invoice` SET `status`=?, `notice` = `notice`+?  WHERE id=?")
+			$dbObj = DB::getInstance()->prepare("UPDATE `tl_iao_invoice` SET `status`=?, `notice` = `notice`+?  WHERE id=?")
 									->execute($visibility, $remindObj->notice, $remindObj->invoice_id);
 		}
 
-		$this->createNewVersion('tl_iao_reminder', $intId);
+        $logger->create();
 	}
 
-	/**
-	* ondelete_callback
-	* @var object
-	*/
+    /**
+     * ondelete_callback
+     * @param DataContainer $dc
+     */
 	public function onDeleteReminder(DataContainer $dc)
 	{
 		$invoiceID = $dc->activeRecord->invoice_id;
 
 		if($invoiceID)
 		{
-			$otherReminderObj = $this->Database->prepare('SELECT `id` FROM `tl_iao_reminder` WHERE `invoice_id`=? AND `id`!=? ORDER BY `step` DESC')
+			$otherReminderObj = DB::getInstance()->prepare('SELECT `id` FROM `tl_iao_reminder` WHERE `invoice_id`=? AND `id`!=? ORDER BY `step` DESC')
 												->limit(1)
 												->execute($invoiceID, $dc->id);
 
 			$newReminderID = ($otherReminderObj->numRows > 0) ? $otherReminderObj->id : 0;
 
-			$this->Database->prepare('UPDATE `tl_iao_invoice` SET `reminder_id`=? WHERE `id`=?')
+			DB::getInstance()->prepare('UPDATE `tl_iao_invoice` SET `reminder_id`=? WHERE `id`=?')
 							->execute($newReminderID, $invoiceID);
 	     }
 	 }
 
-	/**
-	 * ondelete_callback
-	 * @var object
-	 */
+    /**
+     * @param DataContainer $dc
+     */
 	public function changeStatusReminder(DataContainer $dc)
 	{
 		$state = \Input::get('state');
@@ -923,7 +931,7 @@ class iaoDcaReminder extends \iao\iaoBackend
 		{
 			if($invoiceID)
 			{
-				$this->Database->prepare('UPDATE `tl_iao_invoice` SET `reminder_id`=?, `paid_on_date`=?, `status`=? WHERE `id`=?')
+				DB::getInstance()->prepare('UPDATE `tl_iao_invoice` SET `reminder_id`=?, `paid_on_date`=?, `status`=? WHERE `id`=?')
 								->execute($reminderID, time(), 2, $invoiceID);
 			}
 		}
@@ -931,17 +939,17 @@ class iaoDcaReminder extends \iao\iaoBackend
 		{
 			if($invoiceID)
 			{
-				$this->Database->prepare('UPDATE `tl_iao_invoice` SET `reminder_id`=?, `paid_on_date`=?,`status`=?  WHERE `id`=?')
+				DB::getInstance()->prepare('UPDATE `tl_iao_invoice` SET `reminder_id`=?, `paid_on_date`=?,`status`=?  WHERE `id`=?')
 								->execute('', '', 1, $invoiceID);
 			}
 		}
 	}
 
-	/**
-	 * status save_callback
-	 * @var string
-	 * @var object
-	 */
+    /**
+     * @param $varValue
+     * @param DataContainer $dc
+     * @return int
+     */
 	public function updateStatus($varValue, DataContainer $dc)
 	{
 		$varValue = (int) $varValue;
@@ -955,7 +963,7 @@ class iaoDcaReminder extends \iao\iaoBackend
 				'paid_on_date' => $dc->activeRecord->paid_on_date
 			);
 
-			$this->Database->prepare("UPDATE `tl_iao_invoice` %s  WHERE `id`=?")
+			DB::getInstance()->prepare("UPDATE `tl_iao_invoice` %s  WHERE `id`=?")
 							->set($set)
 							->limit(1)
 							->execute($dc->activeRecord->invoice_id);

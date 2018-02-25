@@ -83,6 +83,20 @@ $GLOBALS['BE_MOD']['iao'] = array
 if ('BE' === TL_MODE) {
     $GLOBALS['TL_CSS'][] = PMB_PUBLIC_FOLDER.'/be.css|static';
 }
+
+$GLOBALS['TL_MODELS']['tl_iao_agreements'] = \Srhinow\IaoAgreementsModel::class;
+$GLOBALS['TL_MODELS']['tl_iao_credit_items'] = \Srhinow\IaoCreditItemsModel::class;
+$GLOBALS['TL_MODELS']['tl_iao_credit'] = \Srhinow\IaoCreditModel::class;
+$GLOBALS['TL_MODELS']['tl_iao_invoice_items'] = \Srhinow\IaoInvoiceItemsModel::class;
+$GLOBALS['TL_MODELS']['tl_iao_invoice'] = \Srhinow\IaoInvoiceModel::class;
+$GLOBALS['TL_MODELS']['tl_iao_offer_items'] = \Srhinow\IaoOfferItemsModel::class;
+$GLOBALS['TL_MODELS']['tl_iao_offer'] = \Srhinow\IaoOfferModel::class;
+$GLOBALS['TL_MODELS']['tl_iao_projects'] = \Srhinow\IaoProjectsModel::class;
+$GLOBALS['TL_MODELS']['tl_iao_reminder'] = \Srhinow\IaoReminderModel::class;
+$GLOBALS['TL_MODELS']['tl_iao_settings'] = \Srhinow\IaoSettingsModel::class;
+$GLOBALS['TL_MODELS']['tl_iao_template_items'] = \Srhinow\IaoTemplatesItemsModel::class;
+$GLOBALS['TL_MODELS']['tl_iao_templates'] = \Srhinow\IaoTemplatesModel::class;
+
 /**
  * Setup Modules
  */

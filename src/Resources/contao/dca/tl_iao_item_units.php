@@ -1,7 +1,8 @@
 <?php
+namespace iao\Dca;
 
 /**
- * @copyright  Sven Rhinow 2011-2017
+ * @copyright  Sven Rhinow 2011-2018
  * @author     sr-tag Sven Rhinow Webentwicklung <http://www.sr-tag.de>
  * @package    project-manager-bundle
  * @license    LGPL
@@ -41,7 +42,6 @@ $GLOBALS['TL_DCA']['tl_iao_item_units'] = array
 		(
 			'fields'                  => array('name', 'value'),
 			'format'                  => '%s <span style="color:#b3b3b3; padding-left:3px;">[%s]</span>',
-			// 'label_callback'		  => array('tl_iso_config', 'addIcon')
 		),
 		'global_operations' => array
 		(

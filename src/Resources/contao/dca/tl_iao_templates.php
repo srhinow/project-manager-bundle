@@ -1,7 +1,15 @@
 <?php
+namespace iao\Dca;
+
+use iao\iaoBackend;
+use Contao\Database as DB;
+use Contao\BackendUser as User;
+use Contao\Image;
+use Contao\DataContainer;
+
 
 /**
- * @copyright  Sven Rhinow 2011-2015
+ * @copyright  Sven Rhinow 2011-2018
  * @author     sr-tag Sven Rhinow Webentwicklung <http://www.sr-tag.de>
  * @package    project-manager-bundle
  * @license    LGPL
@@ -22,7 +30,7 @@ $GLOBALS['TL_DCA']['tl_iao_templates'] = array
 		'enableVersioning'            => false,
 		'onload_callback' => array
 		(
-			array('tl_iao_templates', 'checkPermission')
+			array('iao\Dca\Templates', 'checkPermission')
 		),
 		'sql' => array
 		(
@@ -79,7 +87,7 @@ $GLOBALS['TL_DCA']['tl_iao_templates'] = array
 				'label'               => &$GLOBALS['TL_LANG']['tl_iao_templates']['editheader'],
 				'href'                => 'act=edit',
 				'icon'                => 'header.gif',
-				'button_callback'     => array('tl_iao_templates', 'editHeader'),
+				'button_callback'     => array('iao\Dca\Templates', 'editHeader'),
 				'attributes'          => 'class="edit-header"'
 			),
 			'copy' => array
@@ -149,18 +157,11 @@ $GLOBALS['TL_DCA']['tl_iao_templates'] = array
 		),
 		'position' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_iao_templates']['position'],
-			'exclude'                 => true,
-			'filter'                  => true,
-			'inputType'               => 'select',
-			'options' => array(
-			'invoice_before_text'=>'Rechnung Text vor Positionen',
-			'invoice_after_text'=>'Rechnung Text nach Positionen',
-			'offer_before_text'=>'Angebot Text vor Positionen',
-			'offer_after_text'=>'Angebot Text nach Positionen',
-			'credit_before_text'=>'Gutschrift Text vor Positionen',
-			'credit_after_text'=>'Gutschrift Text nach Positionen',
-			 ),
+			'label'                 => &$GLOBALS['TL_LANG']['tl_iao_templates']['position'],
+			'exclude'               => true,
+			'filter'                => true,
+			'inputType'             => 'select',
+			'options'               => &$GLOBALS['TL_LANG']['tl_iao_templates']['template_options'],
 			'sql'					=> "varchar(25) NOT NULL default ''"
 		),
 
@@ -169,18 +170,18 @@ $GLOBALS['TL_DCA']['tl_iao_templates'] = array
 
 
 /**
- * Class tl_iao_templates
+ * Class Templates
+ * @package iao\Dca
  */
-class tl_iao_templates extends \iao\iaoBackend
+class Templates extends iaoBackend
 {
 
-	/**
-	 * Import the back end user object
-	 */
+    /**
+     * Templates constructor.
+     */
 	public function __construct()
 	{
 		parent::__construct();
-		$this->import('BackendUser', 'User');
 	}
 
 	
@@ -210,7 +211,7 @@ class tl_iao_templates extends \iao\iaoBackend
 		}
 
 
-		$objAlias = $this->Database->prepare("SELECT id FROM `tl_iao_templates` WHERE id=? OR alias=?")
+		$objAlias = DB::getInstance()->prepare("SELECT id FROM `tl_iao_templates` WHERE id=? OR alias=?")
 								   ->execute($dc->id, $varValue);
 
 		// Check whether the page alias exists
@@ -218,7 +219,7 @@ class tl_iao_templates extends \iao\iaoBackend
 		{
 			if (!$autoAlias)
 			{
-				throw new Exception(sprintf($GLOBALS['TL_LANG']['ERR']['aliasExists'], $varValue));
+				throw new \Exception(sprintf($GLOBALS['TL_LANG']['ERR']['aliasExists'], $varValue));
 			}
 
 			$varValue .= '-' . $dc->id;
@@ -227,23 +228,23 @@ class tl_iao_templates extends \iao\iaoBackend
 		return $varValue;
 	}
 
-	/**
-	 * fill date-Field if this empty
-	 * @param mixed
-	 * @param object
-	 * @return date
-	 */
+    /**
+     * fill date-Field if this empty
+     * @param $varValue
+     * @param DataContainer $dc
+     * @return false|string
+     */
 	public function  generateCreditDate($varValue, DataContainer $dc)
 	{
 		return ($varValue==0) ? date('Y-m-d') : $varValue;
 	}
 
-	/**
-	 * fill date-Field if this empty
-	 * @param mixed
-	 * @param object
-	 * @return date
-	 */
+    /**
+     * fill date-Field if this empty
+     * @param $varValue
+     * @param DataContainer $dc
+     * @return false|string
+     */
 	public function  generateExpiryDate($varValue, DataContainer $dc)
 	{
 		if($varValue==0)
@@ -260,12 +261,12 @@ class tl_iao_templates extends \iao\iaoBackend
 		return  $varValue;
 	}
 
-	/**
-	 * fill date-Field if this empty
-	 * @param mixed
-	 * @param object
-	 * @return date
-	*/
+    /**
+     * fill date-Field if this empty
+     * @param $varValue
+     * @param DataContainer $dc
+     * @return false|int
+     */
 	public function  generateCreditTstamp($varValue, DataContainer $dc)
 	{
 		$credit_date = $dc->activeRecord->credit_date;
@@ -275,11 +276,12 @@ class tl_iao_templates extends \iao\iaoBackend
 		return mktime(0, 0, 0, $idArr[1], $idArr[2], $idArr[0]);
 	}
 
-	/**
-	 * fill Adress-Text
-	 * @param object
-	 * @throws Exception
-	 */
+    /**
+     * fill Adress-Text
+     * @param $varValue
+     * @param DataContainer $dc
+     * @return mixed
+     */
 	public function fillAdressText($varValue, DataContainer $dc)
 	{
 		if(strip_tags($dc->activeRecord->address_text)=='')
@@ -287,14 +289,14 @@ class tl_iao_templates extends \iao\iaoBackend
 
 			if(strlen($varValue)<=0) return $varValue;
 
-			$objMember = $this->Database->prepare('SELECT * FROM `tl_member` WHERE `id`=?')
+			$objMember = DB::getInstance()->prepare('SELECT * FROM `tl_member` WHERE `id`=?')
 										->limit(1)
 										->execute($varValue);
 
 			$text = '<p>'.$objMember->company.'<br />'.($objMember->gender!='' ? $GLOBALS['TL_LANG']['tl_iao_templates']['gender'][$objMember->gender].' ':'').($objMember->title ? $objMember->title.' ':'').$objMember->firstname.' '.$objMember->lastname.'<br />'.$objMember->street.'</p>';
 		    $text .='<p>'.$objMember->postal.' '.$objMember->city.'</p>';
 
-			$this->Database->prepare('UPDATE `tl_iao_templates` SET `address_text`=? WHERE `id`=?')
+			DB::getInstance()->prepare('UPDATE `tl_iao_templates` SET `address_text`=? WHERE `id`=?')
 							->limit(1)
 							->execute($text,$dc->id);
 		}
@@ -314,9 +316,15 @@ class tl_iao_templates extends \iao\iaoBackend
 	 */
 	public function editHeader($row, $href, $label, $title, $icon, $attributes)
 	{
-		return ($this->User->isAdmin || count(preg_grep('/^tl_iao_templates::/', $this->User->alexf)) > 0) ? '<a href="'.$this->addToUrl($href.'&amp;id='.$row['id']).'" title="'.specialchars($title).'"'.$attributes.'>'.$this->generateImage($icon, $label).'</a> ' : '';
+		$User = User::getInstance();
+	    return ($User->isAdmin || count(preg_grep('/^tl_iao_templates::/', $User->alexf)) > 0) ? '<a href="'.$this->addToUrl($href.'&amp;id='.$row['id']).'" title="'.specialchars($title).'"'.$attributes.'>'.Image::getHtml($icon, $label).'</a> ' : '';
 	}
 
+    /**
+     * @param $varValue
+     * @param DataContainer $dc
+     * @return mixed
+     */
 	public function createCreditNumberStr($varValue, DataContainer $dc)
 	{
 		if(!$varValue)
@@ -347,7 +355,7 @@ class tl_iao_templates extends \iao\iaoBackend
 		if($varValue == 0)
 		{
 			$autoNr = true;
-			$objNr = $this->Database->prepare("SELECT `credit_id` FROM `tl_iao_templates` ORDER BY `credit_id` DESC")
+			$objNr = DB::getInstance()->prepare("SELECT `credit_id` FROM `tl_iao_templates` ORDER BY `credit_id` DESC")
 									->limit(1)
 									->execute();
 
@@ -356,7 +364,7 @@ class tl_iao_templates extends \iao\iaoBackend
 		}
 		else
 		{
-			$objNr = $this->Database->prepare("SELECT `credit_id` FROM `tl_iao_templates` WHERE `id`=? OR `credit_id`=?")
+			$objNr = DB::getInstance()->prepare("SELECT `credit_id` FROM `tl_iao_templates` WHERE `id`=? OR `credit_id`=?")
 									->limit(1)
 									->execute($dc->id,$varValue);
 
@@ -365,7 +373,7 @@ class tl_iao_templates extends \iao\iaoBackend
 			{
 				if (!$autoNr)
 				{
-					throw new Exception(sprintf($GLOBALS['TL_LANG']['ERR']['aliasExists'], $varValue));
+					throw new \Exception(sprintf($GLOBALS['TL_LANG']['ERR']['aliasExists'], $varValue));
 				}
 
 				$varValue .= '-' . $dc->id;
@@ -384,7 +392,7 @@ class tl_iao_templates extends \iao\iaoBackend
 	{
 
 		$this->import('Database');
-		$result = $this->Database->prepare("SELECT `firstname`,`lastname`,`company` FROM `tl_member`  WHERE id=?")
+		$result = DB::getInstance()->prepare("SELECT `firstname`,`lastname`,`company` FROM `tl_member`  WHERE id=?")
 								->limit(1)
 								->execute($arrRow['member']);
 
@@ -411,11 +419,9 @@ class tl_iao_templates extends \iao\iaoBackend
 	 */
 	public function toggleIcon($row, $href, $label, $title, $icon, $attributes)
 	{
-		$this->import('BackendUser', 'User');
-
 		if (strlen($this->Input->get('tid')))
 		{
-			$this->toggleVisibility($this->Input->get('tid'), ($this->Input->get('state')));
+			$this->toggleVisibility(\Input::get('tid'), (\Input::get('state')));
 			$this->redirect($this->getReferer());
 		}
 
@@ -427,7 +433,7 @@ class tl_iao_templates extends \iao\iaoBackend
 			$icon = 'logout.gif';
 		}
 
-		return '<a href="'.$this->addToUrl($href).'" title="'.$GLOBALS['TL_LANG']['tl_iao_templates']['toggle'].'"'.$attributes.'>'.$this->generateImage($icon, $label).'</a> ';
+		return '<a href="'.$this->addToUrl($href).'" title="'.$GLOBALS['TL_LANG']['tl_iao_templates']['toggle'].'"'.$attributes.'>'.Image::getHtml($icon, $label).'</a> ';
 	}
 
 	/**
@@ -438,17 +444,21 @@ class tl_iao_templates extends \iao\iaoBackend
 	public function toggleVisibility($intId, $blnVisible)
 	{
 		// Check permissions to edit
-		$this->Input->setGet('id', $intId);
-		$this->Input->setGet('act', 'toggle');
+		\Input::setGet('id', $intId);
+		\Input::setGet('act', 'toggle');
+
+        $logger = static::getContainer()->get('monolog.logger.contao');
 
 		// Check permissions to publish
-		if (!$this->User->isAdmin && !$this->User->hasAccess('tl_iao_templates::status', 'alexf'))
+		$User = User::getInstance();
+        if (!$User->isAdmin && !$User->hasAccess('tl_iao_templates::status', 'alexf'))
 		{
-			$this->log('Not enough permissions to publish/unpublish comment ID "'.$intId.'"', 'tl_iao_templates toggleActivity', TL_ERROR);
+			$logger->log('Not enough permissions to publish/unpublish comment ID "'.$intId.'"', 'tl_iao_templates toggleActivity', TL_ERROR);
 			$this->redirect('contao/main.php?act=error');
 		}
 
-		$this->createInitialVersion('tl_iao_templates', $intId);
+        $objVersions = new \Versions('tl_iao_templates', $intId);
+        $objVersions->initialize();
 
 		// Trigger the save_callback
 		if (is_array($GLOBALS['TL_DCA']['tl_iao_templates']['fields']['status']['save_callback']))
@@ -461,9 +471,9 @@ class tl_iao_templates extends \iao\iaoBackend
 		}
 
 		// Update the database
-		$this->Database->prepare("UPDATE tl_iao_templates SET status='" . ($blnVisible==1 ? '1' : '2') . "' WHERE id=?")
+		DB::getInstance()->prepare("UPDATE tl_iao_templates SET status='" . ($blnVisible==1 ? '1' : '2') . "' WHERE id=?")
 					   ->execute($intId);
 
-		$this->createNewVersion('tl_iao_templates', $intId);
+		$logger->create();
 	}
 }

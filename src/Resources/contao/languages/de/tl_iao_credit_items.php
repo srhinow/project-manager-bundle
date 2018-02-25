@@ -17,6 +17,7 @@
 
 $GLOBALS['TL_LANG']['tl_iao_credit_items']['posten_template'] =	array('Template','Posten-Template');
 $GLOBALS['TL_LANG']['tl_iao_credit_items']['headline'] =	array('Bezeichnung','Posten-Bezeichnung');
+$GLOBALS['TL_LANG']['tl_iao_credit_items']['headline_to_pdf'] = ['Bezeichnung in PDF aufnehmen'];
 $GLOBALS['TL_LANG']['tl_iao_credit_items']['type'] =	array('Inhaltstyp','neuer Eintrag oder PDF-Seitentrenner');
 $GLOBALS['TL_LANG']['tl_iao_credit_items']['alias'] =	array('Alias','');
 $GLOBALS['TL_LANG']['tl_iao_credit_items']['author'] =	array('Posten-Ersteller','');

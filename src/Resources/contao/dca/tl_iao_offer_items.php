@@ -1,7 +1,15 @@
 <?php
+namespace iao\Dca;
+
+use iao\iaoBackend;
+use Contao\Database as DB;
+use Contao\BackendUser as User;
+use Contao\Image;
+use Contao\DataContainer;
+
 
 /**
- * @copyright  Sven Rhinow 2011-2015
+ * @copyright  Sven Rhinow 2011-2018
  * @author     sr-tag Sven Rhinow Webentwicklung <http://www.sr-tag.de>
  * @package    project-manager-bundle
  * @license    LGPL
@@ -27,13 +35,13 @@ $GLOBALS['TL_DCA']['tl_iao_offer_items'] = array
 		'ptable'                      => 'tl_iao_offer',
 		'enableVersioning'            => true,
 		'onload_callback'		=> array(
-			array('tl_iao_offer_items','setIaoSettings'),
-			array('tl_iao_offer_items', 'checkPermission'),
+			array('iao\Dca\OfferItems','setIaoSettings'),
+			array('iao\Dca\OfferItems', 'checkPermission'),
 		),
 		'onsubmit_callback'	      => array
 		(
-			array('tl_iao_offer_items','saveAllPricesToParent'),
-			array('tl_iao_offer_items','saveNettoAndBrutto')
+			array('iao\Dca\OfferItems','saveAllPricesToParent'),
+			array('iao\Dca\OfferItems','saveNettoAndBrutto')
 		),
 		'sql' => array
 		(
@@ -76,7 +84,7 @@ $GLOBALS['TL_DCA']['tl_iao_offer_items'] = array
 				'label'               => &$GLOBALS['TL_LANG']['tl_iao_offer_items']['pdf'],
 				'href'                => 'key=pdf&id='.$_GET['id'],
 				'class'               => 'header_generate_pdf',
-				'button_callback'     => array('tl_iao_offer_items', 'showPDFButton')
+				'button_callback'     => array('iao\Dca\OfferItems', 'showPDFButton')
 			)
 		),
 		'operations' => array
@@ -168,9 +176,9 @@ $GLOBALS['TL_DCA']['tl_iao_offer_items'] = array
 			'exclude'                 => true,
 			'filter'                  => true,
 			'inputType'               => 'select',
-			'options' 		  => &$GLOBALS['TL_LANG']['tl_iao_offer_items']['type_options'],
+			'options' 		          => &$GLOBALS['TL_LANG']['tl_iao_offer_items']['type_options'],
 			'eval'                    => array( 'submitOnChange'=>true),
-			'sql'					=> "varchar(32) NOT NULL default 'item'"
+			'sql'					  => "varchar(32) NOT NULL default 'item'"
 		),
 		'headline' => array
 		(
@@ -230,7 +238,7 @@ $GLOBALS['TL_DCA']['tl_iao_offer_items'] = array
 			'filter'                  => true,
 			'flag'                    => 1,
 			'inputType'               => 'select',
-			'options_callback'        => array('tl_iao_offer_items', 'getItemUnitsOptions'),
+			'options_callback'        => array('iao\Dca\OfferItems', 'getItemUnitsOptions'),
             'eval'                    => array('tl_class'=>'w50','submitOnChange'=>false),
             'sql'					  => "varchar(64) NOT NULL default ''"
 		),
@@ -271,7 +279,7 @@ $GLOBALS['TL_DCA']['tl_iao_offer_items'] = array
 			'filter'                  => true,
 			'flag'                    => 1,
 			'inputType'               => 'select',
-			'options_callback'        => array('tl_iao_offer_items', 'getTaxRatesOptions'),
+			'options_callback'        => array('iao\Dca\OfferItems', 'getTaxRatesOptions'),
 			'eval'                    => array('tl_class'=>'w50'),
 			'sql'					  => "int(10) unsigned NOT NULL default '19'"
 		),
@@ -294,11 +302,11 @@ $GLOBALS['TL_DCA']['tl_iao_offer_items'] = array
 			'sorting'                 => true,
 			'flag'                    => 11,
 			'inputType'               => 'select',
-			'options_callback'        => array('tl_iao_offer_items', 'getPostenTemplate'),
+			'options_callback'        => array('iao\Dca\OfferItems', 'getPostenTemplate'),
 			'eval'                    => array('tl_class'=>'w50','includeBlankOption'=>true,'submitOnChange'=>true, 'chosen'=>true),
 			'save_callback' => array
 			(
-				array('tl_iao_offer_items', 'fillPostenFields')
+				array('iao\Dca\OfferItems', 'fillPostenFields')
 			),
 			'sql'					=> "int(10) unsigned NOT NULL default '0'"
 		),
@@ -325,17 +333,16 @@ $GLOBALS['TL_DCA']['tl_iao_offer_items'] = array
 /**
 * Class tl_iao_offer_items
 */
-class tl_iao_offer_items extends \iao\iaoBackend
+class OfferItems extends iaoBackend
 {
 	protected $settings = array();
 
-	/**
-	 * Import the back end user object
-	 */
+    /**
+     * OfferItems constructor.
+     */
 	public function __construct()
 	{
 		parent::__construct();
-		$this->import('BackendUser', 'User');
 	}
 
 	/**
@@ -346,7 +353,7 @@ class tl_iao_offer_items extends \iao\iaoBackend
 		$id = \Input::get('id');
 		if($id)
 		{
-			$dbObj = $this->Database->prepare('SELECT  * FROM `tl_iao_offer` WHERE `id`=?')
+			$dbObj = DB::getInstance()->prepare('SELECT  * FROM `tl_iao_offer` WHERE `id`=?')
 							->limit(1)
 							->execute($id);
 
@@ -354,11 +361,18 @@ class tl_iao_offer_items extends \iao\iaoBackend
 		}
 	}
 
+    /**
+     * @param $href
+     * @param $label
+     * @param $title
+     * @param $class
+     * @return string
+     */
 	public function showPDFButton($href, $label, $title, $class)
 	{
 	    $objPdfTemplate = 	\FilesModel::findByUuid($this->settings['iao_offer_pdf']);			
 
-		if(strlen($objPdfTemplate->path) < 1 || !file_exists(TL_ROOT . '/' . $objPdfTemplate->path) ) return;  // template file not found
+		if(strlen($objPdfTemplate->path) < 1 || !file_exists(TL_ROOT . '/' . $objPdfTemplate->path) ) return '';  // template file not found
 
 		return '&nbsp; :: &nbsp;<a href="contao/main.php?do=iao_offer&table=tl_iao_offer&'.$href.'" title="'.specialchars($title).'" class="'.$class.'">'.$label.'</a> ';
 	}
@@ -438,7 +452,7 @@ class tl_iao_offer_items extends \iao\iaoBackend
 					$allBrutto += $priceSum;
 				}
 
-				$this->Database->prepare('UPDATE `tl_iao_offer` SET `price_netto`=?, `price_brutto`=? WHERE `id`=?')
+				DB::getInstance()->prepare('UPDATE `tl_iao_offer` SET `price_netto`=?, `price_brutto`=? WHERE `id`=?')
 						->limit(1)
 						->execute($allNetto, $allBrutto, $dc->activeRecord->pid);
 			}
@@ -476,7 +490,7 @@ class tl_iao_offer_items extends \iao\iaoBackend
 			$Brutto = $priceSum;
 		}
 
-		$this->Database->prepare('UPDATE `tl_iao_offer_items` SET `price_netto`=?, `price_brutto`=? WHERE `id`=?')
+		DB::getInstance()->prepare('UPDATE `tl_iao_offer_items` SET `price_netto`=?, `price_brutto`=? WHERE `id`=?')
 				->limit(1)
 				->execute($Netto, $Brutto, $dc->id);
 	}
@@ -513,7 +527,7 @@ class tl_iao_offer_items extends \iao\iaoBackend
 			$icon = 'invisible.gif';
 		}
 
-		return '<a href="'.$this->addToUrl($href).'" title="'.specialchars($title).'"'.$attributes.'>'.$this->generateImage($icon, $label).'</a> ';
+		return '<a href="'.$this->addToUrl($href).'" title="'.specialchars($title).'"'.$attributes.'>'.Image::getHtml($icon, $label).'</a> ';
 	}
 
 	/**
@@ -529,13 +543,15 @@ class tl_iao_offer_items extends \iao\iaoBackend
 		$this->checkPermission();
 
 		// Check permissions to publish
-		if (!$this->User->isAdmin && !$this->User->hasAccess('tl_iao_offer_items::published', 'alexf'))
+        $User = User::getInstance();
+		if (!$User->isAdmin && !$User->hasAccess('tl_iao_offer_items::published', 'alexf'))
 		{
 			$this->log('Not enough permissions to publish/unpublish event ID "'.$intId.'"', 'tl_iao_offer_items toggleVisibility', TL_ERROR);
 			$this->redirect('contao/main.php?act=error');
 		}
 
-		$this->createInitialVersion('tl_iao_offer_items', $intId);
+        $objVersions = new \Versions('tl_iao_offer_items', $intId);
+        $objVersions->initialize();
 
 		// Trigger the save_callback
 		if (is_array($GLOBALS['TL_DCA']['tl_iao_offer_items']['fields']['published']['save_callback']))
@@ -548,12 +564,12 @@ class tl_iao_offer_items extends \iao\iaoBackend
 		}
 
 		// Update the database
-		$this->Database->prepare("UPDATE tl_iao_offer_items SET tstamp=". time() .", published='" . ($blnVisible ? 1 : '') . "' WHERE id=?")
+		DB::getInstance()->prepare("UPDATE tl_iao_offer_items SET tstamp=". time() .", published='" . ($blnVisible ? 1 : '') . "' WHERE id=?")
 				->execute($intId);
 
-		$this->createNewVersion('tl_iao_offer_items', $intId);
+        $objVersions->create();
 
-		// Update the RSS feed (for some reason it does not work without sleep(1))
+        // Update the RSS feed (for some reason it does not work without sleep(1))
 		sleep(1);
 
 	}
@@ -576,7 +592,7 @@ class tl_iao_offer_items extends \iao\iaoBackend
 
 		if (\Input::get('key') == 'addPostenTemplate' && \Input::get('ptid') == $row['id'])
 		{
-			$result = $this->Database->prepare('SELECT * FROM `tl_iao_offer_items` WHERE `id`=?')
+			$result = DB::getInstance()->prepare('SELECT * FROM `tl_iao_offer_items` WHERE `id`=?')
 							->limit(1)
 							->execute($row['id']);
 
@@ -602,7 +618,7 @@ class tl_iao_offer_items extends \iao\iaoBackend
 				'position' => 'offer',
 			);
 
-			$newposten = $this->Database->prepare('INSERT INTO `tl_iao_templates_items` %s')
+			$newposten = DB::getInstance()->prepare('INSERT INTO `tl_iao_templates_items` %s')
 							->set($postenset)
 							->execute();
 
@@ -612,19 +628,19 @@ class tl_iao_offer_items extends \iao\iaoBackend
 		}
 
 		$href.='&amp;ptid='.$row['id'];
-		return '<a href="'.$this->addToUrl($href).'" title="'.specialchars($title).'"'.$attributes.'>'.$this->generateImage($icon, $label).'</a> ';
+		return '<a href="'.$this->addToUrl($href).'" title="'.specialchars($title).'"'.$attributes.'>'.Image::getHtml($icon, $label).'</a> ';
 	}
 
-	/**
-	 * get all offer-posten-templates
-	 * @param object
-	 * @throws Exception
-	 */
+    /**
+     * get all offer-posten-templates
+     * @param DataContainer $dc
+     * @return array
+     */
 	public function getPostenTemplate(DataContainer $dc)
 	{
 		$varValue= array();
 
-		$all = $this->Database->prepare('SELECT `id`,`headline` FROM `tl_iao_templates_items` WHERE `position`=?')
+		$all = DB::getInstance()->prepare('SELECT `id`,`headline` FROM `tl_iao_templates_items` WHERE `position`=?')
 					->execute('offer');
 
 		while($all->next())
@@ -635,17 +651,17 @@ class tl_iao_offer_items extends \iao\iaoBackend
 		return $varValue;
 	}
 
-	/**
-	 * fill Text before
-	 * @param object
-	 * @throws Exception
-	 */
+    /**
+     * fill Text before
+     * @param $varValue
+     * @param DataContainer $dc
+     * @return mixed
+     */
 	public function fillPostenFields($varValue, DataContainer $dc)
 	{
-
 		if(strlen($varValue)<=0) return $varValue;
 
-		$result = $this->Database->prepare('SELECT * FROM `tl_iao_templates_items` WHERE `id`=?')
+		$result = DB::getInstance()->prepare('SELECT * FROM `tl_iao_templates_items` WHERE `id`=?')
 						->limit(1)
 						->execute($varValue);
 
@@ -670,7 +686,7 @@ class tl_iao_offer_items extends \iao\iaoBackend
 			'vat_incl' => $result->vat_incl,
 		);
 
-		$this->Database->prepare('UPDATE `tl_iao_offer_items` %s WHERE `id`=?')
+		DB::getInstance()->prepare('UPDATE `tl_iao_offer_items` %s WHERE `id`=?')
 				->set($postenset)
 				->execute($dc->id);
 
