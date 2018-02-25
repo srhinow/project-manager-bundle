@@ -1,0 +1,50 @@
+    <div id="tl_buttons">
+        <a href="<?=ampersand(str_replace('&key=exportInvoices', '', $this->Environment->request));?>" class="header_back" title="<?=specialchars($GLOBALS['TL_LANG']['MSC']['backBT']); ?>" accesskey="b"><?=$GLOBALS['TL_LANG']['MSC']['backBT'];?></a>
+    </div>
+
+    <h2 class="sub_headline"><?=$this->headline; ?></h2><?=$this->message;?>
+    <form action="<?=ampersand(\Environment::get('request'), true);?>" id="<?=$this->formId;?>" class="tl_form" method="post">
+        <div class="tl_formbody_edit">
+            <input type="hidden" name="FORM_SUBMIT" value="tl_iao_export" />
+            <input type="hidden" name="REQUEST_TOKEN" value="<?=REQUEST_TOKEN ?>" />
+            <fieldset class="tl_tbox block nolegend">
+                <div class="widget">
+                    <select name="separator" id="separator" class="tl_select" onfocus="Backend.getScrollOffset();">
+                        <?php if(is_array($this->csv_seperators)) foreach($this->csv_seperators as $separator => $string):?>
+                            <option value="<?=$separator;?>"><?=$GLOBALS['TL_LANG']['MSC'][$separator];?></option>
+                        <?php endforeach;?>
+                    </select><?=(($GLOBALS['TL_LANG']['MSC']['separator'][1] != '') ? '<p class="tl_help tl_tip">'.$GLOBALS['TL_LANG']['MSC']['separator'][1].'</p>' : '');?>
+                </div>
+            </fieldset>
+
+            <fieldset class="tl_tbox block nolegend">
+                <div class="w50">
+                    <div class="widget">
+                        <h3><label for="ctrl_invoice_filename"><?=$this->lang_array['export_invoice_filename'][0];?></label></h3>
+                        <input id="ctrl_invoice_filename" class="tl_text" type="text" name="export_invoice_filename" value="<?='tl_iao_invoice_'.date('Y-m-d'); ?>" />
+                        <?=(strlen($this->lang_array['export_invoice_filename'][1]) ? '<p class="tl_help tl_tip">'.$this->lang_array['export_invoice_filename'][1].'</p>' : ''); ?>
+                    </div>
+                </div>
+                <div class="w50">
+                    <div class="widget">
+                        <h3><label for="ctrl_invoice_item_filename"><?=$this->lang_array['export_invoice_item_filename'][0];?></label></h3>
+                        <input id="ctrl_invoice_item_filename" class="tl_text"  type="text" name="export_invoice_item_filename" value="<?='tl_iao_invoice_items_'.date('Y-m-d');?>" />
+                        <?=(strlen($this->lang_array['export_invoice_item_filename'][1]) ? '<p class="tl_help tl_tip">'.$this->lang_array['export_invoice_item_filename'][1].'</p>' : ''); ?>
+                    </div>
+                </div>
+            </fieldset>
+            <fieldset class="tl_tbox block nolegend">
+                <div class="widget">
+                    <h3><label for="csv_export_dir"><?=$this->lang_array['csv_export_dir'][0];?></label></h3>
+                    <?=$this->objTree4Export->generate().(strlen($GLOBALS['TL_LANG']['tl_theme']['source'][1]) ? '<p class="tl_help tl_tip">'.$this->lang_array['csv_export_dir'][1].'</p>' : '');?>
+                </div>
+            </fieldset>
+        </div>
+        <div class="tl_formbody_submit">
+            <div class="tl_submit_container">
+                <input type="submit" name="save" id="save" class="tl_submit" accesskey="s" value="<?=specialchars($GLOBALS['TL_LANG']['tl_iao_invoice']['exportCSV'][0]);?>" />
+            </div>
+        </div>
+    </form>
+
+
