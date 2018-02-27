@@ -1,12 +1,5 @@
 <?php
-namespace iao\Dca;
-
-use iao\iaoBackend;
-use Contao\Database as DB;
-use Contao\DataContainer;
-use Contao\BackendUser as User;
-use Contao\Image;
-use Srhinow\IaoReminderModel;
+namespace Iao\Dca;
 
 /**
  * @copyright  Sven Rhinow 2011-2018
@@ -15,6 +8,13 @@ use Srhinow\IaoReminderModel;
  * @license    LGPL
  * @filesource
  */
+
+use Iao\Backend\IaoBackend;
+use Contao\Database as DB;
+use Contao\DataContainer;
+use Contao\BackendUser as User;
+use Contao\Image;
+use Srhinow\IaoReminderModel;
 
 /**
  * Table tl_iao_agreements
@@ -31,12 +31,12 @@ $GLOBALS['TL_DCA']['tl_iao_agreements'] = array
 		'enableVersioning'            => false,
 		'onload_callback' => array
 		(
-			array('iao\Dca\Agreements','IAOSettings'),
-			array('iao\Dca\Agreements', 'checkPermission'),
+			array('Iao\Dca\Agreements','IAOSettings'),
+			array('Iao\Dca\Agreements', 'checkPermission'),
 		),
 		'onsubmit_callback'	    => array
 		(
-		    array('iao\Dca\Agreements','saveNettoAndBrutto')
+		    array('Iao\Dca\Agreements','saveNettoAndBrutto')
 		),
 		'sql' => array
 		(
@@ -62,7 +62,7 @@ $GLOBALS['TL_DCA']['tl_iao_agreements'] = array
 		(
 			'fields'                  => array('title','beginn_date','end_date','price_brutto'),
 			'format'                  => '%s (aktuelle Laufzeit: %s - %s)',
-			'label_callback'          => array('iao\Dca\Agreements', 'listEntries'),
+			'label_callback'          => array('Iao\Dca\Agreements', 'listEntries'),
 		),
 		'global_operations' => array
 		(
@@ -95,14 +95,14 @@ $GLOBALS['TL_DCA']['tl_iao_agreements'] = array
 				'label'               => &$GLOBALS['TL_LANG']['tl_iao_agreements']['invoice'],
 				'href'                => 'key=addInvoice',
 				'icon'                => 'system/modules/invoice_and_offer/html/icons/kontact_todo.png',
-				'button_callback'     => array('iao\Dca\Agreements', 'addInvoice')
+				'button_callback'     => array('Iao\Dca\Agreements', 'addInvoice')
 			),
 			'pdf' => array
 			(
 				'label'               => &$GLOBALS['TL_LANG']['tl_iao_agreements']['pdf'],
 				'href'                => 'key=pdf',
 				'icon'                => 'iconPDF.gif',
-				'button_callback'     => array('iao\Dca\Agreements', 'showPDF')
+				'button_callback'     => array('Iao\Dca\Agreements', 'showPDF')
 			),
 			'delete' => array
 			(
@@ -162,7 +162,7 @@ $GLOBALS['TL_DCA']['tl_iao_agreements'] = array
 			'sorting'                 => true,
 			'flag'                    => 11,
 			'inputType'               => 'select',
-			'options_callback'        => array('iao\Dca\Agreements', 'getSettingOptions'),
+			'options_callback'        => array('Iao\Dca\Agreements', 'getSettingOptions'),
 			'eval'                    => array('tl_class'=>'w50','includeBlankOption'=>false, 'chosen'=>true),
 			'sql'                     => "int(10) unsigned NOT NULL default '0'"
 		),
@@ -186,7 +186,7 @@ $GLOBALS['TL_DCA']['tl_iao_agreements'] = array
 			'inputType'               => 'text',
 			'eval'                    => array('rgxp'=>'date', 'datepicker'=>$this->getDatePickerString(), 'tl_class'=>'w50 wizard'),
 			'load_callback'			=> array (
-				array('iao\Dca\Agreements','getAgreementValue')
+				array('Iao\Dca\Agreements','getAgreementValue')
 			),
 			'sql'                     => "int(10) unsigned NOT NULL default '0'"
 		),
@@ -198,7 +198,7 @@ $GLOBALS['TL_DCA']['tl_iao_agreements'] = array
 			'inputType'               => 'text',
 			'eval'                    => array('mandatory'=>true, 'maxlength'=>255,'tl_class'=>'w50'),
 			'load_callback'			=> array (
-				array('iao\Dca\Agreements','getPeriodeValue')
+				array('Iao\Dca\Agreements','getPeriodeValue')
 			),
 			'sql'                     => "varchar(255) NOT NULL default ''"
 		),
@@ -210,7 +210,7 @@ $GLOBALS['TL_DCA']['tl_iao_agreements'] = array
 			'eval'                    => array('rgxp'=>'date', 'datepicker'=>$this->getDatePickerString(), 'tl_class'=>'w50 wizard'),
 			'load_callback'				=> array
 			(
-				array('iao\Dca\Agreements','getBeginnDateValue')
+				array('Iao\Dca\Agreements','getBeginnDateValue')
 			),
 			'sql'                     => "varchar(255) NOT NULL default ''"
 		),
@@ -222,7 +222,7 @@ $GLOBALS['TL_DCA']['tl_iao_agreements'] = array
 			'eval'                    => array('rgxp'=>'date', 'datepicker'=>$this->getDatePickerString(), 'tl_class'=>'w50 wizard'),
 			'load_callback'				=> array
 			(
-				array('iao\Dca\Agreements','getEndDateValue')
+				array('Iao\Dca\Agreements','getEndDateValue')
 			),
 			'sql'                     => "varchar(255) NOT NULL default ''"
 		),
@@ -234,7 +234,7 @@ $GLOBALS['TL_DCA']['tl_iao_agreements'] = array
 			'eval'                    => array('tl_class'=>'clr'),
 			'save_callback'				=> array
 			(
-				array('iao\Dca\Agreements','generateNewCycle')
+				array('Iao\Dca\Agreements','generateNewCycle')
 			),
 			'sql'                     => "char(1) NOT NULL default ''"
 		),
@@ -271,7 +271,7 @@ $GLOBALS['TL_DCA']['tl_iao_agreements'] = array
 			'filter'                  => true,
 			'flag'                    => 1,
 			'inputType'               => 'select',
-			'options_callback'        => array('iao\Dca\Agreements', 'getTaxRatesOptions'),
+			'options_callback'        => array('Iao\Dca\Agreements', 'getTaxRatesOptions'),
 			'eval'                    => array('tl_class'=>'w50'),
 			'sql'					  => "int(10) unsigned NOT NULL default '19'"
 		),
@@ -302,7 +302,7 @@ $GLOBALS['TL_DCA']['tl_iao_agreements'] = array
 			'filter'                  => true,
 			'flag'                    => 1,
 			'inputType'               => 'select',
-			'options_callback'        => array('iao\Dca\Agreements', 'getItemUnitsOptions'),
+			'options_callback'        => array('Iao\Dca\Agreements', 'getItemUnitsOptions'),
             'eval'                    => array('tl_class'=>'w50','submitOnChange'=>false),
 			'sql'					  => "varchar(64) NOT NULL default ''"
 		),
@@ -315,11 +315,11 @@ $GLOBALS['TL_DCA']['tl_iao_agreements'] = array
 			'sorting'                 => true,
 			'flag'                    => 11,
 			'inputType'               => 'select',
-			'options_callback'        => array('iao\Dca\Agreements', 'getMemberOptions'),
+			'options_callback'        => array('Iao\Dca\Agreements', 'getMemberOptions'),
 			'eval'                    => array('tl_class'=>'w50','includeBlankOption'=>true,'submitOnChange'=>true, 'chosen'=>true),
 			'save_callback' => array
 			(
-				array('iao\Dca\Agreements', 'fillAdressText')
+				array('Iao\Dca\Agreements', 'fillAdressText')
 			),
 			'sql'                     => "varbinary(128) NOT NULL default ''"
 		),
@@ -409,7 +409,7 @@ $GLOBALS['TL_DCA']['tl_iao_agreements'] = array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_iao_agreements']['before_template'],
 			'inputType'               => 'select',
-			'options_callback'        => array('iao\Dca\Agreements', 'getBeforeTemplate'),
+			'options_callback'        => array('Iao\Dca\Agreements', 'getBeforeTemplate'),
 			'eval'                    => array('tl_class'=>'w50','includeBlankOption'=>true,'submitOnChange'=>false, 'chosen'=>true),
 			'sql'					  => "int(10) unsigned NOT NULL default '0'"
 		),
@@ -417,7 +417,7 @@ $GLOBALS['TL_DCA']['tl_iao_agreements'] = array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_iao_agreements']['after_template'],
 			'inputType'               => 'select',
-			'options_callback'        => array('iao\Dca\Agreements', 'getAfterTemplate'),
+			'options_callback'        => array('Iao\Dca\Agreements', 'getAfterTemplate'),
 			'eval'                    => array('tl_class'=>'w50','includeBlankOption'=>true, 'submitOnChange'=>false, 'chosen'=>true),
 			'sql'					  => "int(10) unsigned NOT NULL default '0'"
 		),
@@ -425,7 +425,7 @@ $GLOBALS['TL_DCA']['tl_iao_agreements'] = array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_iao_agreements']['posten_template'],
 			'inputType'               => 'select',
-			'options_callback'        => array('iao\Dca\Agreements', 'getPostenTemplate'),
+			'options_callback'        => array('Iao\Dca\Agreements', 'getPostenTemplate'),
 			'eval'                    => array('tl_class'=>'w50', 'includeBlankOption'=>true, 'submitOnChange'=>false, 'chosen'=>true),
 			'sql'					  => "int(10) unsigned NOT NULL default '0'"
 		),
@@ -442,10 +442,10 @@ $GLOBALS['TL_DCA']['tl_iao_agreements'] = array
 );
 
 /**
- * Class iaoDcaAgreements
- * @package iao
+ * Class Agreements
+ * @package Iao\Dca
  */
-class Agreements extends iaoBackend
+class Agreements extends IaoBackend
 {
     protected $settings = array();
 

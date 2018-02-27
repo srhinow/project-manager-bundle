@@ -1,7 +1,7 @@
 <?php
-namespace iao\Dca;
+namespace Iao\Dca;
 
-use iao\iaoBackend as iaoBackend;
+use Iao\Backend\IaoBackend;
 use Srhinow\IaoTemplatesModel;
 use Srhinow\IaoOfferModel;
 use Srhinow\IaoProjectsModel;
@@ -33,14 +33,14 @@ $GLOBALS['TL_DCA']['tl_iao_offer'] = array
 		'enableVersioning'            => false,
 		'onload_callback' => array
 		(
-			array('iao\Dca\Offer', 'generateOfferPDF'),
-			array('iao\Dca\Offer', 'checkPermission'),
-			array('iao\Dca\Offer', 'updateExpiryToTstmp')
+			array('Iao\Dca\Offer', 'generateOfferPDF'),
+			array('Iao\Dca\Offer', 'checkPermission'),
+			array('Iao\Dca\Offer', 'updateExpiryToTstmp')
 		),
 		'oncreate_callback' => array
 		(
-			array('iao\Dca\Offer', 'preFillFields'),
-			array('iao\Dca\Offer', 'setMemmberfieldsFromProject'),
+			array('Iao\Dca\Offer', 'preFillFields'),
+			array('Iao\Dca\Offer', 'setMemmberfieldsFromProject'),
 		),
 		'sql' => array
 		(
@@ -66,7 +66,7 @@ $GLOBALS['TL_DCA']['tl_iao_offer'] = array
 		(
 			'fields'                  => array('title','offer_id_str'),
 			'format'                  => '%s (%s)',
-			'label_callback'          => array('iao\Dca\Offer', 'listEntries'),
+			'label_callback'          => array('Iao\Dca\Offer', 'listEntries'),
 		),
 		'global_operations' => array
 		(
@@ -106,7 +106,7 @@ $GLOBALS['TL_DCA']['tl_iao_offer'] = array
 				'label'               => &$GLOBALS['TL_LANG']['tl_iao_offer']['editheader'],
 				'href'                => 'act=edit',
 				'icon'                => 'header.gif',
-				'button_callback'     => array('iao\Dca\Offer', 'editHeader'),
+				'button_callback'     => array('Iao\Dca\Offer', 'editHeader'),
 				// 'attributes'          => 'class="edit-header"'
 			),
 			'copy' => array
@@ -133,21 +133,21 @@ $GLOBALS['TL_DCA']['tl_iao_offer'] = array
 				'label'               => &$GLOBALS['TL_LANG']['tl_iao_offer']['invoice'],
 				'href'                => 'key=addInvoice',
 				'icon'                => 'system/modules/invoice_and_offer/html/icons/kontact_todo.png',
-				'button_callback'     => array('iao\Dca\Offer', 'addInvoice')
+				'button_callback'     => array('Iao\Dca\Offer', 'addInvoice')
 			),
 			'toggle' => array
 			(
 				'label'               => &$GLOBALS['TL_LANG']['tl_iao_credit']['toggle'],
 				'icon'                => 'ok.gif',
 				#'attributes'          => 'onclick="Backend.getScrollOffset(); return AjaxRequest.toggleVisibility(this, %s);"',
-				'button_callback'     => array('iao\Dca\Offer', 'toggleIcon')
+				'button_callback'     => array('Iao\Dca\Offer', 'toggleIcon')
 			),
 			'pdf' => array
 			(
 				'label'               => &$GLOBALS['TL_LANG']['tl_iao_offer']['pdf'],
 				'href'                => 'do=iao_offer&key=pdf',
 				'icon'                => 'iconPDF.gif',
-				'button_callback'     => array('iao\Dca\Offer', 'showPDFButton')
+				'button_callback'     => array('Iao\Dca\Offer', 'showPDFButton')
 			)
 		)
 	),
@@ -185,7 +185,7 @@ $GLOBALS['TL_DCA']['tl_iao_offer'] = array
 			'relation'                => array('type'=>'belongsTo', 'load'=>'eager'),
             'save_callback' => array
             (
-                array('iao\Dca\Offer', 'fillMemberAndAddressFields')
+                array('Iao\Dca\Offer', 'fillMemberAndAddressFields')
             ),
 		),
 		'tstamp' => array
@@ -204,7 +204,7 @@ $GLOBALS['TL_DCA']['tl_iao_offer'] = array
 			'sorting'                 => true,
 			'flag'                    => 11,
 			'inputType'               => 'select',
-			'options_callback'        => array('iao\Dca\Offer', 'getSettingOptions'),
+			'options_callback'        => array('Iao\Dca\Offer', 'getSettingOptions'),
 			'eval'                    => array('tl_class'=>'w50','includeBlankOption'=>false, 'chosen'=>true),
 			'sql'                     => "int(10) unsigned NOT NULL default '0'"
 		),
@@ -225,7 +225,7 @@ $GLOBALS['TL_DCA']['tl_iao_offer'] = array
 			'eval'                    => array('rgxp'=>'datim', 'doNotCopy'=>true, 'datepicker'=>$this->getDatePickerString(), 'tl_class'=>'w50 wizard'),
 			'load_callback' => array
 			(
-				array('iao\Dca\Offer', 'generateOfferTstamp')
+				array('Iao\Dca\Offer', 'generateOfferTstamp')
 			),
 			'sql'                     => "int(10) unsigned NOT NULL default '0'"
 		),
@@ -237,7 +237,7 @@ $GLOBALS['TL_DCA']['tl_iao_offer'] = array
 			'eval'                    => array('rgxp'=>'date', 'doNotCopy'=>true, 'datepicker'=>$this->getDatePickerString(), 'tl_class'=>'w50 wizard'),
 			'load_callback' => array
 			(
-				array('iao\Dca\Offer', 'generateExpiryDate')
+				array('Iao\Dca\Offer', 'generateExpiryDate')
 			),
 			'sql'                     => "varchar(255) NOT NULL default ''"
 		),
@@ -250,7 +250,7 @@ $GLOBALS['TL_DCA']['tl_iao_offer'] = array
 			'eval'                    => array('rgxp'=>'alnum', 'doNotCopy'=>true, 'spaceToUnderscore'=>true, 'maxlength'=>128, 'tl_class'=>'w50'),
 			'save_callback' => array
 			(
-				array('iao\Dca\Offer', 'setFieldOfferNumber')
+				array('Iao\Dca\Offer', 'setFieldOfferNumber')
 			),
 			'sql'					  => "int(10) unsigned NOT NULL default '0'"
 		),
@@ -263,7 +263,7 @@ $GLOBALS['TL_DCA']['tl_iao_offer'] = array
 			'eval'                    => array('doNotCopy'=>true, 'spaceToUnderscore'=>true, 'maxlength'=>128, 'tl_class'=>'w50'),
 			'save_callback' => array
 			(
-				array('iao\Dca\Offer', 'setFieldOfferNumberStr')
+				array('Iao\Dca\Offer', 'setFieldOfferNumberStr')
 			),
 			'sql'					  => "varchar(255) NOT NULL default ''"
 		),
@@ -286,11 +286,11 @@ $GLOBALS['TL_DCA']['tl_iao_offer'] = array
 			'flag'                    => 11,
 			'inputType'               => 'select',
 			// 'foreignKey'              => 'tl_member.company',
-			'options_callback'        => array('iao\Dca\Offer', 'getMemberOptions'),
+			'options_callback'        => array('Iao\Dca\Offer', 'getMemberOptions'),
 			'eval'                    => array('tl_class'=>'w50','includeBlankOption'=>true,'submitOnChange'=>true, 'chosen'=>true),
 			'save_callback' => array
 			(
-				array('iao\Dca\Offer', 'fillAddressSaveCallback')
+				array('Iao\Dca\Offer', 'fillAddressSaveCallback')
 			),
 			'sql'					  => "varbinary(128) NOT NULL default ''"
 		),
@@ -311,11 +311,11 @@ $GLOBALS['TL_DCA']['tl_iao_offer'] = array
 			'sorting'                 => true,
 			'flag'                    => 11,
 			'inputType'               => 'select',
-			'options_callback'        => array('iao\Dca\Offer', 'getBeforeTemplate'),
+			'options_callback'        => array('Iao\Dca\Offer', 'getBeforeTemplate'),
 			'eval'                    => array('tl_class'=>'w50','includeBlankOption'=>true,'submitOnChange'=>true, 'chosen'=>true),
 			'save_callback' => array
 			(
-				array('iao\Dca\Offer', 'fillBeforeText')
+				array('Iao\Dca\Offer', 'fillBeforeText')
 			),
 			'sql'					  => "int(10) unsigned NOT NULL default '0'"
 		),
@@ -336,11 +336,11 @@ $GLOBALS['TL_DCA']['tl_iao_offer'] = array
 			'sorting'                 => true,
 			'flag'                    => 11,
 			'inputType'               => 'select',
-			'options_callback'        => array('iao\Dca\Offer', 'getAfterTemplate'),
+			'options_callback'        => array('Iao\Dca\Offer', 'getAfterTemplate'),
 			'eval'                    => array('tl_class'=>'w50','includeBlankOption'=>true,'submitOnChange'=>true, 'chosen'=>true),
 			'save_callback' => array
 			(
-				array('iao\Dca\Offer', 'fillAfterText')
+				array('Iao\Dca\Offer', 'fillAfterText')
 			),
 			'sql'					  => "int(10) unsigned NOT NULL default '0'"
 		),
@@ -438,9 +438,10 @@ $GLOBALS['TL_DCA']['tl_iao_offer'] = array
 );
 
 /**
- * Class tl_iao_offer
+ * Class Offer
+ * @package Iao\Dca
  */
-class Offer extends iaoBackend
+class Offer extends IaoBackend
 {
 
 	protected $settings = array();

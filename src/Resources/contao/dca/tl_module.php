@@ -1,13 +1,17 @@
 <?php
+namespace Iao\Dca;
 
 /**
- * PHP version 5
- * @copyright  sr-tag.de 2011-2017
- * @author     Sven Rhinow
+ * @copyright  Sven Rhinow 2011-2018
+ * @author     sr-tag Sven Rhinow Webentwicklung <http://www.sr-tag.de>
  * @package    project-manager-bundle
  * @license    LGPL
  * @filesource
  */
+
+use Contao\DataContainer;
+use Iao\Backend\IaoBackend;
+
 $this->loadLanguageFile('tl_iao_invoice');
 $this->loadLanguageFile('tl_iao_credit');
 $this->loadLanguageFile('tl_iao_offer');
@@ -32,7 +36,7 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['fe_iao_template'] = array
 	'default'                 => 'bbk_default',
 	'exclude'                 => true,
 	'inputType'               => 'select',
-	'options_callback'        => array('tl_module_iao', 'getTemplates'),
+	'options_callback'        => array('Iao\Dca\Module', 'getTemplates'),
 	'eval'                    => array('tl_class'=>'w50'),
 	'sql'					  => "varchar(32) NOT NULL default ''"
 );
@@ -103,31 +107,24 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['agreement_status'] = array
     'eval'					=> array('doNotCopy'=>true,'includeBlankOption'=>true),
 	'sql'					=> "char(1) NOT NULL default ''"
 );
+
 /**
- * Class tl_module_iao
- *
- * Provide miscellaneous methods that are used by the data configuration array.
- * @copyright  Leo Feyer 2005-2012
- * @author     Leo Feyer <http://www.contao.org>
- * @package    Controller
+ * Class Module
+ * @package Iao\Dca
  */
-class tl_module_iao extends Backend
-{
-	/**
-	 * Return all info templates as array
-	 * @param DataContainer
-	 * @return array
-	 */
-	public function getTemplates(DataContainer $dc)
+class Module extends IaoBackend {
+
+    /**
+     * Return all info templates as array
+     *
+     * @param DataContainer $dc
+     * @return array
+     */
+	public function getIaoTemplates(DataContainer $dc)
 	{
-		$intPid = $dc->activeRecord->pid;
+        $arrTemplates = \Controller::getTemplateGroup('iao_');
 
-		if ($this->Input->get('act') == 'overrideAll')
-		{
-			$intPid = $this->Input->get('id');
-		}
-
-		return $this->getTemplateGroup('iao_', $intPid);
+		return $arrTemplates;
 	}
 }
 

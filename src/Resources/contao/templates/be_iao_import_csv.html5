@@ -9,17 +9,6 @@
         <div class="tl_formbody_edit">
             <input type="hidden" name="FORM_SUBMIT" value="tl_iao_import" />
             <input type="hidden" name="REQUEST_TOKEN" value="<?=REQUEST_TOKEN ?>">
-            <fieldset class="tl_tbox block nolegend">
-                <div class="w50">
-                    <div class="widget">
-                        <h3><label for="import_lib"><?=$GLOBALS['TL_LANG']['tl_iao_invoice']['importlib'][0];?></label></h3>
-                        <select name="import_lib" id="import_lib" class="tl_select" onfocus="Backend.getScrollOffset();">
-                            <option value="invoiceandoffer"><?=$GLOBALS['TL_LANG']['tl_iao_invoice']['importlib_invoiceandoffer'];?></option>
-                            <option value="phprechnung"><?=$GLOBALS['TL_LANG']['tl_iao_invoice']['importlib_phprechnung'];?></option>
-                        </select><?=(($GLOBALS['TL_LANG']['MSC']['separator'][1] != '') ? '<p class="tl_help tl_tip">'.$GLOBALS['TL_LANG']['tl_iao_invoice']['importlib'][1].'</p>' : '');?>
-                    </div>
-                </div>
-            </fieldset>
 
             <fieldset class="tl_tbox block nolegend">
                 <div class="w50">
@@ -43,7 +32,7 @@
             <fieldset class="tl_tbox block nolegend">
                 <div class="widget clr">
                     <h3><label for="csv_source"><?=$GLOBALS['TL_LANG']['tl_iao_invoice']['csv_source'][0];?></label></h3>
-                    <?=$this->objTree4PDF->generate().(strlen($GLOBALS['TL_LANG']['tl_iao_invoice']['csv_source'][1]) ? '<p class="tl_help tl_tip">'.$GLOBALS['TL_LANG']['tl_iao_invoice']['csv_source'][1].'</p>' : ''); ?>
+                    <?=$this->objTree4Source->generate().(strlen($GLOBALS['TL_LANG']['tl_iao_invoice']['csv_source'][1]) ? '<p class="tl_help tl_tip">'.$GLOBALS['TL_LANG']['tl_iao_invoice']['csv_source'][1].'</p>' : ''); ?>
                 </div>
                 <div class="widget clr">
                     <h3><label for="csv_posten_source"><?=$GLOBALS['TL_LANG']['tl_iao_invoice']['csv_posten_source'][0];?></label></h3>

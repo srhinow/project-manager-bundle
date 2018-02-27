@@ -1,12 +1,11 @@
 <?php
-namespace iao\Dca;
+namespace Iao\Dca;
 
-use iao\iaoBackend;
+use Iao\Backend\IaoBackend;
 use Contao\Database as DB;
 use Contao\BackendUser as User;
 use Contao\Image;
 use Contao\DataContainer;
-
 
 /**
  * @copyright  Sven Rhinow 2011-2018
@@ -35,13 +34,13 @@ $GLOBALS['TL_DCA']['tl_iao_offer_items'] = array
 		'ptable'                      => 'tl_iao_offer',
 		'enableVersioning'            => true,
 		'onload_callback'		=> array(
-			array('iao\Dca\OfferItems','setIaoSettings'),
-			array('iao\Dca\OfferItems', 'checkPermission'),
+			array('Iao\Dca\OfferItems','setIaoSettings'),
+			array('Iao\Dca\OfferItems', 'checkPermission'),
 		),
 		'onsubmit_callback'	      => array
 		(
-			array('iao\Dca\OfferItems','saveAllPricesToParent'),
-			array('iao\Dca\OfferItems','saveNettoAndBrutto')
+			array('Iao\Dca\OfferItems','saveAllPricesToParent'),
+			array('Iao\Dca\OfferItems','saveNettoAndBrutto')
 		),
 		'sql' => array
 		(
@@ -84,7 +83,7 @@ $GLOBALS['TL_DCA']['tl_iao_offer_items'] = array
 				'label'               => &$GLOBALS['TL_LANG']['tl_iao_offer_items']['pdf'],
 				'href'                => 'key=pdf&id='.$_GET['id'],
 				'class'               => 'header_generate_pdf',
-				'button_callback'     => array('iao\Dca\OfferItems', 'showPDFButton')
+				'button_callback'     => array('Iao\Dca\OfferItems', 'showPDFButton')
 			)
 		),
 		'operations' => array
@@ -238,7 +237,7 @@ $GLOBALS['TL_DCA']['tl_iao_offer_items'] = array
 			'filter'                  => true,
 			'flag'                    => 1,
 			'inputType'               => 'select',
-			'options_callback'        => array('iao\Dca\OfferItems', 'getItemUnitsOptions'),
+			'options_callback'        => array('Iao\Dca\OfferItems', 'getItemUnitsOptions'),
             'eval'                    => array('tl_class'=>'w50','submitOnChange'=>false),
             'sql'					  => "varchar(64) NOT NULL default ''"
 		),
@@ -279,7 +278,7 @@ $GLOBALS['TL_DCA']['tl_iao_offer_items'] = array
 			'filter'                  => true,
 			'flag'                    => 1,
 			'inputType'               => 'select',
-			'options_callback'        => array('iao\Dca\OfferItems', 'getTaxRatesOptions'),
+			'options_callback'        => array('Iao\Dca\OfferItems', 'getTaxRatesOptions'),
 			'eval'                    => array('tl_class'=>'w50'),
 			'sql'					  => "int(10) unsigned NOT NULL default '19'"
 		),
@@ -302,11 +301,11 @@ $GLOBALS['TL_DCA']['tl_iao_offer_items'] = array
 			'sorting'                 => true,
 			'flag'                    => 11,
 			'inputType'               => 'select',
-			'options_callback'        => array('iao\Dca\OfferItems', 'getPostenTemplate'),
+			'options_callback'        => array('Iao\Dca\OfferItems', 'getPostenTemplate'),
 			'eval'                    => array('tl_class'=>'w50','includeBlankOption'=>true,'submitOnChange'=>true, 'chosen'=>true),
 			'save_callback' => array
 			(
-				array('iao\Dca\OfferItems', 'fillPostenFields')
+				array('Iao\Dca\OfferItems', 'fillPostenFields')
 			),
 			'sql'					=> "int(10) unsigned NOT NULL default '0'"
 		),
@@ -331,9 +330,10 @@ $GLOBALS['TL_DCA']['tl_iao_offer_items'] = array
 
 
 /**
-* Class tl_iao_offer_items
-*/
-class OfferItems extends iaoBackend
+ * Class OfferItems
+ * @package Iao\Dca
+ */
+class OfferItems extends IaoBackend
 {
 	protected $settings = array();
 

@@ -1,7 +1,7 @@
 <?php
-namespace iao\Dca;
+namespace Iao\Dca;
 
-use iao\iaoBackend as iaoBackend;
+use Iao\Backend\IaoBackend;
 use iao\iaoPDF;
 use Srhinow\IaoReminderModel;
 use Srhinow\IaoInvoiceModel;
@@ -10,9 +10,8 @@ use Contao\BackendUser as User;
 use Contao\DataContainer;
 use Contao\Image;
 
-
 /**
- * @copyright  Sven Rhinow 2011-2013
+ * @copyright  Sven Rhinow 2011-2018
  * @author     sr-tag Sven Rhinow Webentwicklung <http://www.sr-tag.de>
  * @package    project-manager-bundle
  * @license    LGPL
@@ -35,15 +34,15 @@ $GLOBALS['TL_DCA']['tl_iao_reminder'] = array
 		'enableVersioning'		=> false,
 		'onload_callback'		=> array
 		(
-			array('iao\Dca\Reminder', 'generateInvoicePDF'),
-			array('iao\Dca\Reminder', 'checkPermission'),
+			array('Iao\Dca\Reminder', 'generateInvoicePDF'),
+			array('Iao\Dca\Reminder', 'checkPermission'),
 		),
 		'onsubmit_callback'	=> array(
-        	array('iao\Dca\Reminder','setTextFinish')
+        	array('Iao\Dca\Reminder','setTextFinish')
 		),
 		'ondelete_callback'	=> array
 		(
-			array('iao\Dca\Reminder', 'onDeleteReminder')
+			array('Iao\Dca\Reminder', 'onDeleteReminder')
 		),
 		'sql' => array
 		(
@@ -69,7 +68,7 @@ $GLOBALS['TL_DCA']['tl_iao_reminder'] = array
 		(
 			'fields'                  => array('title','invoice_id'),
 			'format'                  => '%s (%s)',
-			'label_callback'          => array('iao\Dca\Reminder', 'listEntries'),
+			'label_callback'          => array('Iao\Dca\Reminder', 'listEntries'),
 		),
 		'global_operations' => array
 		(
@@ -121,14 +120,14 @@ $GLOBALS['TL_DCA']['tl_iao_reminder'] = array
 				'label'               => &$GLOBALS['TL_LANG']['tl_iao_reminder']['toggle'],
 				'icon'                => 'ok.gif',
 				#'attributes'          => 'onclick="Backend.getScrollOffset(); return AjaxRequest.toggleVisibility(this, %s);"',
-				'button_callback'     => array('iao\Dca\Reminder', 'toggleIcon')
+				'button_callback'     => array('Iao\Dca\Reminder', 'toggleIcon')
 			),
 			'pdf' => array
 			(
 				'label'               => &$GLOBALS['TL_LANG']['tl_iao_reminder']['pdf'],
 				'href'                => 'key=pdf',
 				'icon'                => 'iconPDF.gif',
-				'button_callback'     => array('iao\Dca\Reminder', 'showPDFButton')
+				'button_callback'     => array('Iao\Dca\Reminder', 'showPDFButton')
 			)
 		)
 	),
@@ -137,7 +136,7 @@ $GLOBALS['TL_DCA']['tl_iao_reminder'] = array
 	'palettes' => array
 	(
 		'__selector__'                => array(),
-		'default'                     => '{settings_legend},setting_id,pid;{invoice_legend},invoice_id,title,address_text,unpaid,reminder_tstamp,periode_date,step,tax,postage,sum,text,text_finish;{status_legend},published,status,paid_on_date;{notice_legend:hide},notice'
+		'default'                     => '{settings_legend},setting_id,pid;{invoice_legend},invoice_id,title,address_text,unpaid,step,reminder_tstamp,periode_date,tax,postage,sum,text,text_finish;{status_legend},published,status,paid_on_date;{notice_legend:hide},notice'
 	),
 
 	// Subpalettes
@@ -177,7 +176,7 @@ $GLOBALS['TL_DCA']['tl_iao_reminder'] = array
 			'sorting'                 => true,
 			'flag'                    => 11,
 			'inputType'               => 'select',
-			'options_callback'        => array('iao\Dca\Reminder', 'getSettingOptions'),
+			'options_callback'        => array('Iao\Dca\Reminder', 'getSettingOptions'),
 			'eval'                    => array('tl_class'=>'w50','includeBlankOption'=>false, 'chosen'=>true),
 			'sql'                     => "int(10) unsigned NOT NULL default '0'"
 		),
@@ -187,7 +186,7 @@ $GLOBALS['TL_DCA']['tl_iao_reminder'] = array
 			'exclude'                 => true,
 			'search'                  => true,
 			'inputType'               => 'text',
-			'eval'                    => array('mandatory'=>false, 'maxlength'=>255),
+			'eval'                    => array('mandatory'=>false, 'maxlength'=>255,'tl_class'=>'clr'),
 			'sql'					  => "varchar(255) NOT NULL default ''"
 		),
 		'text' => array
@@ -205,7 +204,7 @@ $GLOBALS['TL_DCA']['tl_iao_reminder'] = array
 			'label'						=> &$GLOBALS['TL_LANG']['tl_iao_reminder']['text_finish'],
 			'exclude'					=> true,
 			'eval'						=> array('tl_class'=>'clr'),
-			'input_field_callback'		=> array('iao\Dca\Reminder','getTextFinish'),
+			'input_field_callback'		=> array('Iao\Dca\Reminder','getTextFinish'),
 			'sql'					  => "mediumtext NULL"
 		),
 		'reminder_tstamp' => array
@@ -216,7 +215,7 @@ $GLOBALS['TL_DCA']['tl_iao_reminder'] = array
 			'eval'                    => array('doNotCopy'=>true,'rgxp'=>'datim', 'datepicker'=>$this->getDatePickerString(), 'tl_class'=>'w50 wizard'),
 			'load_callback' => array
 			(
-				array('iao\Dca\Reminder', 'generateReminderTstamp')
+				array('Iao\Dca\Reminder', 'generateReminderTstamp')
 			),
 			'sql'                     => "int(10) unsigned NOT NULL default '0'"
 		),
@@ -242,11 +241,11 @@ $GLOBALS['TL_DCA']['tl_iao_reminder'] = array
 			'filter'                  => true,
 			'flag'                    => 1,
 			'inputType'               => 'select',
-			'options_callback'        => array('iao\Dca\Reminder', 'getInvoices'),
+			'options_callback'        => array('Iao\Dca\Reminder', 'getInvoices'),
                         'eval'			  => array('tl_class'=>'w50','includeBlankOption'=>true,'submitOnChange'=>true, 'chosen'=>true),
 			'save_callback' => array
 			(
-				array('iao\Dca\Reminder', 'fillFields')
+				array('Iao\Dca\Reminder', 'fillFields')
 			),
 			'sql'					  => "int(10) unsigned NOT NULL default '0'"
 		),
@@ -258,11 +257,11 @@ $GLOBALS['TL_DCA']['tl_iao_reminder'] = array
 			'sorting'                 => true,
 			'flag'                    => 11,
 			'inputType'               => 'select',
-			'options_callback'        => array('iao\Dca\Reminder', 'getMemberOptions'),
+			'options_callback'        => array('Iao\Dca\Reminder', 'getMemberOptions'),
 			'eval'                    => array('tl_class'=>'w50','includeBlankOption'=>true,'submitOnChange'=>true, 'chosen'=>true),
 			'save_callback' => array
 			(
-				array('iao\Dca\Reminder', 'fillAdressText')
+				array('Iao\Dca\Reminder', 'fillAdressText')
 			),
 			'sql'					  => "varbinary(128) NOT NULL default ''"
 		),
@@ -297,7 +296,7 @@ $GLOBALS['TL_DCA']['tl_iao_reminder'] = array
                         'eval'			  => array('tl_class'=>'w50'),
                         'save_callback' => array
 			(
-				array('iao\Dca\Reminder', 'updateStatus')
+				array('Iao\Dca\Reminder', 'updateStatus')
 			),
 			'sql'					  => "char(1) NOT NULL default ''"
 		),
@@ -312,7 +311,7 @@ $GLOBALS['TL_DCA']['tl_iao_reminder'] = array
 			'eval'                    => array('tl_class'=>'w50','includeBlankOption'=>true,'submitOnChange'=>true),
 			'save_callback' => array
 			(
-				array('iao\Dca\Reminder', 'fillStepFields')
+				array('Iao\Dca\Reminder', 'fillStepFields')
 			),
 			'sql'					  => "varchar(255) NOT NULL default ''"
 		),
@@ -374,7 +373,8 @@ $GLOBALS['TL_DCA']['tl_iao_reminder'] = array
 );
 
 /**
- * Class tl_iao_reminder
+ * Class Reminder
+ * @package Iao\Dca
  */
 class Reminder extends iaoBackend
 {
@@ -416,7 +416,7 @@ class Reminder extends iaoBackend
 	 * @param $dc object
 	 * @return integer
 	 */
-	public function  generateReminderTstamp($varValue, \DataContainer $dc)
+	public function  generateReminderTstamp($varValue, DataContainer $dc)
 	{
 		return ($varValue == 0) ? time() : $varValue;
 	}
@@ -471,7 +471,7 @@ class Reminder extends iaoBackend
 	 * @throws \Exception
      * @return integer
 	 */
-	public function fillStepFields($varValue, \DataContainer $dc)
+	public function fillStepFields($varValue, DataContainer $dc)
 	{
 		$settings = $this->getSettings($dc->activeRecord->setting_id);
 
@@ -553,10 +553,10 @@ class Reminder extends iaoBackend
     /**
      * fill Adress-Text
      * @param $intMember int
-     * @param \DataContainer $dc
+     * @param DataContainer $dc
      * @return mixed
      */
-    public function fillAdressText($intMember, \DataContainer $dc)
+    public function fillAdressText($intMember, DataContainer $dc)
     {
         if(trim(strip_tags($dc->activeRecord->address_text)) == '')
         {
@@ -735,7 +735,7 @@ class Reminder extends iaoBackend
 		// wenn kein Admin dann kein PDF-Link
 		if (!$this->User->isAdmin)	return false;
 
-		$href = 'contao/main.php?do=iao_reminder&amp;key=pdf&amp;id='.$row['id'];
+		$href = 'contao/main.php?do=reminder&amp;key=pdf&amp;id='.$row['id'];
 		return '<a href="'.$href.'" title="'.specialchars($title).'">'.Image::getHtml($icon, $label).'</a> ';
 	}
 

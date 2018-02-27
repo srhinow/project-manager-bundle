@@ -1,7 +1,7 @@
 <?php
-namespace iao\Dca;
+namespace Iao\Dca;
 
-use iao\iaoBackend;
+use Iao\Backend\IaoBackend;
 
 /**
  * @copyright  Sven Rhinow 2011-2018
@@ -24,7 +24,7 @@ $GLOBALS['TL_DCA']['tl_iao_tax_rates'] = array
 		'enableVersioning'            => true,
 		'onload_callback'		=> array
 		(
-			array('\iao\Dca\TaxRates', 'checkPermission'),
+			array('Iao\Dca\TaxRates', 'checkPermission'),
 		),
 		'sql' => array
 		(
@@ -48,7 +48,6 @@ $GLOBALS['TL_DCA']['tl_iao_tax_rates'] = array
 		(
 			'fields'                  => array('name', 'value'),
 			'format'                  => '%s <span style="color:#b3b3b3; padding-left:3px;">[%s]</span>',
-			// 'label_callback'		  => array('tl_iso_config', 'addIcon')
 		),
 		'global_operations' => array
 		(
@@ -150,11 +149,11 @@ $GLOBALS['TL_DCA']['tl_iao_tax_rates'] = array
 );
 
 /**
- * Class tl_iao_tax_rates
+ * Class TaxRates
+ * @package Iao\Dca
  */
-class TaxRates extends iaoBackend
+class TaxRates extends IaoBackend
 {
-
     /**
      * TaxRates constructor.
      */

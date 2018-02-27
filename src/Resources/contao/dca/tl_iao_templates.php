@@ -1,7 +1,7 @@
 <?php
-namespace iao\Dca;
+namespace Iao\Dca;
 
-use iao\iaoBackend;
+use Iao\Backend\IaoBackend;
 use Contao\Database as DB;
 use Contao\BackendUser as User;
 use Contao\Image;
@@ -30,7 +30,7 @@ $GLOBALS['TL_DCA']['tl_iao_templates'] = array
 		'enableVersioning'            => false,
 		'onload_callback' => array
 		(
-			array('iao\Dca\Templates', 'checkPermission')
+			array('Iao\Dca\Templates', 'checkPermission')
 		),
 		'sql' => array
 		(
@@ -87,7 +87,7 @@ $GLOBALS['TL_DCA']['tl_iao_templates'] = array
 				'label'               => &$GLOBALS['TL_LANG']['tl_iao_templates']['editheader'],
 				'href'                => 'act=edit',
 				'icon'                => 'header.gif',
-				'button_callback'     => array('iao\Dca\Templates', 'editHeader'),
+				'button_callback'     => array('Iao\Dca\Templates', 'editHeader'),
 				'attributes'          => 'class="edit-header"'
 			),
 			'copy' => array
@@ -171,9 +171,9 @@ $GLOBALS['TL_DCA']['tl_iao_templates'] = array
 
 /**
  * Class Templates
- * @package iao\Dca
+ * @package Iao\Dca
  */
-class Templates extends iaoBackend
+class Templates extends IaoBackend
 {
 
     /**

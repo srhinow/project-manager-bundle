@@ -1,7 +1,7 @@
 <?php
-namespace iao\Dca;
+namespace Iao\Dca;
 
-use iao\iaoBackend;
+use Iao\Backend\IaoBackend;
 use Contao\Database as DB;
 use Contao\BackendUser as User;
 use Contao\Image;
@@ -28,7 +28,7 @@ $GLOBALS['TL_DCA']['tl_iao_templates_items'] = array
 		'enableVersioning'            => false,
 		'onload_callback' => array
 		(
-			array('iao\Dca\TemplateItems', 'checkPermission')
+			array('Iao\Dca\TemplateItems', 'checkPermission')
 		),
 		'sql' => array
 		(
@@ -85,7 +85,7 @@ $GLOBALS['TL_DCA']['tl_iao_templates_items'] = array
 				'label'               => &$GLOBALS['TL_LANG']['tl_iao_templates_items']['editheader'],
 				'href'                => 'act=edit',
 				'icon'                => 'header.gif',
-				'button_callback'     => array('iao\Dca\TemplateItems', 'editHeader'),
+				'button_callback'     => array('Iao\Dca\TemplateItems', 'editHeader'),
 				'attributes'          => 'class="edit-header"'
 			),
 			'copy' => array
@@ -189,7 +189,7 @@ $GLOBALS['TL_DCA']['tl_iao_templates_items'] = array
 			'filter'                  => true,
 			'flag'                    => 1,
 			'inputType'               => 'select',
-            'options_callback'        => array('iao\Dca\TemplateItems', 'getItemUnitsOptions'),
+            'options_callback'        => array('Iao\Dca\TemplateItems', 'getItemUnitsOptions'),
 			'eval'                    => array('tl_class'=>'w50','includeBlankOption'=>true,'submitOnChange'=>false),
 			'sql'					  => "varchar(64) NOT NULL default ''"
 		),
@@ -230,7 +230,7 @@ $GLOBALS['TL_DCA']['tl_iao_templates_items'] = array
 			'filter'                  => true,
 			'flag'                    => 1,
 			'inputType'               => 'select',
-            'options_callback'        => array('iao\Dca\TemplateItems', 'getTaxRatesOptions'),
+            'options_callback'        => array('Iao\Dca\TemplateItems', 'getTaxRatesOptions'),
 			'eval'                    => array('tl_class'=>'w50'),
 			'sql'					  => "int(10) unsigned NOT NULL default '19'"
 		),
@@ -270,9 +270,10 @@ $GLOBALS['TL_DCA']['tl_iao_templates_items'] = array
 
 
 /**
- * Class iao\Dca\TemplateItems
+ * Class TemplateItems
+ * @package Iao\Dca
  */
-class TemplateItems extends iaoBackend
+class TemplateItems extends IaoBackend
 {
 
     /**

@@ -1,7 +1,7 @@
 <?php
-namespace iao\Dca;
+namespace Iao\Dca;
 
-use iao\iaoBackend as iaoBackend;
+use Iao\Backend\IaoBackend;
 use Srhinow\IaoTemplatesModel as TemplModel;
 use Srhinow\IaoInvoiceModel as InvoiceModel;
 use Srhinow\IaoAgreementsModel as AgreementsModel;
@@ -37,14 +37,14 @@ $GLOBALS['TL_DCA']['tl_iao_invoice'] = array
 		'enableVersioning'            => false,
 		'onload_callback' => array
 		(
-			array('iao\Dca\Invoice', 'generateInvoicePDF'),
-			array('iao\Dca\Invoice', 'checkPermission'),
-			array('iao\Dca\Invoice','upgradeInvoices')
+			array('Iao\Dca\Invoice', 'generateInvoicePDF'),
+			array('Iao\Dca\Invoice', 'checkPermission'),
+			array('Iao\Dca\Invoice','upgradeInvoices')
 		),
 		'oncreate_callback' => array
 		(
-			array('iao\Dca\Invoice', 'preFillFields'),
-			array('iao\Dca\Invoice', 'setMemmberfieldsFromProject'),
+			array('Iao\Dca\Invoice', 'preFillFields'),
+			array('Iao\Dca\Invoice', 'setMemmberfieldsFromProject'),
 		),
 		'sql' => array
 		(
@@ -70,7 +70,7 @@ $GLOBALS['TL_DCA']['tl_iao_invoice'] = array
 		(
 			'fields'                  => array('title','invoice_id_str'),
 			'format'                  => '%s (%s)',
-			'label_callback'          => array('iao\Dca\Invoice', 'listEntries'),
+			'label_callback'          => array('Iao\Dca\Invoice', 'listEntries'),
 		),
 		'global_operations' => array
 		(
@@ -110,7 +110,7 @@ $GLOBALS['TL_DCA']['tl_iao_invoice'] = array
 				'label'               => &$GLOBALS['TL_LANG']['tl_iao_invoice']['editheader'],
 				'href'                => 'act=edit',
 				'icon'                => 'header.gif',
-				'button_callback'     => array('iao\Dca\Invoice', 'editHeader'),
+				'button_callback'     => array('Iao\Dca\Invoice', 'editHeader'),
 				// 'attributes'          => 'class="edit-header"'
 			),
 			'copy' => array
@@ -136,14 +136,14 @@ $GLOBALS['TL_DCA']['tl_iao_invoice'] = array
 			(
 				'label'               => &$GLOBALS['TL_LANG']['tl_iao_invoice']['toggle'],
 				'icon'                => 'ok.gif',
-				'button_callback'     => array('iao\Dca\Invoice', 'toggleIcon')
+				'button_callback'     => array('Iao\Dca\Invoice', 'toggleIcon')
 			),
 			'pdf' => array
 			(
 				'label'               => &$GLOBALS['TL_LANG']['tl_iao_invoice']['pdf'],
 				'href'                => 'key=pdf',
 				'icon'                => 'iconPDF.gif',
-				'button_callback'     => array('iao\Dca\Invoice', 'showPDFButton')
+				'button_callback'     => array('Iao\Dca\Invoice', 'showPDFButton')
 			)
 		)
 	),
@@ -200,7 +200,7 @@ $GLOBALS['TL_DCA']['tl_iao_invoice'] = array
 			'sorting'                 => true,
 			'flag'                    => 11,
 			'inputType'               => 'select',
-			'options_callback'        => array('iao\Dca\Invoice', 'getSettingOptions'),
+			'options_callback'        => array('Iao\Dca\Invoice', 'getSettingOptions'),
 			'eval'                    => array('tl_class'=>'w50','includeBlankOption'=>false, 'chosen'=>true),
 			'sql'                     => "int(10) unsigned NOT NULL default '0'"
 		),
@@ -220,7 +220,7 @@ $GLOBALS['TL_DCA']['tl_iao_invoice'] = array
 			'eval'                    => array('doNotCopy'=>true,'rgxp'=>'datim', 'datepicker'=>$this->getDatePickerString(), 'tl_class'=>'w50 wizard'),
 			'load_callback' => array
 			(
-				array('iao\Dca\Invoice', 'generateInvoiceTstamp')
+				array('Iao\Dca\Invoice', 'generateInvoiceTstamp')
 			),
 			'sql'                     => "int(10) unsigned NOT NULL default '0'"
 		),
@@ -232,7 +232,7 @@ $GLOBALS['TL_DCA']['tl_iao_invoice'] = array
 			'eval'                    => array('doNotCopy'=>true,'rgxp'=>'date', 'datepicker'=>$this->getDatePickerString(), 'tl_class'=>'w50 wizard'),
 			'load_callback' => array
 			(
-				array('iao\Dca\Invoice', 'generateExecuteDate')
+				array('Iao\Dca\Invoice', 'generateExecuteDate')
 			),
 			'sql'                     => "varchar(255) NOT NULL default ''"
 		),
@@ -244,7 +244,7 @@ $GLOBALS['TL_DCA']['tl_iao_invoice'] = array
 			'eval'                    => array('doNotCopy'=>true,'rgxp'=>'date', 'datepicker'=>$this->getDatePickerString(), 'tl_class'=>'w50 wizard'),
 			'load_callback' => array
 			(
-				array('iao\Dca\Invoice', 'generateExpiryDate')
+				array('Iao\Dca\Invoice', 'generateExpiryDate')
 			),
 			'sql'                     => "varchar(255) NOT NULL default ''"
 		),
@@ -265,7 +265,7 @@ $GLOBALS['TL_DCA']['tl_iao_invoice'] = array
 			'eval'                    => array('doNotCopy'=>true, 'tl_class'=>'w50'),
 			'save_callback' => array
 			(
-				array('iao\Dca\Invoice', 'setFieldInvoiceNumber')
+				array('Iao\Dca\Invoice', 'setFieldInvoiceNumber')
 			),
 			'sql'					  => "int(10) unsigned NOT NULL default '0'"
 		),
@@ -278,7 +278,7 @@ $GLOBALS['TL_DCA']['tl_iao_invoice'] = array
 			'eval'                    => array('doNotCopy'=>true, 'spaceToUnderscore'=>true, 'maxlength'=>128, 'tl_class'=>'w50'),
 			'save_callback' => array
 			(
-				array('iao\Dca\Invoice', 'setFieldInvoiceNumberStr')
+				array('Iao\Dca\Invoice', 'setFieldInvoiceNumberStr')
 			),
 			'sql'					  => "varchar(255) NOT NULL default ''"
 		),
@@ -299,11 +299,11 @@ $GLOBALS['TL_DCA']['tl_iao_invoice'] = array
 			'sorting'                 => true,
 			'flag'                    => 11,
 			'inputType'               => 'select',
-			'options_callback'        => array('iao\Dca\Invoice', 'getMemberOptions'),
+			'options_callback'        => array('Iao\Dca\Invoice', 'getMemberOptions'),
 			'eval'                    => array('tl_class'=>'w50','includeBlankOption'=>true,'submitOnChange'=>true, 'chosen'=>true),
 			'save_callback' => array
 			(
-				array('iao\Dca\Invoice', 'fillAdressText')
+				array('Iao\Dca\Invoice', 'fillAdressText')
 			),
 			'sql'					  => "varbinary(128) NOT NULL default ''"
 		),
@@ -322,11 +322,11 @@ $GLOBALS['TL_DCA']['tl_iao_invoice'] = array
 			'sorting'                 => true,
 			'flag'                    => 11,
 			'inputType'               => 'select',
-			'options_callback'        => array('iao\Dca\Invoice', 'getBeforeTemplate'),
+			'options_callback'        => array('Iao\Dca\Invoice', 'getBeforeTemplate'),
 			'eval'                    => array('tl_class'=>'w50','includeBlankOption'=>true,'submitOnChange'=>true, 'chosen'=>true),
 			'save_callback' => array
 			(
-				array('iao\Dca\Invoice', 'fillBeforeText')
+				array('Iao\Dca\Invoice', 'fillBeforeText')
 			),
 			'sql'					  => "int(10) unsigned NOT NULL default '0'"
 		),
@@ -349,7 +349,7 @@ $GLOBALS['TL_DCA']['tl_iao_invoice'] = array
 			'sql'					  => "char(1) NOT NULL default ''",
 			'save_callback' => array
 			(
-				array('iao\Dca\Invoice', 'saveBeforeTextAsTemplate')
+				array('Iao\Dca\Invoice', 'saveBeforeTextAsTemplate')
 			),
 		),
 		'after_template' => array
@@ -358,11 +358,11 @@ $GLOBALS['TL_DCA']['tl_iao_invoice'] = array
 			'sorting'                 => true,
 			'flag'                    => 11,
 			'inputType'               => 'select',
-			'options_callback'        => array('iao\Dca\Invoice', 'getAfterTemplate'),
+			'options_callback'        => array('Iao\Dca\Invoice', 'getAfterTemplate'),
 			'eval'                    => array('tl_class'=>'w50','includeBlankOption'=>true,'submitOnChange'=>true, 'chosen'=>true),
 			'save_callback' => array
 			(
-				array('iao\Dca\Invoice', 'fillAfterText')
+				array('Iao\Dca\Invoice', 'fillAfterText')
 			),
 			'sql'					  => "int(10) unsigned NOT NULL default '0'"
 		),
@@ -385,7 +385,7 @@ $GLOBALS['TL_DCA']['tl_iao_invoice'] = array
 			'sql'					  => "char(1) NOT NULL default ''",
 			'save_callback' => array
 			(
-				array('iao\Dca\Invoice', 'saveAfterTextAsTemplate')
+				array('Iao\Dca\Invoice', 'saveAfterTextAsTemplate')
 			),
 
 		),
@@ -409,7 +409,7 @@ $GLOBALS['TL_DCA']['tl_iao_invoice'] = array
             'eval'					=> array('doNotCopy'=>true),
 			'save_callback' => array
 			(
-				array('iao\Dca\Invoice', 'updateStatus')
+				array('Iao\Dca\Invoice', 'updateStatus')
 			),
 			'sql'					=> "char(1) NOT NULL default ''"
 		),
@@ -451,7 +451,7 @@ $GLOBALS['TL_DCA']['tl_iao_invoice'] = array
 			),
 			'save_callback'			=> array
 			(
-				array('iao\Dca\Invoice', 'updateRemaining')
+				array('Iao\Dca\Invoice', 'updateRemaining')
 			),
 			'sql'				=> "blob NULL"
 		),
@@ -463,7 +463,7 @@ $GLOBALS['TL_DCA']['tl_iao_invoice'] = array
 			'eval'                    => array('readonly'=>true,'style'=>'border:0'),
 			'load_callback'			=> array
 			(
-				array('iao\Dca\Invoice', 'priceFormat')
+				array('Iao\Dca\Invoice', 'priceFormat')
 			),
 			'sql'					=> "varchar(64) NOT NULL default '0'"
 		),
@@ -474,8 +474,8 @@ $GLOBALS['TL_DCA']['tl_iao_invoice'] = array
 			'eval'                    => array('readonly'=>true,'style'=>'border:0'),
 			'load_callback'			=> array
 			(
-				array('iao\Dca\Invoice','getPriceallValue'),
-				array('iao\Dca\Invoice', 'priceFormat')
+				array('Iao\Dca\Invoice','getPriceallValue'),
+				array('Iao\Dca\Invoice', 'priceFormat')
 			)
 		),
 		'noVat' => array
@@ -541,7 +541,7 @@ $GLOBALS['TL_DCA']['tl_iao_invoice'] = array
 			'sorting'                 => false,
 			'flag'                    => 11,
 			'inputType'               => 'select',
-			'options_callback'        => array('iao\Dca\Invoice', 'getAgreements'),
+			'options_callback'        => array('Iao\Dca\Invoice', 'getAgreements'),
 			'eval'                    => array('tl_class'=>'w50','includeBlankOption'=>true, 'chosen'=>true),
 			'sql'					  => "int(10) unsigned NOT NULL default '0'"
 		),
@@ -596,9 +596,9 @@ $GLOBALS['TL_DCA']['tl_iao_invoice'] = array
 
 /**
  * Class Invoice
- * @package iao
+ * @package Iao\Dca
  */
-class Invoice extends iaoBackend
+class Invoice extends IaoBackend
 {
 	protected $settings = array();
 

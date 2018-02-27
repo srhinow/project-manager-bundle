@@ -1,7 +1,7 @@
 <?php
-namespace iao\Dca;
+namespace Iao\Dca;
 
-use iao\iaoBackend;
+use Iao\Backend\IaoBackend;
 use Srhinow\IaoTemplatesModel;
 use Srhinow\IaoCreditModel;
 use Srhinow\IaoProjectsModel;
@@ -34,13 +34,13 @@ $GLOBALS['TL_DCA']['tl_iao_credit'] = array
 		'enableVersioning'            => false,
 		'onload_callback' => array
 		(
-			array('iao\Dca\Credit', 'generateCreditPDF'),
-			array('iao\Dca\Credit', 'checkPermission'),
+			array('Iao\Dca\Credit', 'generateCreditPDF'),
+			array('Iao\Dca\Credit', 'checkPermission'),
 		),
 		'oncreate_callback' => array
 		(
-			array('iao\Dca\Credit', 'preFillFields'),
-			array('iao\Dca\Credit', 'setMemmberfieldsFromProject'),
+			array('Iao\Dca\Credit', 'preFillFields'),
+			array('Iao\Dca\Credit', 'setMemmberfieldsFromProject'),
 		),
 		'sql' => array
 		(
@@ -66,7 +66,7 @@ $GLOBALS['TL_DCA']['tl_iao_credit'] = array
 		(
 			'fields'                  => array('title','credit_id_str'),
 			'format'                  => '%s (%s)',
-			'label_callback'          => array('iao\Dca\Credit', 'listEntries'),
+			'label_callback'          => array('Iao\Dca\Credit', 'listEntries'),
 		),
 		'global_operations' => array
 		(
@@ -92,7 +92,7 @@ $GLOBALS['TL_DCA']['tl_iao_credit'] = array
 				'label'               => &$GLOBALS['TL_LANG']['tl_iao_credit']['editheader'],
 				'href'                => 'act=edit',
 				'icon'                => 'header.gif',
-				'button_callback'     => array('iao\Dca\Credit', 'editHeader'),
+				'button_callback'     => array('Iao\Dca\Credit', 'editHeader'),
 				// 'attributes'          => 'class="edit-header"'
 			),
 			'copy' => array
@@ -119,14 +119,14 @@ $GLOBALS['TL_DCA']['tl_iao_credit'] = array
 			(
 				'label'               => &$GLOBALS['TL_LANG']['tl_iao_credit']['toggle'],
 				'icon'                => 'ok.gif',
-				'button_callback'     => array('iao\Dca\Credit', 'toggleIcon')
+				'button_callback'     => array('Iao\Dca\Credit', 'toggleIcon')
 			),
 			'pdf' => array
 			(
 				'label'               => &$GLOBALS['TL_LANG']['tl_iao_credit']['pdf'],
 				'href'                => 'key=pdf',
 				'icon'                => 'iconPDF.gif',
-				'button_callback'     => array('iao\Dca\Credit', 'showPDFButton')
+				'button_callback'     => array('Iao\Dca\Credit', 'showPDFButton')
 			)
 		)
 	),
@@ -179,7 +179,7 @@ $GLOBALS['TL_DCA']['tl_iao_credit'] = array
 			'sorting'                 => true,
 			'flag'                    => 11,
 			'inputType'               => 'select',
-			'options_callback'        => array('iao\Dca\Credit', 'getSettingOptions'),
+			'options_callback'        => array('Iao\Dca\Credit', 'getSettingOptions'),
 			'eval'                    => array('tl_class'=>'w50','includeBlankOption'=>false, 'chosen'=>true),
 			'sql'                     => "int(10) unsigned NOT NULL default '0'"
 		),
@@ -200,7 +200,7 @@ $GLOBALS['TL_DCA']['tl_iao_credit'] = array
 			'eval'                    => array('rgxp'=>'datim', 'doNotCopy'=>true, 'datepicker'=>$this->getDatePickerString(), 'tl_class'=>'w50 wizard'),
 			'load_callback' => array
 			(
-				array('iao\Dca\Credit', 'generateCreditTstamp')
+				array('Iao\Dca\Credit', 'generateCreditTstamp')
 			),
 			'sql'                     => "int(10) unsigned NOT NULL default '0'"
 		),
@@ -212,7 +212,7 @@ $GLOBALS['TL_DCA']['tl_iao_credit'] = array
 			'eval'                    => array('rgxp'=>'date', 'doNotCopy'=>true, 'datepicker'=>$this->getDatePickerString(), 'tl_class'=>'w50 wizard'),
 			'load_callback' => array
 			(
-				array('iao\Dca\Credit', 'generateExpiryDate')
+				array('Iao\Dca\Credit', 'generateExpiryDate')
 			),
 			'sql'                     => "varchar(255) NOT NULL default ''"
 		),
@@ -224,7 +224,7 @@ $GLOBALS['TL_DCA']['tl_iao_credit'] = array
 			'eval'                    => array('rgxp'=>'alnum', 'doNotCopy'=>true, 'spaceToUnderscore'=>true, 'maxlength'=>128, 'tl_class'=>'w50'),
 			'save_callback' => array
 			(
-				array('iao\Dca\Credit', 'setFieldCreditNumber')
+				array('Iao\Dca\Credit', 'setFieldCreditNumber')
 			),
 			'sql'					  => "int(10) unsigned NOT NULL default '0'"
 		),
@@ -236,7 +236,7 @@ $GLOBALS['TL_DCA']['tl_iao_credit'] = array
 			'eval'                    => array('doNotCopy'=>true, 'spaceToUnderscore'=>true, 'maxlength'=>128, 'tl_class'=>'w50'),
 			'save_callback' => array
 			(
-				array('iao\Dca\Credit', 'createCreditNumberStr')
+				array('Iao\Dca\Credit', 'createCreditNumberStr')
 			),
 			'sql'					  => "varchar(255) NOT NULL default ''"
 		),
@@ -256,11 +256,11 @@ $GLOBALS['TL_DCA']['tl_iao_credit'] = array
 			'sorting'                 => true,
 			'flag'                    => 11,
 			'inputType'               => 'select',
-			'options_callback'        => array('iao\Dca\Credit', 'getMemberOptions'),
+			'options_callback'        => array('Iao\Dca\Credit', 'getMemberOptions'),
 			'eval'                    => array('tl_class'=>'w50','includeBlankOption'=>true,'submitOnChange'=>true, 'chosen'=>true),
 			'save_callback' => array
 			(
-				array('iao\Dca\Credit', 'fillAdressText')
+				array('Iao\Dca\Credit', 'fillAdressText')
 			),
 			'sql'					  => "varbinary(128) NOT NULL default ''"
 		),
@@ -282,11 +282,11 @@ $GLOBALS['TL_DCA']['tl_iao_credit'] = array
 			'sorting'                 => true,
 			'flag'                    => 11,
 			'inputType'               => 'select',
-			'options_callback'        => array('iao\Dca\Credit', 'getBeforeTemplate'),
+			'options_callback'        => array('Iao\Dca\Credit', 'getBeforeTemplate'),
 			'eval'                    => array('tl_class'=>'w50','includeBlankOption'=>true,'submitOnChange'=>true),
 			'save_callback' => array
 			(
-				array('iao\Dca\Credit', 'fillBeforeTextFromTemplate')
+				array('Iao\Dca\Credit', 'fillBeforeTextFromTemplate')
 			),
 			'sql'					  => "int(10) unsigned NOT NULL default '0'"
 		),
@@ -308,11 +308,11 @@ $GLOBALS['TL_DCA']['tl_iao_credit'] = array
 			'sorting'                 => true,
 			'flag'                    => 11,
 			'inputType'               => 'select',
-			'options_callback'        => array('iao\Dca\Credit', 'getAfterTemplate'),
+			'options_callback'        => array('Iao\Dca\Credit', 'getAfterTemplate'),
 			'eval'                    => array('tl_class'=>'w50','includeBlankOption'=>true,'submitOnChange'=>true),
 			'save_callback' => array
 			(
-				array('iao\Dca\Credit', 'fillAfterTextFromTemplate')
+				array('Iao\Dca\Credit', 'fillAfterTextFromTemplate')
 			),
 			'sql'					  => "int(10) unsigned NOT NULL default '0'"
 		),
@@ -396,10 +396,10 @@ $GLOBALS['TL_DCA']['tl_iao_credit'] = array
 
 
 /**
- * Class iaoDcaCredit
- * @package iao
+ * Class Credit
+ * @package Iao\Dca
  */
-class Credit  extends iaoBackend
+class Credit  extends IaoBackend
 {
 
 	protected $settings = array();

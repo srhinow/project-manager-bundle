@@ -1,34 +1,17 @@
 <?php
+namespace Iao\Dca;
+
+use Contao\Database;
+use Contao\DataContainer;
+use Iao\Backend\IaoBackend;
 
 /**
- * This program is free software: you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation, either
- * version 3 of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this program. If not, please visit the Free
- * Software Foundation website at <http://www.gnu.org/licenses/>.
- *
- * @copyright  Sven Rhinow 2011-2013
+ * @copyright  Sven Rhinow 2011-2018
  * @author     sr-tag Sven Rhinow Webentwicklung <http://www.sr-tag.de>
  * @package    project-manager-bundle
  * @license    LGPL
  * @filesource
  */
-
-/**
- * Table tl_member
- */
-if($this->Input->get('do') == 'iao_customer')
-{
-
-}
 
 /**
  * Table tl_member
@@ -62,14 +45,17 @@ $GLOBALS['TL_DCA']['tl_member']['fields']['iao_group'] = array
 );
 
 /**
- * Class tl_member
+ * Class Member
+ * @package Iao\Dca
  */
-class tl_iao_member extends Backend
+class Member extends IaoBackend
 {
-	public function setCustomerGroup(DataContainer $dc)
+    /**
+     * @param DataContainer $dc
+     */
+    public function setCustomerGroup(DataContainer $dc)
 	{
-        $this->import('iao');
-        $this->settings = $this->iao->getSettings();
+        $this->settings = $this->getSettings();
 
 		// Return if there is no active record (override all)
 		if (!$dc->activeRecord || $dc->id == 0)
@@ -77,7 +63,7 @@ class tl_iao_member extends Backend
 			return;
 		}
 
-		$this->Database->prepare("UPDATE tl_member SET iao_group=? WHERE id=?")
+		Database::getInstance()->prepare("UPDATE tl_member SET iao_group=? WHERE id=?")
 						->execute($this->settings['iao_costumer_group'],$dc->id);
     }
 }

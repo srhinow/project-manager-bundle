@@ -1,7 +1,7 @@
 <?php
-namespace iao\Dca;
+namespace Iao\Dca;
 
-use iao\iaoBackend;
+use Iao\Backend\IaoBackend;
 use Contao\Image;
 use Contao\DataContainer;
 
@@ -26,7 +26,7 @@ $GLOBALS['TL_DCA']['tl_iao_settings'] = array
 		'enableVersioning'            => true,
 		'onload_callback'		=> array
 		(
-			array('iao\Dca\Settings', 'checkPermission'),
+			array('Iao\Dca\Settings', 'checkPermission'),
 		),
 		'sql' => array
 		(
@@ -538,9 +538,10 @@ $GLOBALS['TL_DCA']['tl_iao_settings'] = array
 
 
 /**
- * Class iao\Dca\Settings
+ * Class Settings
+ * @package Iao\Dca
  */
-class Settings extends iaoBackend
+class Settings extends IaoBackend
 {
 
 	protected $settings = array();

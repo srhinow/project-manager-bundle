@@ -1,9 +1,7 @@
 <?php
-
 /**
- * PHP version 5
- * @copyright  sr-tag.de 2011-2017
- * @author     Sven Rhinow
+ * @copyright  Sven Rhinow 2011-2018
+ * @author     sr-tag Sven Rhinow Webentwicklung <http://www.sr-tag.de>
  * @package    project-manager-bundle
  * @license    LGPL
  * @filesource
@@ -35,22 +33,22 @@ $GLOBALS['BE_MOD']['iao'] = array
 	(
 		'tables' => array('tl_iao_projects','tl_iao_agreements','tl_iao_invoice','tl_iao_invoice_items','tl_iao_offer','tl_iao_offer_items','tl_iao_credit','tl_iao_credit_items','tl_iao_reminder'),
 		'icon'   => 'bundles/srhinowprojectmanager/icons/blackboard_steps.png',
-        'importInvoices'=> array('iao\ExportImport\Invoice', 'importInvoices'),
-        'exportInvoices'=> array('iao\ExportImport\Invoice', 'exportInvoices')
+        'importInvoices'=> array('Iao\Backend\Invoice\ImportExport', 'importInvoices'),
+        'exportInvoices'=> array('Iao\Backend\Invoice\ImportExport', 'exportInvoices')
 	),
 	'iao_offer' => array
 	(
 		'tables' => array('tl_iao_offer','tl_iao_offer_items'),
 		'icon'   => 'bundles/srhinowprojectmanager/icons/16-file-page.png',
-		'importOffer'=> array('iao_offer', 'importOffer'),
-		'exportOffer'=> array('iao_offer', 'exportOffer')
+		'importOffer'=> array('Iao\Backend\Offer\ImportExport', 'importOffer'),
+		'exportOffer'=> array('Iao\Backend\Offer\ImportExport', 'exportOffer')
 	),
 	'iao_invoice' => array
 	(
 		'tables' => array('tl_iao_invoice','tl_iao_invoice_items'),
 		'icon'   => 'bundles/srhinowprojectmanager/icons/kontact_todo.png',
-        'importInvoices'=> array('iao\ExportImport\Invoice', 'importInvoices'),
-        'exportInvoices'=> array('iao\ExportImport\Invoice', 'exportInvoices')
+        'importInvoices'=> array('Iao\Backend\Invoice\ImportExport', 'importInvoices'),
+        'exportInvoices'=> array('Iao\Backend\Invoice\ImportExport', 'exportInvoices')
 	),
 	'iao_credit' => array
 	(
@@ -61,7 +59,7 @@ $GLOBALS['BE_MOD']['iao'] = array
 	(
 		'tables' => array('tl_iao_reminder'),
 		'icon'   => 'bundles/srhinowprojectmanager/icons/warning.png',
-		'checkReminder'=> array('iao_reminder', 'checkReminder'),
+		'checkReminder'=> array('Iao\Backend\Reminder\Reminder', 'checkReminder'),
 	),
 	'iao_agreements' => array
 	(
@@ -70,8 +68,8 @@ $GLOBALS['BE_MOD']['iao'] = array
 	),
 	'iao_customer' => array
 	(
-		'tables'	=> array('tl_member'),
-		'callback'	=> 'ModuleCustomerMember',
+		'tables'	=> array('tl_member','tl_iso_address'),
+		'callback'	=> 'Iao\Modules\Be\ModuleCustomerMember',
 		'icon'		=> 'bundles/srhinowprojectmanager/icons/users.png',
 	),
 

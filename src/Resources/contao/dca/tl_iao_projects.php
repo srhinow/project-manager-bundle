@@ -1,13 +1,19 @@
 <?php
+namespace Iao\Dca;
+
+use Contao\Config;
+use Contao\User;
+use Contao\Image;
+use Contao\Database;
+use Iao\Backend\IaoBackend;
 
 /**
- * @copyright  Sven Rhinow 2011-2017
+ * @copyright  Sven Rhinow 2011-2018
  * @author     sr-tag Sven Rhinow Webentwicklung <http://www.sr-tag.de>
  * @package    project-manager-bundle
  * @license    LGPL
  * @filesource
  */
-
 
 /**
  * Table tl_iao_projects
@@ -158,7 +164,7 @@ $GLOBALS['TL_DCA']['tl_iao_projects'] = array
 			'sorting'                 => true,
 			'flag'                    => 11,
 			'inputType'               => 'select',
-			'options_callback'        => array('tl_iao_projects', 'getSettingOptions'),
+			'options_callback'        => array('Iao\Dca\Projects', 'getSettingOptions'),
 			'eval'                    => array('tl_class'=>'w50','includeBlankOption'=>false, 'chosen'=>true),
 			'sql'                     => "int(10) unsigned NOT NULL default '0'"
 		),
@@ -180,7 +186,7 @@ $GLOBALS['TL_DCA']['tl_iao_projects'] = array
 			'sorting'                 => true,
 			'flag'                    => 11,
 			'inputType'               => 'select',
-			'options_callback'        => array('tl_iao_projects', 'getMemberOptions'),
+			'options_callback'        => array('Iao\Dca\Projects', 'getMemberOptions'),
 			'eval'                    => array('tl_class'=>'w50','includeBlankOption'=>true,'submitOnChange'=>true, 'chosen'=>true),
 			'sql'					  => "varbinary(128) NOT NULL default ''"
 		),
@@ -320,22 +326,17 @@ $GLOBALS['TL_DCA']['tl_iao_projects'] = array
 
 
 /**
- * Class tl_iao_projects
+ * Class Projects
+ * @package Iao\Dca
  */
-class tl_iao_projects  extends \iao\iaoBackend
+class Projects  extends IaoBackend
 {
-
-	protected $settings = array();
-
 	/**
 	 * Import the back end user object
 	 */
 	public function __construct()
 	{
 		parent::__construct();
-		$this->import('BackendUser', 'User');
-		$this->settings = $this->getSettings(1);
-		// print_r($this->settings->iao_costumer_group);
 	}
 
 	/**
@@ -358,7 +359,7 @@ class tl_iao_projects  extends \iao\iaoBackend
 	 */
 	public function editHeader($row, $href, $label, $title, $icon, $attributes)
 	{
-		return ($this->User->isAdmin || count(preg_grep('/^tl_iao_projects::/', $this->User->alexf)) > 0) ? '<a href="'.$this->addToUrl($href.'&amp;id='.$row['id']).'" title="'.specialchars($title).'"'.$attributes.'>'.Image::getHtml($icon, $label).'</a> ' : '';
+		return (User::getInstance()->isAdmin || count(preg_grep('/^tl_iao_projects::/', User::getInstance()->alexf)) > 0) ? '<a href="'.$this->addToUrl($href.'&amp;id='.$row['id']).'" title="'.specialchars($title).'"'.$attributes.'>'.Image::getHtml($icon, $label).'</a> ' : '';
 	}
 
     /**
@@ -368,10 +369,9 @@ class tl_iao_projects  extends \iao\iaoBackend
      */
     public function listEntries($arrRow)
     {
-		$this->import('Database');
-		$result = $this->Database->prepare("SELECT `firstname`,`lastname`,`company` FROM `tl_member`  WHERE id=?")
-		->limit(1)
-		->execute($arrRow['member']);
+		$result = Database::getInstance()->prepare("SELECT `firstname`,`lastname`,`company` FROM `tl_member`  WHERE id=?")
+            ->limit(1)
+            ->execute($arrRow['member']);
 
 	    $row = $result->fetchAssoc();
 

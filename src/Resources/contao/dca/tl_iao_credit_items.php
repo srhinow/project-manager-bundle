@@ -1,7 +1,7 @@
 <?php
-namespace iao\Dca;
+namespace Iao\Dca;
 
-use iao\iaoBackend;
+use Iao\Backend\IaoBackend;
 use Contao\Database as DB;
 use Contao\BackendUser as User;
 use Contao\DataContainer;
@@ -23,7 +23,7 @@ $this->loadLanguageFile('tl_content');
 
 
 /**
- * Table iao\Dca\CreditItems
+ * Table Iao\Dca\CreditItems
  */
 $GLOBALS['TL_DCA']['tl_iao_credit_items'] = array
 (
@@ -36,13 +36,13 @@ $GLOBALS['TL_DCA']['tl_iao_credit_items'] = array
 		'enableVersioning'	=> true,
 		'onload_callback'		=> array
 		(
-			array('iao\Dca\CreditItems','setIaoSettings'),
-			array('iao\Dca\CreditItems', 'checkPermission'),
+			array('Iao\Dca\CreditItems','setIaoSettings'),
+			array('Iao\Dca\CreditItems', 'checkPermission'),
 		),
 		'onsubmit_callback'	=> array
 		(
-			array('iao\Dca\CreditItems','saveAllPricesToParent'),
-			array('iao\Dca\CreditItems','saveNettoAndBrutto')
+			array('Iao\Dca\CreditItems','saveAllPricesToParent'),
+			array('Iao\Dca\CreditItems','saveNettoAndBrutto')
 		),
 		'sql' => array
 		(
@@ -64,7 +64,7 @@ $GLOBALS['TL_DCA']['tl_iao_credit_items'] = array
 			'flag'                    => 1,
 			'headerFields'            => array('title', 'tstamp', 'price','member','price_netto','price_brutto'),
 			'panelLayout'             => '',
-			'child_record_callback'   => array('iao\Dca\CreditItems', 'listItems')
+			'child_record_callback'   => array('Iao\Dca\CreditItems', 'listItems')
 		),
 		'label' => array
 		(
@@ -85,7 +85,7 @@ $GLOBALS['TL_DCA']['tl_iao_credit_items'] = array
 				'label'               => &$GLOBALS['TL_LANG']['tl_iao_credit_items']['pdf'],
 				'href'                => 'key=pdf&id='.$_GET['id'],
 				'class'               => 'header_generate_pdf',
-				'button_callback'     => array('iao\Dca\CreditItems', 'showPDFButton')
+				'button_callback'     => array('Iao\Dca\CreditItems', 'showPDFButton')
 			)
 		),
 		'operations' => array
@@ -120,7 +120,7 @@ $GLOBALS['TL_DCA']['tl_iao_credit_items'] = array
 				'label'               => &$GLOBALS['TL_LANG']['tl_iao_credit_items']['toggle'],
 				'icon'                => 'visible.gif',
 				'attributes'          => 'onclick="Backend.getScrollOffset(); return AjaxRequest.toggleVisibility(this, %s);"',
-				'button_callback'     => array('iao\Dca\CreditItems', 'toggleIcon')
+				'button_callback'     => array('Iao\Dca\CreditItems', 'toggleIcon')
 			),
 			'show' => array
 			(
@@ -133,7 +133,7 @@ $GLOBALS['TL_DCA']['tl_iao_credit_items'] = array
 				'label'               => &$GLOBALS['TL_LANG']['tl_iao_credit_items']['postentemplate'],
 				'href'                => 'key=addPostenTemplate',
 				'icon'                => 'system/modules/invoice_and_offer/html/icons/posten_templates_16.png',
-				'button_callback'     => array('iao\Dca\CreditItems', 'addPostenTemplate')
+				'button_callback'     => array('Iao\Dca\CreditItems', 'addPostenTemplate')
 			)
 		)
 	),
@@ -189,11 +189,11 @@ $GLOBALS['TL_DCA']['tl_iao_credit_items'] = array
 			'sorting'                 => true,
 			'flag'                    => 11,
 			'inputType'               => 'select',
-			'options_callback'        => array('iao\Dca\CreditItems', 'getPostenTemplate'),
+			'options_callback'        => array('Iao\Dca\CreditItems', 'getPostenTemplate'),
 			'eval'                    => array('tl_class'=>'w50','includeBlankOption'=>true,'submitOnChange'=>true, 'chosen'=>true),
 			'save_callback' => array
 			(
-				array('iao\Dca\CreditItems', 'fillPostenFields')
+				array('Iao\Dca\CreditItems', 'fillPostenFields')
 			),
 			'sql'					=> "int(10) unsigned NOT NULL default '0'"
 		),
@@ -255,7 +255,7 @@ $GLOBALS['TL_DCA']['tl_iao_credit_items'] = array
 			'filter'                  => true,
 			'flag'                    => 1,
 			'inputType'               => 'select',
-			'options_callback'        => array('iao\Dca\CreditItems', 'getItemUnitsOptions'),
+			'options_callback'        => array('Iao\Dca\CreditItems', 'getItemUnitsOptions'),
             'eval'                    => array('tl_class'=>'w50','includeBlankOption'=>true,'submitOnChange'=>false),
             'sql'					  => "varchar(64) NOT NULL default ''"
 		),
@@ -295,7 +295,7 @@ $GLOBALS['TL_DCA']['tl_iao_credit_items'] = array
 			'filter'                  => true,
 			'flag'                    => 1,
 			'inputType'               => 'select',
-			'options_callback'        => array('iao\Dca\CreditItems', 'getTaxRatesOptions'),
+			'options_callback'        => array('Iao\Dca\CreditItems', 'getTaxRatesOptions'),
 			'eval'                    => array('tl_class'=>'w50'),
 			'sql'					  => "int(10) unsigned NOT NULL default '19'"
 		),
@@ -332,15 +332,15 @@ $GLOBALS['TL_DCA']['tl_iao_credit_items'] = array
 
 /**
  * Class CreditItems
- * @package iao\Dca
+ * @package Iao\Dca
  */
-class CreditItems extends iaoBackend
+class CreditItems extends IaoBackend
 {
 
 	protected $settings = array();
 
     /**
-     * iao\Dca\CreditItems constructor.
+     * Iao\Dca\CreditItems constructor.
      */
 	public function __construct()
 	{
@@ -375,11 +375,11 @@ class CreditItems extends iaoBackend
 	}
 
 	/**
-	 * Check permissions to edit table iao\Dca\CreditItems
+	 * Check permissions to edit table Iao\Dca\CreditItems
 	 */
 	public function checkPermission()
 	{
-		$this->checkIaoModulePermission('iao\Dca\CreditItems');
+		$this->checkIaoModulePermission('Iao\Dca\CreditItems');
 	}
 
 	/**
@@ -509,7 +509,7 @@ class CreditItems extends iaoBackend
 
         // Check permissions AFTER checking the tid, so hacking attempts are logged
         $User = User::getInstance();
-        if (!$User->isAdmin && !$User->hasAccess('iao\Dca\CreditItems::published', 'alexf'))
+        if (!$User->isAdmin && !$User->hasAccess('Iao\Dca\CreditItems::published', 'alexf'))
         {
             return '';
         }
@@ -538,10 +538,10 @@ class CreditItems extends iaoBackend
 
 		// Check permissions to publish
         $User = User::getInstance();
-		if (!$User->isAdmin && !$User->hasAccess('iao\Dca\CreditItems::published', 'alexf'))
+		if (!$User->isAdmin && !$User->hasAccess('tl_iao_credit_items::published', 'alexf'))
 		{
             $logger = static::getContainer()->get('monolog.logger.contao');
-            $logger->log('Not enough permissions to publish/unpublish event ID "'.$intId.'"', 'iao\Dca\CreditItems toggleVisibility', TL_ERROR);
+            $logger->log('Not enough permissions to publish/unpublish event ID "'.$intId.'"', 'Iao\Dca\CreditItems toggleVisibility', TL_ERROR);
 
 			$this->redirect('contao/main.php?act=error');
 		}
@@ -550,9 +550,9 @@ class CreditItems extends iaoBackend
         $objVersions->initialize();
 
 		// Trigger the save_callback
-		if (is_array($GLOBALS['TL_DCA']['iao\Dca\CreditItems']['fields']['published']['save_callback']))
+		if (is_array($GLOBALS['TL_DCA']['tl_iao_credit_items']['fields']['published']['save_callback']))
 		{
-			foreach ($GLOBALS['TL_DCA']['iao\Dca\CreditItems']['fields']['published']['save_callback'] as $callback)
+			foreach ($GLOBALS['TL_DCA']['tl_iao_credit_items']['fields']['published']['save_callback'] as $callback)
 			{
 				$this->import($callback[0]);
 				$blnVisible = $this->$callback[0]->$callback[1]($blnVisible, $this);
@@ -560,7 +560,7 @@ class CreditItems extends iaoBackend
 		}
 
 		// Update the database
-		DB::getInstance()->prepare("UPDATE iao\Dca\CreditItems SET tstamp=". time() .", published='" . ($blnVisible ? 1 : '') . "' WHERE id=?")
+		DB::getInstance()->prepare("UPDATE tl_iao_credit_items SET tstamp=". time() .", published='" . ($blnVisible ? 1 : '') . "' WHERE id=?")
 		->execute($intId);
 
         $objVersions->create();

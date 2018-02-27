@@ -1,7 +1,7 @@
 <?php
-namespace iao\Dca;
+namespace Iao\Dca;
 
-use iao\iaoBackend;
+use Iao\Backend\IaoBackend;
 use Contao\Database as DB;
 use Contao\BackendUser as User;
 use Contao\DataContainer;
@@ -34,14 +34,14 @@ $GLOBALS['TL_DCA']['tl_iao_invoice_items'] = array
 		'enableVersioning'            => true,
 		'onload_callback'		=> array
 		(
-			array('iao\Dca\InvoiceItems','setIaoSettings'),
-			array('iao\Dca\InvoiceItems', 'checkPermission'),
+			array('Iao\Dca\InvoiceItems','setIaoSettings'),
+			array('Iao\Dca\InvoiceItems', 'checkPermission'),
 		),
 		'onsubmit_callback'	    => array
 		(
-		    array('iao\Dca\InvoiceItems','saveAllPricesToParent'),
-		    array('iao\Dca\InvoiceItems','saveNettoAndBrutto'),
-		    array('iao\Dca\InvoiceItems','updateRemaining')
+		    array('Iao\Dca\InvoiceItems','saveAllPricesToParent'),
+		    array('Iao\Dca\InvoiceItems','saveNettoAndBrutto'),
+		    array('Iao\Dca\InvoiceItems','updateRemaining')
 		),
 		'sql' => array
 		(
@@ -63,7 +63,7 @@ $GLOBALS['TL_DCA']['tl_iao_invoice_items'] = array
 			'flag'                    => 1,
 			'headerFields'            => array('title', 'tstamp', 'price','member','price_netto','price_brutto'),
 			'panelLayout'             => '',
-			'child_record_callback'   => array('iao\Dca\InvoiceItems', 'listItems')
+			'child_record_callback'   => array('Iao\Dca\InvoiceItems', 'listItems')
 		),
 		'label' => array
 		(
@@ -84,7 +84,7 @@ $GLOBALS['TL_DCA']['tl_iao_invoice_items'] = array
 				'label'               => &$GLOBALS['TL_LANG']['tl_iao_invoice_items']['pdf'],
 				'href'                => 'key=pdf&id='.$_GET['id'],
 				'class'               => 'header_generate_pdf',
-				'button_callback'     => array('iao\Dca\InvoiceItems', 'showPDFButton')
+				'button_callback'     => array('Iao\Dca\InvoiceItems', 'showPDFButton')
 			)
 		),
 		'operations' => array
@@ -119,7 +119,7 @@ $GLOBALS['TL_DCA']['tl_iao_invoice_items'] = array
 				'label'               => &$GLOBALS['TL_LANG']['tl_iao_invoice_items']['toggle'],
 				'icon'                => 'visible.gif',
 				'attributes'          => 'onclick="Backend.getScrollOffset(); return AjaxRequest.toggleVisibility(this, %s);"',
-				'button_callback'     => array('iao\Dca\InvoiceItems', 'toggleIcon')
+				'button_callback'     => array('Iao\Dca\InvoiceItems', 'toggleIcon')
 			),
 			'show' => array
 			(
@@ -132,7 +132,7 @@ $GLOBALS['TL_DCA']['tl_iao_invoice_items'] = array
 				'label'               => &$GLOBALS['TL_LANG']['tl_iao_invoice_items']['postentemplate'],
 				'href'                => 'key=addPostenTemplate',
 				'icon'                => 'system/modules/invoice_and_offer/html/icons/posten_templates_16.png',
-				'button_callback'     => array('iao\Dca\InvoiceItems', 'addPostenTemplate')
+				'button_callback'     => array('Iao\Dca\InvoiceItems', 'addPostenTemplate')
 			),
 		)
 	),
@@ -236,7 +236,7 @@ $GLOBALS['TL_DCA']['tl_iao_invoice_items'] = array
 			'filter'                  => true,
 			'flag'                    => 1,
 			'inputType'               => 'select',
-			'options_callback'        => array('iao\Dca\InvoiceItems', 'getItemUnitsOptions'),
+			'options_callback'        => array('Iao\Dca\InvoiceItems', 'getItemUnitsOptions'),
             'eval'                    => array('tl_class'=>'w50','submitOnChange'=>false),
 			'sql'					  => "varchar(64) NOT NULL default ''"
 		),
@@ -275,7 +275,7 @@ $GLOBALS['TL_DCA']['tl_iao_invoice_items'] = array
 			'filter'                  => true,
 			'flag'                    => 1,
 			'inputType'               => 'select',
-			'options_callback'        => array('iao\Dca\InvoiceItems', 'getTaxRatesOptions'),
+			'options_callback'        => array('Iao\Dca\InvoiceItems', 'getTaxRatesOptions'),
 			'eval'                    => array('tl_class'=>'w50'),
 			'sql'					  => "int(10) unsigned NOT NULL default '19'"
 		),
@@ -296,11 +296,11 @@ $GLOBALS['TL_DCA']['tl_iao_invoice_items'] = array
 			'sorting'                 => true,
 			'flag'                    => 11,
 			'inputType'               => 'select',
-			'options_callback'        => array('iao\Dca\InvoiceItems', 'getPostenTemplate'),
+			'options_callback'        => array('Iao\Dca\InvoiceItems', 'getPostenTemplate'),
 			'eval'                    => array('tl_class'=>'w50','includeBlankOption'=>true,'submitOnChange'=>true, 'chosen'=>true),
 			'save_callback' => array
 			(
-				array('iao\Dca\InvoiceItems', 'fillPostenFields')
+				array('Iao\Dca\InvoiceItems', 'fillPostenFields')
 			),
 			'sql'					=> "int(10) unsigned NOT NULL default '0'"
 		),
@@ -325,9 +325,10 @@ $GLOBALS['TL_DCA']['tl_iao_invoice_items'] = array
 
 
 /**
- * Class tl_iao_invoice_items
+ * Class InvoiceItems
+ * @package Iao\Dca
  */
-class InvoiceItems extends iaoBackend
+class InvoiceItems extends IaoBackend
 {
 
 	protected $settings = array();

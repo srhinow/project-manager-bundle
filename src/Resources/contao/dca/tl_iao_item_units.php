@@ -1,5 +1,5 @@
 <?php
-namespace iao\Dca;
+namespace Iao\Dca;
 
 /**
  * @copyright  Sven Rhinow 2011-2018
