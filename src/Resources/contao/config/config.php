@@ -175,7 +175,7 @@ $GLOBALS['TL_HOOKS']['replaceInsertTags'][] = array('iaoHooks', 'iaoReplaceInser
 /**
  * Cron jobs
  */
-$GLOBALS['TL_CRON']['daily'][] = array('iaoCrons', 'sendAgreementRemindEmail');
+$GLOBALS['TL_CRON']['daily'][] = array('Iao\Cron\iaoCrons', 'sendAgreementRemindEmail');
 
 /**
  * Permissions are access settings for user and groups (fields in tl_user and tl_user_group)
