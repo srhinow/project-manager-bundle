@@ -1,49 +1,73 @@
 <?php
+namespace Iao\Hooks;
+
+use Contao\Frontend;
 /**
- * PHP version 5
- * @copyright  Sven Rhinow Webentwicklung 2013 <http://www.sr-tag.de>
- * @author     Sven Rhinow
- * @package    BBK (BilderBuchKino)
- * @license    commercial
+ * @copyright  Sven Rhinow 2011-2018
+ * @author     sr-tag Sven Rhinow Webentwicklung <http://www.sr-tag.de>
+ * @package    project-manager-bundle
+ * @license    LGPL
  * @filesource
  */
-
-class iaoHooks extends \Frontend
+class iaoHooks extends Frontend
 {
     public function __construct()
     {
 		parent::__construct();
     }
+
     /**
     * replace iao-specific inserttag if get-paramter isset
-    * bn::colname::alternative from objPage
+     * {{iao::BEREICH::COLUMN[::ID|ALIAS]}}
+     * z.B. {{iao::invoice::title}} oder {{iao::invoice::title::4}}
+     *
     * @param string
     * @return string
     */
-    public function iaoReplaceInsertTags($strTag)
+    public function replaceFrontendIaoTags($strTag)
 	{
 
 	    if (substr($strTag,0,5) == 'iao::')
 	    {
-	        global $objPage;
-
-	        $Id = \Input::get('bbk');
+	        //inserttag in Stuecke teilen
 	        $split = explode('::',$strTag);
 
-       		if(strlen($bbkId) < 1 || (int) $bbkId < 1) return $objPage->$split[2];
+	        //wenn die ID nicht mit übergeben wurde die Detailseite vorraussetzen
+            $idAlias = (strlen($split[3]) > 0) ? $split[3] : \Input::get('auto_item');
 
-			$objBbk = BBKModel::findBBKByIdOrAlias($Id);
+            switch($split[1]){
+                case 'agreement':
+                    $objResult = \Srhinow\IaoAgreementsModel::findByIdOrAlias($idAlias);
+                    break;
+                case 'credit':
+                    $objResult = \Srhinow\IaoCreditModel::findByIdOrAlias($idAlias);
+                    break;
+                case 'credititem':
+                    $objResult = \Srhinow\IaoCreditItemsModel::findByIdOrAlias($idAlias);
+                    break;
+                case 'invoice':
+                    $objResult = \Srhinow\IaoInvoiceModel::findByIdOrAlias($idAlias);
+                    break;
+                case 'invoiceitem':
+                    $objResult = \Srhinow\IaoInvoiceItemsModel::findByIdOrAlias($idAlias);
+                    break;
+                case 'offer':
+                    $objResult = \Srhinow\IaoOfferModel::findByIdOrAlias($idAlias);
+                    break;
+                case 'offeritem':
+                    $objResult = \Srhinow\IaoOfferItemsModel::findByIdOrAlias($idAlias);
+                    break;
+                case 'project':
+                    $objResult = \Srhinow\IaoProjectsModel::findByIdOrAlias($idAlias);
+                    break;
+                default:
+                    $objResult = null;
+            }
 
-
-	        switch($split[1]){
-	        	case 'printbutton':
-	        		return (!$libId) ? '' : '<a href="javascript:window.print()" class="printbutton"><i class="fa fa-print"></i></a>';
-
-	        	break;
-	        	default:
-	        		return $objBbk->$split[1];
-	        }
-
+            if($objResult !== null)
+            {
+                return $objResult->$split[2];
+            }
 	    }
 
 	    return false;

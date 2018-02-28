@@ -170,7 +170,7 @@ $GLOBALS['FE_MOD']['iao_fe'] = array
 /**
  * HOOKS
  */
-$GLOBALS['TL_HOOKS']['replaceInsertTags'][] = array('iaoHooks', 'iaoReplaceInsertTags');
+$GLOBALS['TL_HOOKS']['replaceInsertTags'][] = array('Iao\Hooks\iaoHooks', 'iaoReplaceInsertTags');
 
 /**
  * Cron jobs
