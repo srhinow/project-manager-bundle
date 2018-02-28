@@ -7,12 +7,27 @@ namespace Srhinow;
 use Contao\Model;
 
 /**
- * for Contao Open Source CMS
+ * Reads and writes Offers
  *
- * Copyright (c) 2016 Sven Rhinow
+ * @property integer $id
+ * @property integer $tstamp
+ * @property string  $title
  *
- * @package project-manager-bundle
- * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL
+ * @method static IaoOfferModel|null findById($id, $opt=array())
+ * @method static IaoOfferModel|null findByIdOrAlias($val, $opt=array())
+ * @method static IaoOfferModel|null findOneBy($col, $val, $opt=array())
+ * @method static IaoOfferModel|null findOneByTstamp($val, $opt=array())
+ * @method static IaoOfferModel|null findOneByTitle($val, $opt=array())
+
+ *
+ * @method static \Model\Collection|IaoOfferModel[]|IaoOfferModel|null findByTstamp($val, $opt=array())
+ * @method static \Model\Collection|IaoOfferModel[]|IaoOfferModel|null findByTitle($val, $opt=array())
+ * @method static \Model\Collection|IaoOfferModel[]|IaoOfferModel|null findBy($col, $val, $opt=array())
+ * @method static \Model\Collection|IaoOfferModel[]|IaoOfferModel|null findAll($opt=array())
+ *
+ * @method static integer countById($id, $opt=array())
+ *
+ * @author Leo Feyer <https://github.com/leofeyer>
  */
 
 
