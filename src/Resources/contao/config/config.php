@@ -11,7 +11,7 @@
  * project-manager-bundle Version
  */
 @define('IAO_VERSION', '1.0');
-@define('IAO_BUILD', '4');
+@define('IAO_BUILD', '6');
 @define('IAO_PATH','vendor/srhinow/project-manager-bundle');
 @define('PMB_PUBLIC_FOLDER','bundles/srhinowprojectmanager');
 @define('IAO_PDFCLASS_FILE', IAO_PATH.'/classes/iaoPDF.php');
