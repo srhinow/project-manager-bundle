@@ -110,7 +110,7 @@ class ModuleMemberAgreements extends Module
 			if(\Input::get('key') == 'pdf' && (int) \Input::get('id') > 0)
 			{
 				// ueberpruefen ob diese zum aktuellen Benutzer gehoert
-				$testObj = IaoAgreementsModel::findOnePublishedByMember(\Input::get('id'), $userId);
+				$testObj = Srhinow\IaoAgreementsModel::findOnePublishedByMember(\Input::get('id'), $userId);
 
 				if($testObj !== NULL)
 				{
@@ -125,7 +125,7 @@ class ModuleMemberAgreements extends Module
 			}
 
 			// Get the total number of items
-			$total = IaoAgreementsModel::countPublishedByMember($this->User->id, $this->agreement_status);
+			$total = \Srhinow\IaoAgreementsModel::countPublishedByMember($this->User->id, $this->agreement_status);
 
 			if($total > 0)
 			{
@@ -168,17 +168,17 @@ class ModuleMemberAgreements extends Module
 					$this->Template->pagination = $objPagination->generate("\n  ");
 				}
 
-				$itemObj = IaoAgreementsModel::findPublishedByMember($this->User->id, $this->agreement_status, $limit, $offset);
+				$itemObj = Srhinow\IaoAgreementsModel::findPublishedByMember($this->User->id, $this->agreement_status, $limit, $offset);
 
 			    $itemsArray = array();
 			    if($itemObj !== null) while($itemObj->next())
 		    	{
-		    		$invoiceObj = IaoInvoiceModel::findOneById($itemObj->invoice_id);
+//		    		 $invoiceObj = Srhinow\IaoInvoiceModel::findByIdOrAlias($itemObj->invoice_id);
 
-		    		// if($itemObj->status == 1) $status_class = 'danger';
-		    		// elseif($itemObj->status == 2) $status_class = 'success';
-		    		// elseif($itemObj->status == 3) $status_class = 'warning';
-		    		// else $status_class = '';
+		    		 if($itemObj->status == 1) $status_class = 'danger';
+		    		 elseif($itemObj->status == 2) $status_class = 'success';
+		    		 elseif($itemObj->status == 3) $status_class = 'warning';
+		    		 else $status_class = '';
 		    		$agrFile = \FilesModel::findByPk($itemObj->agreement_pdf_file);
 		    		$itemsArray[] = array
 		    		(
