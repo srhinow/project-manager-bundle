@@ -1,17 +1,29 @@
-<?
+<?php
+namespace Iao\Cron;
+
 /**
- * PHP version 5
+ * @copyright  Sven Rhinow 2011-2018
+ * @author     sr-tag Sven Rhinow Webentwicklung <http://www.sr-tag.de>
  * @package    project-manager-bundle
  * @license    LGPL
  * @filesource
  */
-class iaoCrons extends Frontend
+
+use Contao\Database;
+use Contao\Email;
+use Contao\Frontend;
+
+/**
+ * Class IaoCrons
+ * @package Iao\Cron
+ */
+class IaoCrons extends Frontend
 {
 
 	public function sendAgreementRemindEmail()
 	{
 
-		$agrObj = $this->Database->prepare('SELECT * FROM `tl_iao_agreements` WHERE `sendEmail`=? AND `email_date`=?')
+		$agrObj = Database::getInstance()->prepare('SELECT * FROM `tl_iao_agreements` WHERE `sendEmail`=? AND `email_date`=?')
 					->execute(1,'');
 
 		if($agrObj->numRows > 0)
@@ -36,11 +48,12 @@ class iaoCrons extends Frontend
 							'email_date' => $today
 						);
 
-						$this->Database->prepare('UPDATE `tl_iao_agreements` %s WHERE `id`=?')
+						Database::getInstance()->prepare('UPDATE `tl_iao_agreements` %s WHERE `id`=?')
 							->set($set)
 							->execute($agrObj->id);
 
-						$this->log('Vertrag-Erinnerung von '.$agrObj->title.' gesendet','iaoCrons sendAgreementRemindEmail()','CRON');
+                        $logger = static::getContainer()->get('monolog.logger.contao');
+                        $logger->log('Vertrag-Erinnerung von '.$agrObj->title.' gesendet','iaoCrons sendAgreementRemindEmail()','CRON');
 					}
 				}
 			}
