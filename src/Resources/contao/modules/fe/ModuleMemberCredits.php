@@ -1,14 +1,18 @@
 <?php
+namespace Iao\Modules\Fe;
 
 /**
- * PHP version 5
- * @copyright  Sven Rhinow Webentwicklung 2017 <http://www.sr-tag.de>
- * @author     Sven Rhinow
+ * @copyright  Sven Rhinow 2011-2018
+ * @author     sr-tag Sven Rhinow Webentwicklung <http://www.sr-tag.de>
  * @package    project-manager-bundle
- * @license	   LGPL
+ * @license    LGPL
  * @filesource
  */
 
+use Contao\BackendTemplate;
+use Contao\Module;
+use Contao\Pagination;
+use Srhinow\IaoCreditModel;
 
 /**
  * Class ModuleMemberCredits
@@ -151,9 +155,8 @@ class ModuleMemberCredits extends Module
 				$itemObj = IaoCreditModel::findPublishedByMember($this->User->id, $this->status, $limit, $offset);
 
 			    $itemsArray = array();
-			    while($itemObj->next())
+			    if($itemObj !== null) while($itemObj->next())
 		    	{
-
 		    		if($itemObj->status == 1) $status_class = 'danger';
 		    		elseif($itemObj->status == 2) $status_class = 'success';
 		    		elseif($itemObj->status == 3) $status_class = 'warning';

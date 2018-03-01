@@ -1,14 +1,20 @@
 <?php
+namespace Iao\Modules\Fe;
 
 /**
- * PHP version 5
- * @copyright  Sven Rhinow Webentwicklung 2017 <http://www.sr-tag.de>
- * @author     Sven Rhinow
+ * @copyright  Sven Rhinow 2011-2018
+ * @author     sr-tag Sven Rhinow Webentwicklung <http://www.sr-tag.de>
  * @package    project-manager-bundle
- * @license	   LGPL
+ * @license    LGPL
  * @filesource
  */
 
+use Contao\BackendTemplate;
+use Contao\Module;
+use Contao\Pagination;
+use Contao\FrontendUser as User;
+use Iao\Iao;
+use Srhinow\IaoOfferModel;
 
 /**
  * Class ModuleMemberOffers
@@ -69,21 +75,19 @@ class ModuleMemberOffers extends Module
 	 */
 	protected function compile()
 	{
-
+        $iao = Iao::class;
 		// Get the front end user object
-		$this->import('FrontendUser', 'User');
-		$this->import('iao');
 		$this->loadLanguageFile('tl_iao_offer');
 
 		//set settings
-		$this->iao->setIAOSettings();
+//        $iao->setIAOSettings();
 
 		$offset = 0;
 		$limit = null;
 
 		if(FE_USER_LOGGED_IN)
 		{
-			$userId = $this->User->id;
+			$userId = User::getInstance()->id;
 
 			//wenn eine PDF angefragt wird
 			if(\Input::get('key') == 'pdf' && (int) \Input::get('id') > 0)
@@ -93,7 +97,7 @@ class ModuleMemberOffers extends Module
 
 				if($testObj !== NULL)
 				{
-					$this->iao->generatePDF((int) \Input::get('id'), 'offer');
+					$iao->generatePDF((int) \Input::get('id'), 'offer');
 				}
 
 			}
@@ -151,7 +155,7 @@ class ModuleMemberOffers extends Module
 				$itemObj = IaoOfferModel::findPublishedByMember($this->User->id, $this->status, $limit, $offset);
 
 			    $itemsArray = array();
-			    while($itemObj->next())
+			    if($itemObj !== null) while($itemObj->next())
 		    	{
 
 		    		if($itemObj->status == 1) $status_class = 'danger';

@@ -71,17 +71,14 @@ class IaoCreditModel extends Model
 		return static::findOneBy($arrColumns, null, $arrOptions);
 	}
 
-	/**
-	 * Find published credit by their parent ID
-	 *
-	 * @param integer $memberId    	An User-ID from actual FrontendUser
-	 * @param string  $status		optional filter
-	 * @param integer $intLimit    	An optional limit
-	 * @param integer $intOffset   	An optional offset
-	 * @param array   $arrOptions  	An optional options array
-	 *
-	 * @return IaoCreditModel[]IaoCreditModel|null A collection of models or null if there are no news
-	 */
+    /**
+     * @param $memberId
+     * @param string $status
+     * @param int $intLimit
+     * @param int $intOffset
+     * @param array $arrOptions
+     * @return \Model\Collection|null|IaoCreditModel|IaoCreditModel[]
+     */
 	public static function findPublishedByMember($memberId, $status='', $intLimit=0, $intOffset=0, array $arrOptions=array())
 	{
 		if (empty($memberId))

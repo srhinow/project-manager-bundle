@@ -1,14 +1,18 @@
 <?php
+namespace Iao\Modules\Fe;
 
 /**
- * PHP version 5
- * @copyright  Sven Rhinow Webentwicklung 2017 <http://www.sr-tag.de>
- * @author     Sven Rhinow
- * @package    invoice_and_agreement
- * @license	   LGPL
+ * @copyright  Sven Rhinow 2011-2018
+ * @author     sr-tag Sven Rhinow Webentwicklung <http://www.sr-tag.de>
+ * @package    project-manager-bundle
+ * @license    LGPL
  * @filesource
  */
 
+use Contao\BackendTemplate;
+use Contao\Module;
+use Contao\Pagination;
+use Srhinow\IaoAgreementsModel;
 
 /**
  * Class ModuleMemberAgreements
@@ -110,7 +114,7 @@ class ModuleMemberAgreements extends Module
 			if(\Input::get('key') == 'pdf' && (int) \Input::get('id') > 0)
 			{
 				// ueberpruefen ob diese zum aktuellen Benutzer gehoert
-				$testObj = Srhinow\IaoAgreementsModel::findOnePublishedByMember(\Input::get('id'), $userId);
+				$testObj = IaoAgreementsModel::findOnePublishedByMember(\Input::get('id'), $userId);
 
 				if($testObj !== NULL)
 				{
@@ -168,7 +172,7 @@ class ModuleMemberAgreements extends Module
 					$this->Template->pagination = $objPagination->generate("\n  ");
 				}
 
-				$itemObj = Srhinow\IaoAgreementsModel::findPublishedByMember($this->User->id, $this->agreement_status, $limit, $offset);
+				$itemObj = IaoAgreementsModel::findPublishedByMember($this->User->id, $this->agreement_status, $limit, $offset);
 
 			    $itemsArray = array();
 			    if($itemObj !== null) while($itemObj->next())

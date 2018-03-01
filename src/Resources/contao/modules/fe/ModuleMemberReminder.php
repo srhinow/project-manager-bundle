@@ -1,14 +1,19 @@
 <?php
+namespace Iao\Modules\Fe;
 
 /**
- * PHP version 5
- * @copyright  Sven Rhinow Webentwicklung 2017 <http://www.sr-tag.de>
- * @author     Sven Rhinow
- * @package    invoice_and_reminder
- * @license	   LGPL
+ * @copyright  Sven Rhinow 2011-2018
+ * @author     sr-tag Sven Rhinow Webentwicklung <http://www.sr-tag.de>
+ * @package    project-manager-bundle
+ * @license    LGPL
  * @filesource
  */
 
+use Contao\BackendTemplate;
+use Contao\Module;
+use Contao\Pagination;
+use Srhinow\IaoInvoiceModel;
+use Srhinow\IaoReminderModel;
 
 /**
  * Class ModuleMemberReminder
@@ -158,7 +163,7 @@ class ModuleMemberReminder extends Module
 			    $itemsArray = array();
 			    if($itemObj !== null) while($itemObj->next())
 		    	{
-		    		$invoiceObj = IaoInvoiceModel::findOneById($itemObj->invoice_id);
+		    		$invoiceObj = IaoInvoiceModel::findByIdOrAlias($itemObj->invoice_id);
 
 		    		if($itemObj->status == 1) $status_class = 'danger';
 		    		elseif($itemObj->status == 2) $status_class = 'success';

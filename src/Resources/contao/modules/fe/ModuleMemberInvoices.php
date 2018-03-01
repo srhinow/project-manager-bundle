@@ -1,14 +1,18 @@
 <?php
+namespace Iao\Modules\Fe;
 
 /**
- * PHP version 5
- * @copyright  Sven Rhinow Webentwicklung 2017 <http://www.sr-tag.de>
- * @author     Sven Rhinow
+ * @copyright  Sven Rhinow 2011-2018
+ * @author     sr-tag Sven Rhinow Webentwicklung <http://www.sr-tag.de>
  * @package    project-manager-bundle
- * @license	   LGPL
+ * @license    LGPL
  * @filesource
  */
 
+use Contao\BackendTemplate;
+use Contao\Module;
+use Contao\Pagination;
+use Srhinow\IaoInvoiceModel;
 
 /**
  * Class ModuleMemberInvoices
@@ -79,6 +83,7 @@ class ModuleMemberInvoices extends Module
 
 		$offset = 0;
 		$limit = null;
+        $itemsArray = array();
 
 		if(FE_USER_LOGGED_IN)
 		{
@@ -149,8 +154,7 @@ class ModuleMemberInvoices extends Module
 
 				$itemObj = IaoInvoiceModel::findPublishedByMember($this->User->id, $this->status, $limit, $offset);
 
-			    $itemsArray = array();
-			    while($itemObj->next())
+			    if($itemObj !== null) while($itemObj->next())
 		    	{
 
 		    		if($itemObj->status == 1) $status_class = 'danger';

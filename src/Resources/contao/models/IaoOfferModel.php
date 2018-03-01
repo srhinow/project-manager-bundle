@@ -39,17 +39,12 @@ class IaoOfferModel extends Model
 	 */
 	protected static $strTable = 'tl_iao_offer';
 
-	/**
-	 * Find published offer by their parent ID
-	 *
-	 * @param integer $id    		An invoice-ID
-	 * @param integer $memberId    	An User-ID from actual FrontendUser
-	 * @param integer $intLimit    	An optional limit
-	 * @param integer $intOffset   	An optional offset
-	 * @param array   $arrOptions  	An optional options array
-	 *
-	 * @return iaoInvoiceModel[]|iaoInvoiceModel|null A collection of models or null if there are no news
-	 */
+    /**
+     * @param $id
+     * @param $memberId
+     * @param array $arrOptions
+     * @return null|IaoOfferModel
+     */
 	public static function findOnePublishedByMember($id, $memberId, array $arrOptions=array())
 	{
 		if (empty($id) || empty($memberId))
@@ -71,17 +66,14 @@ class IaoOfferModel extends Model
 		return static::findOneBy($arrColumns, null, $arrOptions);
 	}
 
-	/**
-	 * Find published offer by their parent ID
-	 *
-	 * @param integer $memberId    	An User-ID from actual FrontendUser
-	 * @param string  $status		optional filter
-	 * @param integer $intLimit    	An optional limit
-	 * @param integer $intOffset   	An optional offset
-	 * @param array   $arrOptions  	An optional options array
-	 *
-	 * @return iaoInvoiceModel[]|iaoInvoiceModel|null A collection of models or null if there are no news
-	 */
+    /**
+     * @param $memberId
+     * @param string $status
+     * @param int $intLimit
+     * @param int $intOffset
+     * @param array $arrOptions
+     * @return \Model\Collection|null|IaoOfferModel|IaoOfferModel[]
+     */
 	public static function findPublishedByMember($memberId, $status='', $intLimit=0, $intOffset=0, array $arrOptions=array())
 	{
 		if (empty($memberId))

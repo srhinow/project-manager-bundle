@@ -1,14 +1,16 @@
 <?php
+namespace Iao\Modules\Fe;
 
 /**
- * PHP version 5
- * @copyright  Sven Rhinow Webentwicklung 2017 <http://www.sr-tag.de>
- * @author     Sven Rhinow
+ * @copyright  Sven Rhinow 2011-2018
+ * @author     sr-tag Sven Rhinow Webentwicklung <http://www.sr-tag.de>
  * @package    project-manager-bundle
- * @license	   LGPL
+ * @license    LGPL
  * @filesource
  */
 
+use Contao\Module;
+use Srhinow\IaoProjectsModel;
 
 /**
  * Class ModulePublicProjectDetails
