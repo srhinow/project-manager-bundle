@@ -13,7 +13,7 @@ use Contao\BackendTemplate;
 use Contao\FilesModel;
 use Contao\Module;
 use Contao\Pagination;
-use Contao\BackendUser as User;
+use Contao\FrontendUser as User;
 use Iao\Iao;
 use Srhinow\IaoAgreementsModel;
 use Srhinow\IaoProjectsModel;
@@ -131,7 +131,6 @@ class ModuleMemberAgreements extends Module
 
 			// Get the total number of items
 			$total = IaoAgreementsModel::countPublishedByMember($User->id, $this->agreement_status);
-
 			if($total > 0)
 			{
 				// Split the results
@@ -194,7 +193,7 @@ class ModuleMemberAgreements extends Module
 		    			'periode' => $itemObj->periode,
 		    			'beginn_date' => date($GLOBALS['TL_CONFIG']['dateFormat'],$itemObj->beginn_date),
 		    			'end_date' => date($GLOBALS['TL_CONFIG']['dateFormat'],$itemObj->end_date),
-		    			'price' => $this->iao->getPriceStr($itemObj->price,'iao_currency_symbol'),
+		    			'price' => $iao->getPriceStr($itemObj->price,'iao_currency_symbol'),
 		    			'agreement_pdf_path' => \Environment::get('request').'?file='.$agrFile->path
 	    			);
 		    	}
