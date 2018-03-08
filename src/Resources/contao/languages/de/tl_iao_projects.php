@@ -34,8 +34,9 @@ $GLOBALS['TL_LANG']['tl_iao_projects']['notice']	=	array('Notiz','Diese Notizen 
  */
 $GLOBALS['TL_LANG']['tl_iao_projects']['offer']	=	array('Projekt-Angebote','alle Angebote von diesem Projekt');
 $GLOBALS['TL_LANG']['tl_iao_projects']['invoice']	=	array('Projekt-Rechnungen','alle Rechnungen von diesem Projekt');
-$GLOBALS['TL_LANG']['tl_iao_projects']['credit']	=	array('Neues Projekt','alle Gutschriften vone diesem Projekt');
-$GLOBALS['TL_LANG']['tl_iao_projects']['reminder']	=	array('Neues Projekt','alle Erinnerungen von diesem Projekt');
+$GLOBALS['TL_LANG']['tl_iao_projects']['credit']	=	array('Projekt-Gutschriften','alle Gutschriften vone diesem Projekt');
+$GLOBALS['TL_LANG']['tl_iao_projects']['reminder']	=	array('Projekt-Erinnerungen','alle Erinnerungen von diesem Projekt');
+$GLOBALS['TL_LANG']['tl_iao_projects']['agreements']	=	array('Projekt-Verträge','alle Verträge von diesem Projekt');
 $GLOBALS['TL_LANG']['tl_iao_projects']['new']	=	array('Neues Projekt','Ein neues Projekt anlegen');
 $GLOBALS['TL_LANG']['tl_iao_projects']['edit']	=	array('Projekt bearbeiten','Projekt ID %s bearbeiten');
 $GLOBALS['TL_LANG']['tl_iao_projects']['copy']	=	array('Projekt duplizieren','Projekt ID %s duplizieren');
