@@ -21,14 +21,14 @@ $this->loadLanguageFile('tl_iao_agreement');
 /**
  * Add palettes to tl_module
  */
-$GLOBALS['TL_DCA']['tl_module']['palettes']['fe_iao_invoice']    = '{title_legend},name,headline,type,fe_iao_numberOfItems,perPage,invoice_status;{template_legend},fe_iao_template;{protected_legend:hide},protected;{expert_legend:hide},cssID,space';
-$GLOBALS['TL_DCA']['tl_module']['palettes']['fe_iao_offer'] = '{title_legend},name,headline,type,fe_iao_numberOfItems,perPage,offer_status;{template_legend},fe_iao_template;{protected_legend:hide},protected;{expert_legend:hide},cssID,space';
-$GLOBALS['TL_DCA']['tl_module']['palettes']['fe_iao_credit']  = '{title_legend},name,headline,type,fe_iao_numberOfItems,perPage,credit_status;{template_legend},fe_iao_template;{protected_legend:hide},protected;{expert_legend:hide},cssID,space';
-$GLOBALS['TL_DCA']['tl_module']['palettes']['fe_iao_reminder']  = '{title_legend},name,headline,type,fe_iao_numberOfItems,perPage,reminder_status;{template_legend},fe_iao_template;{protected_legend:hide},protected;{expert_legend:hide},cssID,space';
-$GLOBALS['TL_DCA']['tl_module']['palettes']['fe_iao_agreement']  = '{title_legend},name,headline,type,fe_iao_numberOfItems,perPage,agreement_status;{template_legend},fe_iao_template;{protected_legend:hide},protected;{expert_legend:hide},cssID,space';
-$GLOBALS['TL_DCA']['tl_module']['palettes']['fe_iao_projects']  = '{title_legend},name,headline,type,fe_iao_numberOfItems,perPage;{template_legend},fe_iao_template;{protected_legend:hide},protected;{expert_legend:hide},cssID,space';
-$GLOBALS['TL_DCA']['tl_module']['palettes']['fe_iao_public_project_list']  = '{title_legend},name,headline,type,fe_iao_numberOfItems,perPage;{config_legend},jumpTo;{template_legend},fe_iao_template;{protected_legend:hide},protected;{expert_legend:hide},cssID,space';
-$GLOBALS['TL_DCA']['tl_module']['palettes']['fe_iao_public_project_details']  = '{title_legend},name,headline,type;{template_legend},fe_iao_template;{protected_legend:hide},protected;{expert_legend:hide},cssID,space';
+$GLOBALS['TL_DCA']['tl_module']['palettes']['fe_iao_invoice']    = '{title_legend},type,name,headline,fe_iao_numberOfItems,perPage,invoice_status;{template_legend},fe_iao_template;{protected_legend:hide},protected;{expert_legend:hide},cssID,space';
+$GLOBALS['TL_DCA']['tl_module']['palettes']['fe_iao_offer'] = '{title_legend},type,name,headline,fe_iao_numberOfItems,perPage,offer_status;{template_legend},fe_iao_template;{protected_legend:hide},protected;{expert_legend:hide},cssID,space';
+$GLOBALS['TL_DCA']['tl_module']['palettes']['fe_iao_credit']  = '{title_legend},type,name,headline,fe_iao_numberOfItems,perPage,credit_status;{template_legend},fe_iao_template;{protected_legend:hide},protected;{expert_legend:hide},cssID,space';
+$GLOBALS['TL_DCA']['tl_module']['palettes']['fe_iao_reminder']  = '{title_legend},type,name,headline,fe_iao_numberOfItems,perPage,reminder_status;{template_legend},fe_iao_template;{protected_legend:hide},protected;{expert_legend:hide},cssID,space';
+$GLOBALS['TL_DCA']['tl_module']['palettes']['fe_iao_agreement']  = '{title_legend},type,name,headline,fe_iao_numberOfItems,perPage,agreement_status;{template_legend},fe_iao_template;{protected_legend:hide},protected;{expert_legend:hide},cssID,space';
+$GLOBALS['TL_DCA']['tl_module']['palettes']['fe_iao_projects']  = '{title_legend},type,name,headline,fe_iao_numberOfItems,perPage;{template_legend},fe_iao_template;{protected_legend:hide},protected;{expert_legend:hide},cssID,space';
+$GLOBALS['TL_DCA']['tl_module']['palettes']['fe_iao_public_project_list']  = '{title_legend},name,type;headline,fe_iao_numberOfItems,perPage;{config_legend},jumpTo;{template_legend},fe_iao_template;{protected_legend:hide},protected;{expert_legend:hide},cssID,space';
+$GLOBALS['TL_DCA']['tl_module']['palettes']['fe_iao_public_project_details']  = '{title_legend},type,name,headline;{template_legend},fe_iao_template;{protected_legend:hide},protected;{expert_legend:hide},cssID,space';
 
 $GLOBALS['TL_DCA']['tl_module']['fields']['fe_iao_template'] = array
 (
@@ -36,7 +36,7 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['fe_iao_template'] = array
 	'default'                 => 'bbk_default',
 	'exclude'                 => true,
 	'inputType'               => 'select',
-	'options_callback'        => array('Iao\Dca\Module', 'getTemplates'),
+	'options_callback'        => array('Iao\Dca\Module', 'getIaoTemplates'),
 	'eval'                    => array('tl_class'=>'w50'),
 	'sql'					  => "varchar(32) NOT NULL default ''"
 );
@@ -60,7 +60,7 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['invoice_status'] = array
 	'flag'                  => 1,
 	'inputType'             => 'select',
 	'options'				=>  &$GLOBALS['TL_LANG']['tl_iao_invoice']['status_options'],
-    'eval'					=> array('doNotCopy'=>true,'includeBlankOption'=>true),
+    'eval'					=> array('doNotCopy'=>true,'includeBlankOption'=>true, 'tl_class'=>'w50'),
 	'sql'					=> "char(1) NOT NULL default ''"
 );
 $GLOBALS['TL_DCA']['tl_module']['fields']['offer_status'] = array
@@ -71,7 +71,7 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['offer_status'] = array
 	'flag'                  => 1,
 	'inputType'             => 'select',
 	'options'				=>  &$GLOBALS['TL_LANG']['tl_iao_offer']['status_options'],
-    'eval'					=> array('doNotCopy'=>true,'includeBlankOption'=>true),
+    'eval'					=> array('doNotCopy'=>true,'includeBlankOption'=>true, 'tl_class'=>'w50'),
 	'sql'					=> "char(1) NOT NULL default ''"
 );
 $GLOBALS['TL_DCA']['tl_module']['fields']['credit_status'] = array
@@ -82,7 +82,7 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['credit_status'] = array
 	'flag'                  => 1,
 	'inputType'             => 'select',
 	'options'				=>  &$GLOBALS['TL_LANG']['tl_iao_credit']['status_options'],
-    'eval'					=> array('doNotCopy'=>true,'includeBlankOption'=>true),
+    'eval'					=> array('doNotCopy'=>true,'includeBlankOption'=>true, 'tl_class'=>'w50'),
 	'sql'					=> "char(1) NOT NULL default ''"
 );
 $GLOBALS['TL_DCA']['tl_module']['fields']['reminder_status'] = array
@@ -93,7 +93,7 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['reminder_status'] = array
 	'flag'                  => 1,
 	'inputType'             => 'select',
 	'options'				=>  &$GLOBALS['TL_LANG']['tl_iao_reminder']['status_options'],
-    'eval'					=> array('doNotCopy'=>true,'includeBlankOption'=>true),
+    'eval'					=> array('doNotCopy'=>true,'includeBlankOption'=>true, 'tl_class'=>'w50'),
 	'sql'					=> "char(1) NOT NULL default ''"
 );
 $GLOBALS['TL_DCA']['tl_module']['fields']['agreement_status'] = array
@@ -104,7 +104,7 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['agreement_status'] = array
 	'flag'                  => 1,
 	'inputType'             => 'select',
 	'options'				=>  &$GLOBALS['TL_LANG']['tl_iao_agreement']['status_options'],
-    'eval'					=> array('doNotCopy'=>true,'includeBlankOption'=>true),
+    'eval'					=> array('doNotCopy'=>true,'includeBlankOption'=>true, 'tl_class'=>'w50'),
 	'sql'					=> "char(1) NOT NULL default ''"
 );
 
