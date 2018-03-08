@@ -45,17 +45,17 @@ $GLOBALS['TL_DCA']['tl_member']['fields']['iao_group'] = array
 );
 
 /**
- * Class Member
+ * Class IaoMember
  * @package Iao\Dca
  */
-class Member extends IaoBackend
+class IaoMember
 {
     /**
      * @param DataContainer $dc
      */
     public function setCustomerGroup(DataContainer $dc)
 	{
-        $this->settings = $this->getSettings();
+        $this->settings = IaoBackend::getInstance()->getSettings();
 
 		// Return if there is no active record (override all)
 		if (!$dc->activeRecord || $dc->id == 0)
