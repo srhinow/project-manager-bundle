@@ -158,13 +158,13 @@ if ($_GET['do'] == 'iao_setup')
  */
 $GLOBALS['FE_MOD']['iao_fe'] = array
 (
-	'fe_iao_offer' => 'ModuleMemberOffers',
-	'fe_iao_invoice' => 'ModuleMemberInvoices',
-	'fe_iao_credit' => 'ModuleMemberCredits',
-	'fe_iao_reminder' => 'ModuleMemberReminder',
-	'fe_iao_agreement' => 'ModuleMemberAgreements',
-	'fe_iao_public_project_list' => 'ModulePublicProjectList',
-	'fe_iao_public_project_details' => 'ModulePublicProjectDetails'
+	'fe_iao_offer' => 'Iao\Modules\Fe\ModuleMemberOffers',
+	'fe_iao_invoice' => 'Iao\Modules\Fe\ModuleMemberInvoices',
+	'fe_iao_credit' => 'Iao\Modules\Fe\ModuleMemberCredits',
+	'fe_iao_reminder' => 'Iao\Modules\Fe\ModuleMemberReminder',
+	'fe_iao_agreement' => 'Iao\Modules\Fe\ModuleMemberAgreements',
+	'fe_iao_public_project_list' => 'Iao\Modules\Fe\ModulePublicProjectList',
+	'fe_iao_public_project_details' => 'Iao\Modules\Fe\ModulePublicProjectDetails'
 );
 
 /**
