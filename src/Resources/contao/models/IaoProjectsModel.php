@@ -13,17 +13,17 @@ use Contao\Model;
  * @property integer $tstamp
  * @property string  $title
  *
- * @method static IaoOfferModel|null findById($id, $opt=array())
- * @method static IaoOfferModel|null findByIdOrAlias($val, $opt=array())
- * @method static IaoOfferModel|null findOneBy($col, $val, $opt=array())
- * @method static IaoOfferModel|null findOneByTstamp($val, $opt=array())
- * @method static IaoOfferModel|null findOneByTitle($val, $opt=array())
+ * @method static IaoProjectsModel|null findById($id, $opt=array())
+ * @method static IaoProjectsModel|null findByIdOrAlias($val, $opt=array())
+ * @method static IaoProjectsModel|null findOneBy($col, $val, $opt=array())
+ * @method static IaoProjectsModel|null findOneByTstamp($val, $opt=array())
+ * @method static IaoProjectsModel|null findOneByTitle($val, $opt=array())
 
  *
- * @method static \Model\Collection|IaoOfferModel[]|IaoOfferModel|null findByTstamp($val, $opt=array())
- * @method static \Model\Collection|IaoOfferModel[]|IaoOfferModel|null findByTitle($val, $opt=array())
- * @method static \Model\Collection|IaoOfferModel[]|IaoOfferModel|null findBy($col, $val, $opt=array())
- * @method static \Model\Collection|IaoOfferModel[]|IaoOfferModel|null findAll($opt=array())
+ * @method static \Model\Collection|IaoProjectsModel[]|IaoProjectsModel|null findByTstamp($val, $opt=array())
+ * @method static \Model\Collection|IaoProjectsModel[]|IaoProjectsModel|null findByTitle($val, $opt=array())
+ * @method static \Model\Collection|IaoProjectsModel[]|IaoProjectsModel|null findBy($col, $val, $opt=array())
+ * @method static \Model\Collection|IaoProjectsModel[]|IaoProjectsModel|null findAll($opt=array())
  *
  * @method static integer countById($id, $opt=array())
  *
@@ -45,7 +45,7 @@ class IaoProjectsModel extends Model
 	 * @param mixed $varId      The numeric ID or alias name
 	 * @param array $arrOptions An optional options array
 	 *
-	 * @return \Model|null The NewsModel or null if there are no news
+	 * @return \Model|null The IaoProjectsModel or null if there are no news
 	 */
 	public static function findProjectByIdOrAlias($varId, array $arrOptions=array())
 	{

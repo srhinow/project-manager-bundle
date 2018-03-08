@@ -108,15 +108,14 @@ class IaoAgreementsModel extends Model
 		return static::findBy($arrColumns, null, $arrOptions);
 	}
 
-	/**
-	 * Count published agreement by their member (Frontend-User) ID
-	 *
-	 * @param integer $pid    		An Project-ID from actual FrontendUser
-	 * @param string  $status		optional filter
-	 * @param array   $arrOptions  	An optional options array
-	 *
-	 * @return integer The number of Invoice items
-	 */
+    /**
+     * Count published agreement by their member (Frontend-User) ID
+     *
+     * @param $memberId
+     * @param string $status
+     * @param array $arrOptions
+     * @return int|null
+     */
 	public static function countPublishedByMember($memberId, $status='', array $arrOptions=array())
 	{
 		if (empty($memberId))
