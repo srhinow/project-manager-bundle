@@ -4,8 +4,9 @@
  */
 namespace Iao;
 
+use Contao\Controller;
 use Contao\Database as DB;
-use Contao\Backend;
+//use Contao\Backend;
 use Iao\PDF\IaoPDF;
 use Srhinow\IaoInvoiceModel;
 
@@ -22,8 +23,38 @@ use Srhinow\IaoInvoiceModel;
  * Class iao
  * Provide methods to handle project-manager-bundle-module.
  */
-class Iao extends Backend
+class Iao extends Controller
 {
+
+    /**
+     * Current object instance (do not remove)
+     * @var Iao
+     */
+    protected static $objInstance;
+
+    /**
+     * Initialize the object
+     */
+    protected function __construct()
+    {
+        parent::__construct();
+    }
+
+    /**
+     * Instantiate a new user object (Factory)
+     *
+     * @return static The object instance
+     */
+    public static function getInstance()
+    {
+        if (static::$objInstance === null)
+        {
+            static::$objInstance = new static();
+        }
+
+        return static::$objInstance;
+    }
+
     /**
      * get current settings
      * @param integer
@@ -333,13 +364,13 @@ class Iao extends Backend
         $l['w_page'] = 'page';
 
         // Create new PDF document with FPDI extension
-        require_once(dirname(__FILE__).'/iaoPDF.php');
+        require_once(dirname(__FILE__).'/PDF/IaoPDF.php');
 
         $objPdfTemplate = 	\FilesModel::findByUuid($templateFile);
         if(strlen($objPdfTemplate->path) < 1 || !file_exists(TL_ROOT . '/' . $objPdfTemplate->path) ) return;  // template file not found
 
 
-        $pdf = new iaoPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true);
+        $pdf = new IaoPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true);
         $pdf->setSourceFile( TL_ROOT . '/' .$objPdfTemplate->path);          // Set PDF template
 
         // Set document information
