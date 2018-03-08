@@ -9,6 +9,7 @@ namespace Iao\Dca;
  * @filesource
  */
 
+use Contao\FilesModel;
 use Iao\Backend\IaoBackend;
 use Contao\Database as DB;
 use Contao\DataContainer;
@@ -842,7 +843,7 @@ class Agreements extends IaoBackend
 		if (!User::getInstance()->isAdmin || strlen($row['agreement_pdf_file']) < 1 ) return '';
 
 		// Wenn keine PDF-Vorlage dann kein PDF-Link
-	    $objPdf = 	\FilesModel::findByUuid($row['agreement_pdf_file']);
+	    $objPdf = 	FilesModel::findByUuid($row['agreement_pdf_file']);
 		if(strlen($objPdf->path) < 1 || !file_exists(TL_ROOT . '/' . $objPdf->path) ) return false;  // template file not found
 
 		$pdfFile = TL_ROOT . '/' . $objPdf->path;
@@ -863,8 +864,11 @@ class Agreements extends IaoBackend
 				exit();
 		    }
 		}
-
-		$button = (!empty($row['agreement_pdf_file']) && file_exists($pdfFile)) ? '<a href="'.$this->addToUrl($href.'&amp;id='.$row['id']).'" title="'.specialchars($title).'">'.Image::getHtml($icon, $label).'</a> ' : '';
+		$href = $this->addToUrl($href.'&amp;id='.$row['id']);
+        $href = str_replace('&amp;onlyproj=1','',$href);
+        $href = str_replace('do=iao_projects&amp;','do=iao_agreements&amp;',$href);
+        $href = str_replace('table=tl_iao_agreements&amp;','',$href);
+		$button = (!empty($row['agreement_pdf_file']) && file_exists($pdfFile)) ? '<a href="'.$href.'" title="'.specialchars($title).'">'.Image::getHtml($icon, $label).'</a> ' : '';
 		return $button;
 	}
 
