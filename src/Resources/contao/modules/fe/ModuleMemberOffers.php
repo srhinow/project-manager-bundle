@@ -15,6 +15,7 @@ use Contao\Pagination;
 use Contao\FrontendUser as User;
 use Iao\Iao;
 use Srhinow\IaoOfferModel;
+use Srhinow\IaoProjectsModel;
 
 /**
  * Class ModuleMemberOffers
@@ -75,25 +76,23 @@ class ModuleMemberOffers extends Module
 	 */
 	protected function compile()
 	{
-        $iao = Iao::class;
-		// Get the front end user object
+        $iao = Iao::getInstance();
+        $User = User::getInstance();
 		$this->loadLanguageFile('tl_iao_offer');
 
-		//set settings
-//        $iao->setIAOSettings();
+        $arrItems = $arrProjects = $arrProjIds = [];
+        $arrStatus = [1 => 'danger', 2 =>'success', 3 => 'warning'];
 
 		$offset = 0;
 		$limit = null;
 
 		if(FE_USER_LOGGED_IN)
 		{
-			$userId = User::getInstance()->id;
-
 			//wenn eine PDF angefragt wird
 			if(\Input::get('key') == 'pdf' && (int) \Input::get('id') > 0)
 			{
 				// ueberpruefen ob diese zum aktuellen Benutzer gehoert
-				$testObj = IaoOfferModel::findOnePublishedByMember(\Input::get('id'), $userId);
+				$testObj = IaoOfferModel::findOnePublishedByMember(\Input::get('id'), $User->id);
 
 				if($testObj !== NULL)
 				{
@@ -109,7 +108,7 @@ class ModuleMemberOffers extends Module
 			}
 
 			// Get the total number of items
-			$total = IaoOfferModel::countPublishedByMember($this->User->id);
+			$total = IaoOfferModel::countPublishedByMember($User->id);
 
 			if($total > 0)
 			{
@@ -152,33 +151,41 @@ class ModuleMemberOffers extends Module
 					$this->Template->pagination = $objPagination->generate("\n  ");
 				}
 
-				$itemObj = IaoOfferModel::findPublishedByMember($this->User->id, $this->status, $limit, $offset);
+				$itemObj = IaoOfferModel::findPublishedByMember($User->id, $this->status, $limit, $offset);
 
-			    $itemsArray = array();
 			    if($itemObj !== null) while($itemObj->next())
 		    	{
+                    //Project-Ids sammeln
+		    	    if(!in_array($itemObj->pid,$arrProjIds)) $arrProjIds[] = $itemObj->pid;
 
-		    		if($itemObj->status == 1) $status_class = 'danger';
-		    		elseif($itemObj->status == 2) $status_class = 'success';
-		    		elseif($itemObj->status == 3) $status_class = 'warning';
-		    		else $status_class = '';
-
-		    		$itemsArray[] = array
+                    //Angebot-Eigenchaften zusammenstellen
+                    $status_class = ($itemObj->status > 0) ? $arrStatus[$itemObj->status]: '';
+                    $arrItems[$itemObj->pid][] = array
 		    		(
 		    			'title' => $itemObj->title,
 		    			'invoice_id_str' => $itemObj->offer_id_str,
 		    			'status' => $itemObj->status,
 		    			'status_class' => $status_class,
 		    			'date' => date($GLOBALS['TL_CONFIG']['dateFormat'],$itemObj->offer_tstamp),
-		    			'price' => $this->iao->getPriceStr($itemObj->price_brutto,'iao_currency_symbol'),
+		    			'price' =>  $iao->getPriceStr($itemObj->price_brutto,'iao_currency_symbol'),
 		    			'expiry' => date($GLOBALS['TL_CONFIG']['dateFormat'],$itemObj->expiry_date),
 		    			'file_path' => \Environment::get('request').'?key=pdf&id='.$itemObj->id
 	    			);
 		    	}
+
+		    	if(count($arrProjIds) > 0) foreach($arrProjIds as $pid) {
+
+			        $objProject = IaoProjectsModel::findByIdOrAlias($pid);
+                    if($objProject !== null) $arrProjects[$pid] = [
+                        'title' =>$objProject->title,
+                        'url' => $objProject->url
+                    ];
+                }
 	    	}
 
 			$this->Template->headline = $this->headline;
-			$this->Template->items = $itemsArray;
+			$this->Template->items = $arrItems;
+			$this->Template->projects = $arrProjects;
 			$this->Template->messages = ($total > 0)? '' : $GLOBALS['TL_LANG']['tl_iao_offer']['no_entries_msg'];
 		}
 

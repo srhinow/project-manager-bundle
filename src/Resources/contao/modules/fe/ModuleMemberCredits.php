@@ -12,7 +12,10 @@ namespace Iao\Modules\Fe;
 use Contao\BackendTemplate;
 use Contao\Module;
 use Contao\Pagination;
+use Contao\FrontendUser as User;
+use Iao\Iao;
 use Srhinow\IaoCreditModel;
+use Srhinow\IaoProjectsModel;
 
 /**
  * Class ModuleMemberCredits
@@ -73,31 +76,27 @@ class ModuleMemberCredits extends Module
 	 */
 	protected function compile()
 	{
-
-		// Get the front end user object
-		$this->import('FrontendUser', 'User');
-		$this->import('iao');
+        $iao = Iao::getInstance();
+        $User = User::getInstance();
 		$this->loadLanguageFile('tl_iao_credit');
 
-		//set settings
-		$this->iao->setIAOSettings();
+        $arrItems = $arrProjects = $arrProjIds = [];
+        $arrStatus = [1 => 'danger', 2 =>'success', 3 => 'warning'];
 
 		$offset = 0;
 		$limit = null;
 
 		if(FE_USER_LOGGED_IN)
 		{
-			$userId = $this->User->id;
-
 			//wenn eine PDF angefragt wird
 			if(\Input::get('key') == 'pdf' && (int) \Input::get('id') > 0)
 			{
 				// ueberpruefen ob diese zum aktuellen Benutzer gehoert
-				$testObj = IaoCreditModel::findOnePublishedByMember(\Input::get('id'), $userId);
+				$testObj = IaoCreditModel::findOnePublishedByMember(\Input::get('id'), $User->id);
 
 				if($testObj !== NULL)
 				{
-					$this->iao->generatePDF((int) \Input::get('id'), 'credit');
+					$iao->generatePDF((int) \Input::get('id'), 'credit');
 				}
 
 			}
@@ -109,7 +108,7 @@ class ModuleMemberCredits extends Module
 			}
 
 			// Get the total number of items
-			$total = IaoCreditModel::countPublishedByMember($this->User->id);
+			$total = IaoCreditModel::countPublishedByMember($User->id);
 
 			if($total > 1)
 			{
@@ -152,17 +151,17 @@ class ModuleMemberCredits extends Module
 					$this->Template->pagination = $objPagination->generate("\n  ");
 				}
 
-				$itemObj = IaoCreditModel::findPublishedByMember($this->User->id, $this->status, $limit, $offset);
+				$itemObj = IaoCreditModel::findPublishedByMember($User->id, $this->status, $limit, $offset);
 
 			    $itemsArray = array();
 			    if($itemObj !== null) while($itemObj->next())
 		    	{
-		    		if($itemObj->status == 1) $status_class = 'danger';
-		    		elseif($itemObj->status == 2) $status_class = 'success';
-		    		elseif($itemObj->status == 3) $status_class = 'warning';
-		    		else $status_class = '';
+                    //Project-Ids sammeln
+                    if(!in_array($itemObj->pid,$arrProjIds)) $arrProjIds[] = $itemObj->pid;
 
-		    		$itemsArray[] = array
+                    //Angebot-Eigenchaften zusammenstellen
+                    $status_class = ($itemObj->status > 0) ? $arrStatus[$itemObj->status]: '';
+                    $arrItems[$itemObj->pid][] = array
 		    		(
 		    			'title' => $itemObj->title,
 		    			'invoice_id_str' => $itemObj->invoice_id_str,
@@ -174,10 +173,20 @@ class ModuleMemberCredits extends Module
 		    			'file_path' => \Environment::get('request').'?key=pdf&id='.$itemObj->id
 	    			);
 		    	}
+
+                if(count($arrProjIds) > 0) foreach($arrProjIds as $pid) {
+
+                    $objProject = IaoProjectsModel::findByIdOrAlias($pid);
+                    if($objProject !== null) $arrProjects[$pid] = [
+                        'title' =>$objProject->title,
+                        'url' => $objProject->url
+                    ];
+                }
 	    	}
 
 			$this->Template->headline = $this->headline;
-			$this->Template->items = $itemsArray;
+			$this->Template->items = $arrItems;
+            $this->Template->projects = $arrProjects;
 			$this->Template->messages = ($total > 0)? '' : $GLOBALS['TL_LANG']['tl_iao_credit']['no_entries_msg'];
 		}
 

@@ -12,7 +12,10 @@ namespace Iao\Modules\Fe;
 use Contao\BackendTemplate;
 use Contao\Module;
 use Contao\Pagination;
+use Contao\FrontendUser as User;
+use Iao\Iao;
 use Srhinow\IaoInvoiceModel;
+use Srhinow\IaoProjectsModel;
 
 /**
  * Class ModuleMemberInvoices
@@ -73,13 +76,12 @@ class ModuleMemberInvoices extends Module
 	 */
 	protected function compile()
 	{
-		// Get the front end user object
-		$this->import('FrontendUser', 'User');
-		$this->import('iao');
+        $iao = Iao::getInstance();
+        $User = User::getInstance();
 		$this->loadLanguageFile('tl_iao_invoice');
 
-		//set settings
-		$this->iao->setIAOSettings();
+        $arrItems = $arrProjects = $arrProjIds = [];
+        $arrStatus = [1 => 'danger', 2 =>'success', 3 => 'warning'];
 
 		$offset = 0;
 		$limit = null;
@@ -87,17 +89,17 @@ class ModuleMemberInvoices extends Module
 
 		if(FE_USER_LOGGED_IN)
 		{
-			$userId = $this->User->id;
+
 
 			//wenn eine PDF angefragt wird
 			if(\Input::get('key') == 'pdf' && (int) \Input::get('id') > 0)
 			{
 				// ueberpruefen ob diese zum aktuellen Benutzer gehoert
-				$testObj = IaoInvoiceModel::findOnePublishedByMember(\Input::get('id'), $userId);
+				$testObj = IaoInvoiceModel::findOnePublishedByMember(\Input::get('id'), $User->id);
 
 				if($testObj !== NULL)
 				{
-					$this->iao->generatePDF((int) \Input::get('id'), 'invoice');
+					$iao->generatePDF((int) \Input::get('id'), 'invoice');
 				}
 
 			}
@@ -109,7 +111,7 @@ class ModuleMemberInvoices extends Module
 			}
 
 			// Get the total number of items
-			$total = IaoInvoiceModel::countPublishedByMember($this->User->id);
+			$total = IaoInvoiceModel::countPublishedByMember($User->id);
 
 			if($total > 0)
 			{
@@ -152,32 +154,41 @@ class ModuleMemberInvoices extends Module
 					$this->Template->pagination = $objPagination->generate("\n  ");
 				}
 
-				$itemObj = IaoInvoiceModel::findPublishedByMember($this->User->id, $this->status, $limit, $offset);
+				$itemObj = IaoInvoiceModel::findPublishedByMember($User->id, $this->status, $limit, $offset);
 
 			    if($itemObj !== null) while($itemObj->next())
 		    	{
+                    //Project-Ids sammeln
+                    if(!in_array($itemObj->pid,$arrProjIds)) $arrProjIds[] = $itemObj->pid;
 
-		    		if($itemObj->status == 1) $status_class = 'danger';
-		    		elseif($itemObj->status == 2) $status_class = 'success';
-		    		elseif($itemObj->status == 3) $status_class = 'warning';
-		    		else $status_class = '';
-
-		    		$itemsArray[] = array
-		    		(
+                    //Angebot-Eigenchaften zusammenstellen
+                    $status_class = ($itemObj->status > 0) ? $arrStatus[$itemObj->status]: '';
+                    $arrItems[$itemObj->pid][] = array
+                    (
 		    			'title' => $itemObj->title,
 		    			'invoice_id_str' => $itemObj->invoice_id_str,
 		    			'status' => $itemObj->status,
 		    			'status_class' => $status_class,
 		    			'date' => date($GLOBALS['TL_CONFIG']['dateFormat'],$itemObj->invoice_tstamp),
-		    			'price' => $this->iao->getPriceStr($itemObj->price_brutto,'iao_currency_symbol'),
-		    			'remaining' => $this->iao->getPriceStr($itemObj->remaining,'iao_currency_symbol'),
+		    			'price' => $iao->getPriceStr($itemObj->price_brutto,'iao_currency_symbol'),
+		    			'remaining' => $iao->getPriceStr($itemObj->remaining,'iao_currency_symbol'),
 		    			'file_path' => \Environment::get('request').'?key=pdf&id='.$itemObj->id
 	    			);
 		    	}
+
+                if(count($arrProjIds) > 0) foreach($arrProjIds as $pid) {
+
+                    $objProject = IaoProjectsModel::findByIdOrAlias($pid);
+                    if($objProject !== null) $arrProjects[$pid] = [
+                        'title' =>$objProject->title,
+                        'url' => $objProject->url
+                    ];
+                }
 			}
 
 			$this->Template->headline = $this->headline;
-			$this->Template->items = $itemsArray;
+			$this->Template->items = $arrItems;
+            $this->Template->projects = $arrProjects;
 			$this->Template->messages = ($total > 0)? '' : $GLOBALS['TL_LANG']['tl_iao_invoice']['no_entries_msg']; // Backwards compatibility
 		}
 

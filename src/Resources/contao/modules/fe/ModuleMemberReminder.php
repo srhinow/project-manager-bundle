@@ -12,6 +12,8 @@ namespace Iao\Modules\Fe;
 use Contao\BackendTemplate;
 use Contao\Module;
 use Contao\Pagination;
+use Contao\FrontendUser as User;
+use Iao\Iao;
 use Srhinow\IaoInvoiceModel;
 use Srhinow\IaoReminderModel;
 
@@ -74,32 +76,29 @@ class ModuleMemberReminder extends Module
 	 */
 	protected function compile()
 	{
-
-		// Get the front end user object
-		$this->import('FrontendUser', 'User');
-		$this->import('iao');
+        $iao = Iao::getInstance();
+        $User = User::getInstance();
 		$this->loadLanguageFile('tl_iao_reminder');
 
-		//set settings
-		$this->iao->setIAOSettings();
+        $arrItems = $arrProjects = $arrProjIds = [];
+        $arrStatus = [1 => 'danger', 2 =>'success', 3 => 'warning'];
 
 		$offset = 0;
 		$limit = null;
 
 		if(FE_USER_LOGGED_IN)
 		{
-			$userId = $this->User->id;
 
 			//wenn eine PDF angefragt wird
 			if(\Input::get('key') == 'pdf' && (int) \Input::get('id') > 0)
 			{
 				if((\Input::get('type')) == 'invoice')
 				{
-					$this->iao->generatePDF((int) \Input::get('id'), 'invoice');
+					$iao->generatePDF((int) \Input::get('id'), 'invoice');
 
 				} else {
 					// ueberpruefen ob diese zum aktuellen Benutzer gehoert
-					$testObj = IaoReminderModel::findOnePublishedByMember(\Input::get('id'), $userId);
+					$testObj = IaoReminderModel::findOnePublishedByMember(\Input::get('id'), $User->id);
 
 					if($testObj !== NULL)
 					{
@@ -115,7 +114,7 @@ class ModuleMemberReminder extends Module
 			}
 
 			// Get the total number of items
-			$total = IaoReminderModel::countPublishedByMember($this->User->id, $this->reminder_status);
+			$total = IaoReminderModel::countPublishedByMember($User->id, $this->reminder_status);
 
 			if($total > 0)
 			{
@@ -158,19 +157,17 @@ class ModuleMemberReminder extends Module
 					$this->Template->pagination = $objPagination->generate("\n  ");
 				}
 
-				$itemObj = IaoReminderModel::findPublishedByMember($this->User->id, $this->reminder_status, $limit, $offset);
+				$itemObj = IaoReminderModel::findPublishedByMember($User->id, $this->reminder_status, $limit, $offset);
 
 			    $itemsArray = array();
 			    if($itemObj !== null) while($itemObj->next())
 		    	{
 		    		$invoiceObj = IaoInvoiceModel::findByIdOrAlias($itemObj->invoice_id);
 
-		    		if($itemObj->status == 1) $status_class = 'danger';
-		    		elseif($itemObj->status == 2) $status_class = 'success';
-		    		elseif($itemObj->status == 3) $status_class = 'warning';
-		    		else $status_class = '';
+                    //Angebot-Eigenchaften zusammenstellen
+                    $status_class = ($itemObj->status > 0) ? $arrStatus[$itemObj->status]: '';
 
-		    		$itemsArray[] = array
+                    $arrItems[] = array
 		    		(
 		    			'title' => $itemObj->title,
 		    			'invoice_id_str' => $invoiceObj->invoice_id_str,
@@ -178,7 +175,7 @@ class ModuleMemberReminder extends Module
 		    			'status_class' => $status_class,
 		    			'step' => $itemObj->step,
 		    			'expiry_date' => date($GLOBALS['TL_CONFIG']['dateFormat'],$invoiceObj->expiry_date),
-		    			'sum' => $this->iao->getPriceStr($itemObj->sum,'iao_currency_symbol'),
+		    			'sum' => $iao->getPriceStr($itemObj->sum,'iao_currency_symbol'),
 		    			'periode_date' => date($GLOBALS['TL_CONFIG']['dateFormat'],$itemObj->periode_date),
 		    			'invoice_pdf_path' => \Environment::get('request').'?type=invoice&key=pdf&id='.$itemObj->invoice_id,
 		    			'reminder_pdf_path' => \Environment::get('request').'?key=pdf&id='.$itemObj->id
@@ -187,7 +184,7 @@ class ModuleMemberReminder extends Module
 	    	}
 
 			$this->Template->headline = $this->headline;
-			$this->Template->items = $itemsArray;
+			$this->Template->items = $arrItems;
 			$this->Template->messages = ($total > 0)? '' : $GLOBALS['TL_LANG']['tl_iao_reminder']['no_entries_msg'];
 		}
 

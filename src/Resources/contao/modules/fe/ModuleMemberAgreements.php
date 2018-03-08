@@ -10,9 +10,13 @@ namespace Iao\Modules\Fe;
  */
 
 use Contao\BackendTemplate;
+use Contao\FilesModel;
 use Contao\Module;
 use Contao\Pagination;
+use Contao\BackendUser as User;
+use Iao\Iao;
 use Srhinow\IaoAgreementsModel;
+use Srhinow\IaoProjectsModel;
 
 /**
  * Class ModuleMemberAgreements
@@ -59,7 +63,7 @@ class ModuleMemberAgreements extends Module
 		if(strlen(\Input::get('file')) > 0 )
 		{
 
-			$objPdf = 	\FilesModel::findByPath(\Input::get('file'));
+			$objPdf = FilesModel::findByPath(\Input::get('file'));
 			// print_r($objPdf);
 			// exit();
 			if($objPdf !== null && file_exists(TL_ROOT . '/' . \Input::get('file')))
@@ -94,31 +98,28 @@ class ModuleMemberAgreements extends Module
 	 */
 	protected function compile()
 	{
+        $iao = Iao::getInstance();
+        $User = User::getInstance();
+		$this->loadLanguageFile('tl_iao_agreements');
 
-		// Get the front end user object
-		$this->import('FrontendUser', 'User');
-		$this->import('iao');
-		$this->loadLanguageFile('tl_iao_agreement');
-
-		//set settings
-		$this->iao->setIAOSettings();
+        $arrItems = $arrProjects = $arrProjIds = [];
+        $arrStatus = [1 => 'danger', 2 =>'success', 3 => 'warning'];
 
 		$offset = 0;
 		$limit = null;
 
+
 		if(FE_USER_LOGGED_IN)
 		{
-			$userId = $this->User->id;
-
 			//wenn eine PDF angefragt wird
 			if(\Input::get('key') == 'pdf' && (int) \Input::get('id') > 0)
 			{
 				// ueberpruefen ob diese zum aktuellen Benutzer gehoert
-				$testObj = IaoAgreementsModel::findOnePublishedByMember(\Input::get('id'), $userId);
+				$testObj = IaoAgreementsModel::findOnePublishedByMember(\Input::get('id'), $User->id);
 
 				if($testObj !== NULL)
 				{
-					$this->iao->generateReminderPDF((int) \Input::get('id'), 'agreement');
+					$iao->generateReminderPDF((int) \Input::get('id'), 'agreement');
 				}
 			}
 
@@ -129,7 +130,7 @@ class ModuleMemberAgreements extends Module
 			}
 
 			// Get the total number of items
-			$total = \Srhinow\IaoAgreementsModel::countPublishedByMember($this->User->id, $this->agreement_status);
+			$total = IaoAgreementsModel::countPublishedByMember($User->id, $this->agreement_status);
 
 			if($total > 0)
 			{
@@ -172,19 +173,20 @@ class ModuleMemberAgreements extends Module
 					$this->Template->pagination = $objPagination->generate("\n  ");
 				}
 
-				$itemObj = IaoAgreementsModel::findPublishedByMember($this->User->id, $this->agreement_status, $limit, $offset);
+				$itemObj = IaoAgreementsModel::findPublishedByMember($User->id, $this->agreement_status, $limit, $offset);
 
 			    $itemsArray = array();
 			    if($itemObj !== null) while($itemObj->next())
 		    	{
-//		    		 $invoiceObj = Srhinow\IaoInvoiceModel::findByIdOrAlias($itemObj->invoice_id);
+                    //Project-Ids sammeln
+                    if(!in_array($itemObj->pid,$arrProjIds)) $arrProjIds[] = $itemObj->pid;
 
-		    		 if($itemObj->status == 1) $status_class = 'danger';
-		    		 elseif($itemObj->status == 2) $status_class = 'success';
-		    		 elseif($itemObj->status == 3) $status_class = 'warning';
-		    		 else $status_class = '';
-		    		$agrFile = \FilesModel::findByPk($itemObj->agreement_pdf_file);
-		    		$itemsArray[] = array
+                    //Angebot-Eigenchaften zusammenstellen
+                    $status_class = ($itemObj->status > 0) ? $arrStatus[$itemObj->status]: '';
+
+		    		$agrFile = FilesModel::findByPk($itemObj->agreement_pdf_file);
+
+                    $arrItems[$itemObj->pid][] = array
 		    		(
 		    			'title' => $itemObj->title,
 		    			'status' => $itemObj->status,
@@ -196,11 +198,21 @@ class ModuleMemberAgreements extends Module
 		    			'agreement_pdf_path' => \Environment::get('request').'?file='.$agrFile->path
 	    			);
 		    	}
+
+		    	if(count($arrProjIds) > 0) foreach($arrProjIds as $pid) {
+
+                    $objProject = IaoProjectsModel::findByIdOrAlias($pid);
+                    if($objProject !== null) $arrProjects[$pid] = [
+                        'title' =>$objProject->title,
+                        'url' => $objProject->url
+                    ];
+                }
 	    	}
 
 			$this->Template->headline = $this->headline;
-			$this->Template->items = $itemsArray;
-			$this->Template->messages = ($total > 0)? '' : $GLOBALS['TL_LANG']['tl_iao_agreement']['no_entries_msg'];
+			$this->Template->items = $arrItems;
+            $this->Template->projects = $arrProjects;
+			$this->Template->messages = ($total > 0)? '' : $GLOBALS['TL_LANG']['tl_iao_agreements']['no_entries_msg'];
 		}
 
 	}
