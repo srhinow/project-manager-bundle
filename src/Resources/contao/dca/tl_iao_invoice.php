@@ -1,6 +1,7 @@
 <?php
 namespace Iao\Dca;
 
+use Contao\StringUtil;
 use Iao\Backend\IaoBackend;
 use Srhinow\IaoTemplatesModel as TemplModel;
 use Srhinow\IaoInvoiceModel as InvoiceModel;
@@ -110,7 +111,7 @@ $GLOBALS['TL_DCA']['tl_iao_invoice'] = array
 				'label'               => &$GLOBALS['TL_LANG']['tl_iao_invoice']['editheader'],
 				'href'                => 'act=edit',
 				'icon'                => 'header.gif',
-				'button_callback'     => array('Iao\Dca\Invoice', 'editHeader'),
+//				'button_callback'     => array('Iao\Dca\Invoice', 'editHeader'),
 				// 'attributes'          => 'class="edit-header"'
 			),
 			'copy' => array
@@ -916,18 +917,19 @@ class Invoice extends IaoBackend
 
 	/**
 	 * Return the edit header button
-	 * @param array
-	 * @param string
-	 * @param string
-	 * @param string
-	 * @param string
-	 * @param string
-	 * @return string
+     * @param array  $row
+     * @param string $href
+     * @param string $label
+     * @param string $title
+     * @param string $icon
+     * @param string $attributes
 	 */
 	public function editHeader($row, $href, $label, $title, $icon, $attributes)
 	{
 		$User = User::getInstance();
-	    return ($User->isAdmin || count(preg_grep('/^tl_iao_invoice::/', $User->alexf)) > 0) ? '<a href="'.$this->addToUrl($href.'&amp;id='.$row['id']).'" title="'.specialchars($title).'"'.$attributes.'>'.\Image::getHtml($icon, $label).'</a> ' : '';
+        return $User->hasAccess('css', 'themes') ? '<a href="'.$this->addToUrl($href.'&amp;id='.$row['id']).'" title="'.StringUtil::specialchars($title).'"'.$attributes.'>'.Image::getHtml($icon, $label).'</a> ' : Image::getHtml(preg_replace('/\.svg$/i', '_.svg', $icon)).' ';
+
+//	    return ($User->isAdmin || count(preg_grep('/^tl_iao_invoice::/', $User->alexf)) > 0) ? '<a href="'.$this->addToUrl($href.'&amp;id='.$row['id']).'" title="'.StringUtil::specialchars($title).'"'.$attributes.'>'.\Image::getHtml($icon, $label).'</a> ' : '';
 	}
 
     /**

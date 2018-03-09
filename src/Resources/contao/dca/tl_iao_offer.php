@@ -106,7 +106,7 @@ $GLOBALS['TL_DCA']['tl_iao_offer'] = array
 				'label'               => &$GLOBALS['TL_LANG']['tl_iao_offer']['editheader'],
 				'href'                => 'act=edit',
 				'icon'                => 'header.gif',
-				'button_callback'     => array('Iao\Dca\Offer', 'editHeader'),
+//				'button_callback'     => array('Iao\Dca\Offer', 'editHeader'),
 				// 'attributes'          => 'class="edit-header"'
 			),
 			'copy' => array

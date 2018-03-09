@@ -95,7 +95,7 @@ $GLOBALS['TL_DCA']['tl_iao_agreements'] = array
 			(
 				'label'               => &$GLOBALS['TL_LANG']['tl_iao_agreements']['invoice'],
 				'href'                => 'key=addInvoice',
-				'icon'                => 'system/modules/invoice_and_offer/html/icons/kontact_todo.png',
+				'icon'                => 'bundles/srhinowprojectmanager/icons/kontact_todo.png',
 				'button_callback'     => array('Iao\Dca\Agreements', 'addInvoice')
 			),
 			'pdf' => array
@@ -563,7 +563,7 @@ class Agreements extends IaoBackend
 	 */
     public function addInvoice($row, $href, $label, $title, $icon)
     {
-        if (User::getInstance()->isAdmin) return '';
+        if (!User::getInstance()->isAdmin) return '';
 
 		if (\Input::get('key') == 'addInvoice' && \Input::get('id') == $row['id'])
 		{
@@ -646,7 +646,7 @@ class Agreements extends IaoBackend
                     throw new \Exception('Es konnte kein Rechnungs-Element angelegt werden.');
                 }
 
-                $redirectUrl = $this->addToUrl('do=iao_invoice&mode=2&table=tl_iao_invoice&s2e=1&id='.$newInvoiceID.'&act=edit');
+                $redirectUrl = $this->addToUrl('do=iao_invoice&mode=2&table=tl_iao_invoice&s2e=1&id='.$newInvoiceID.'&act=edit&rt='.REQUEST_TOKEN);
                 $redirectUrl = str_replace('key=addInvoice&amp;','', $redirectUrl);
 				$this->redirect($redirectUrl);
 			}
@@ -655,7 +655,7 @@ class Agreements extends IaoBackend
 
 		//Button erzeugen
 		$link = (\Input::get('onlyproj') == 1) ? 'do=iao_agreements&amp;id='.$row['id'].'&amp;projId='.\Input::get('id') : 'do=iao_agreements&amp;id='.$row['id'].'';
-		$link = $this->addToUrl($href.'&amp;'.$link);
+		$link = $this->addToUrl($href.'&amp;'.$link.'&rt='.REQUEST_TOKEN);
 		$link = str_replace('table=tl_iao_agreements&amp;','',$link);
 		return '<a href="'.$link.'" title="'.specialchars($title).'">'.\Image::getHtml($icon, $label).'</a> ';
 	}

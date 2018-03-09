@@ -92,7 +92,7 @@ $GLOBALS['TL_DCA']['tl_iao_credit'] = array
 				'label'               => &$GLOBALS['TL_LANG']['tl_iao_credit']['editheader'],
 				'href'                => 'act=edit',
 				'icon'                => 'header.gif',
-				'button_callback'     => array('Iao\Dca\Credit', 'editHeader'),
+//				'button_callback'     => array('Iao\Dca\Credit', 'editHeader'),
 				// 'attributes'          => 'class="edit-header"'
 			),
 			'copy' => array
