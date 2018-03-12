@@ -11,7 +11,7 @@
  * project-manager-bundle Version
  */
 @define('IAO_VERSION', '1.0');
-@define('IAO_BUILD', '8');
+@define('IAO_BUILD', '9');
 @define('IAO_PATH','vendor/srhinow/project-manager-bundle');
 @define('PMB_PUBLIC_FOLDER','bundles/srhinowprojectmanager');
 @define('IAO_PDFCLASS_FILE', IAO_PATH.'/classes/iaoPDF.php');
@@ -34,7 +34,9 @@ $GLOBALS['BE_MOD']['iao'] = array
 		'tables' => array('tl_iao_projects','tl_iao_agreements','tl_iao_invoice','tl_iao_invoice_items','tl_iao_offer','tl_iao_offer_items','tl_iao_credit','tl_iao_credit_items','tl_iao_reminder'),
 		'icon'   => 'bundles/srhinowprojectmanager/icons/blackboard_steps.png',
         'importInvoices'=> array('Iao\Backend\Invoice\ImportExport', 'importInvoices'),
-        'exportInvoices'=> array('Iao\Backend\Invoice\ImportExport', 'exportInvoices')
+        'exportInvoices'=> array('Iao\Backend\Invoice\ImportExport', 'exportInvoices'),
+        'importOffer'=> array('Iao\Backend\Offer\ImportExport', 'importOffer'),
+        'exportOffer'=> array('Iao\Backend\Offer\ImportExport', 'exportOffer')
 	),
 	'iao_offer' => array
 	(
