@@ -82,9 +82,11 @@ $GLOBALS['TL_LANG']['tl_iao_offer']['notice_legend'] = 'Notiz anlegen';
 /**
  * Import / Export-Libs
  */
-$GLOBALS['TL_LANG']['tl_iao_offer']['importlib'] = array('Import-Bibliothek auswählen','wählen Sie die Bibliothek die beim Import die Daten korrekt importiert.');
+$GLOBALS['TL_LANG']['tl_iao_offer']['export_separator'] = array('Feldtrenner','');
+$GLOBALS['TL_LANG']['tl_iao_offer']['export_filename'] = array('Name der Rechnungen (CSV-Datei)','Bei Bedarf ändern sie den Namen der Export-Datei ohne Endung.');
+$GLOBALS['TL_LANG']['tl_iao_offer']['export_item_filename'] = array('Name der Rechnungs-Posten (CSV-Datei)','Bei Bedarf ändern sie den Namen der Export-Datei ohne Endung.');
+
 $GLOBALS['TL_LANG']['tl_iao_offer']['importlib_invoiceandoffer'] = 'Invoice and Offer';
-$GLOBALS['TL_LANG']['tl_iao_offer']['importlib_phprechnung'] = 'PHPRechnung';
 
 /**
  * Notify
