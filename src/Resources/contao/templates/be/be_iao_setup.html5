@@ -1,0 +1,23 @@
+<div class="pmb_config_wrapper">
+    <h1 id="tl_welcome"><?php echo $this->welcome; ?></h1>
+
+    <div id="pmb_overview">
+    <?php foreach ($this->modules as $strGroup=>$arrModules): ?>
+
+        <h2><?php echo $strGroup; ?></h2>
+        <?php foreach ($arrModules as $strModule=>$arrModule): ?>
+
+        <div class="pmb_module_desc">
+            <h3>
+                <i class="icon" <?php if ($arrModule['icon']): ?> style="background-image:url('<?php echo $arrModule['icon']; ?>')"<?php endif; ?>></i>
+                <a href="<?php echo $this->script; ?>?do=iao_setup&mod=<?php echo $strModule; ?>" class="navigation <?php echo $strModule; ?>"><?php echo $arrModule['name']; ?></a>
+            </h3>
+            <p><?php echo $arrModule['description']; ?></p>
+        </div>
+        <?php endforeach;?>
+
+    <?php endforeach; ?>
+    </div>
+</div>
+
+
