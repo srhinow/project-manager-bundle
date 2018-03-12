@@ -402,6 +402,11 @@ $GLOBALS['TL_DCA']['tl_iao_offer'] = array
 		(
 			'sql' 					=> "varchar(64) NOT NULL default '0'"
 		),
+        'csv_export_dir' => array
+        (
+            'label'                 => &$GLOBALS['TL_LANG']['tl_iao_offer']['csv_export_dir'],
+            'eval'                  => array('mandatory'=>true, 'required'=>true, 'fieldType'=>'radio'),
+        ),
 		'pdf_import_dir' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_iao_offer']['pdf_import_dir'],
