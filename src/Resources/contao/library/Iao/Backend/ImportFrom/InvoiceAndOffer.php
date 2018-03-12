@@ -126,12 +126,18 @@ class InvoiceAndOffer
 			foreach($csvhead AS $headk => $headv) $headfields[$headv]=$headk;
 
 			$lineA  = array();
+
+//			print_r($invoice_items_fields); exit();
+
 			foreach($invoice_items_fields as  $ii_field)
 			{
 				//exclude index Fields
 				if($ii_field['type']=='index') continue;
 				$actkey = $headfields[$ii_field['name']];
-				$lineA[$ii_field['name']] =  $data[$actkey];
+
+                if(in_array($ii_field['type'],['int']) && $ii_field['null']=='NOT NULL') $lineA[$ii_field['name']] = (int) $data[$actkey];
+                elseif(in_array($ii_field['type'],['varchar','char']) && $ii_field['null']=='NOT NULL') $lineA[$ii_field['name']] = (string) $data[$actkey];
+				else $lineA[$ii_field['name']] = $data[$actkey];
 			}
 			$InvoiceItemSet = $lineA;
 
@@ -151,10 +157,10 @@ class InvoiceAndOffer
 		// Notify the user
 		$FilesStr = implode(', ',$Files);
 		$_SESSION['TL_ERROR'] = '';
-		$_SESSION['TL_CONFIRM'][] = sprintf($GLOBALS['TL_LANG']['tl_iao_invoice']['Invoice_imported'], $FilesStr);
+        \Message::addConfirmation(sprintf($GLOBALS['TL_LANG']['tl_iao_invoice']['Invoice_imported'],$FilesStr));
+        setcookie('BE_PAGE_OFFSET', 0, 0, '/');
 
-		// Redirect
-		setcookie('BE_PAGE_OFFSET', 0, 0, '/');
+        // Redirect
 		Backend::redirect(str_replace('&key=importInvoices', '', \Environment::get('request')));
 	}
 
@@ -260,8 +266,7 @@ class InvoiceAndOffer
 		// Notify the user
 		$FilesStr = implode(', ',$Files);
 		$_SESSION['TL_ERROR'] = '';
-		$_SESSION['TL_CONFIRM'][] = sprintf($GLOBALS['TL_LANG']['tl_iao_offer']['Offer_imported'], $FilesStr);
-
+        \Message::addConfirmation(sprintf($GLOBALS['TL_LANG']['tl_iao_offer']['Offer_imported'],$FilesStr));
 
 		// Redirect
 		setcookie('BE_PAGE_OFFSET', 0, 0, '/');

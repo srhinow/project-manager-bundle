@@ -18,8 +18,8 @@ use Contao\Input;
 use Iao\Backend\ImportFrom\InvoiceAndOffer;
 
 /**
- * Class iao_invoice
- * Provide methods to handle project-manager-bundle-module.
+ * Class ImportExport
+ * @package Iao\Backend\Invoice
  */
 class ImportExport extends Backend
 {
@@ -54,7 +54,6 @@ class ImportExport extends Backend
 			// check if the directory writeable
 			if (!is_writable(TL_ROOT . '/' . $csv_export_dir))
 			{
-//				$_SESSION['TL_ERROR'][] = sprintf($GLOBALS['TL_LANG']['ERR']['PermissionDenied'],TL_ROOT . '/' . $csv_export_dir);
                 \Message::addError($GLOBALS['TL_LANG']['ERR']['PermissionDenied'],TL_ROOT . '/' . $csv_export_dir);
 				$this->reload();
 			}
@@ -64,8 +63,8 @@ class ImportExport extends Backend
 			$invoice_fields = $DB->listFields('tl_iao_invoice');
 			$invoice_items_fields = $DB->listFields('tl_iao_invoice_items');
 
-			$invoice_export_csv = Input::post('export_invoice_filename').'.csv';
-			$invoice_items_export_csv = Input::post('export_invoice_item_filename').'.csv';
+			$invoice_export_csv = Input::post('export_filename').'.csv';
+			$invoice_items_export_csv = Input::post('export_item_filename').'.csv';
 
 			// work on tl_iao_invoice
 			$dbObj = $DB->prepare('SELECT * FROM `tl_iao_invoice`')->execute();
@@ -88,7 +87,6 @@ class ImportExport extends Backend
 				}
 
 				if($isOneLine) $linesArr[] = $oneLine;
-
 				$linesArr[] = $lineA;
 				$isOneLine = false;
 			}
@@ -145,14 +143,17 @@ class ImportExport extends Backend
 			$_SESSION['TL_ERROR'] = '';
             \Message::addConfirmation(sprintf($GLOBALS['TL_LANG']['tl_iao_invoice']['Invoice_exported']));
 			setcookie('BE_PAGE_OFFSET', 0, 0, '/');
-			$this->redirect(str_replace('&key=exportInvoices', '', $this->Environment->request));
+			$this->redirect(str_replace('&key=exportInvoices', '', \Environment::get('request')));
 		}
 
 		$Template = new BackendTemplate('be_iao_export_csv');
 		$Template->headline = $GLOBALS['TL_LANG']['tl_iao_invoice']['exportInvoices'][1];
+        $Template->backlink = ampersand(str_replace('&key=exportInvoices', '', $this->Environment->request));
 		$Template->message = \Message::generate();
 		$Template->csv_seperators = $GLOBALS['IAO']['csv_seperators'];
 		$Template->lang_array = $GLOBALS['TL_LANG']['tl_iao_invoice'];
+        $Template->default_name = 'tl_iao_invoice_items_'.date('Y-m-d');
+        $Template->default_item_name = 'tl_iao_invoice_items_'.date('Y-m-d');
         $Template->objTree4Export = new FileTree(FileTree::getAttributesFromDca($GLOBALS['TL_DCA']['tl_iao_invoice']['fields']['csv_export_dir'], 'csv_export_dir', null, 'csv_export_dir', 'tl_iao_invoice'));
         $Template->formId = $formId;
 
@@ -230,6 +231,7 @@ class ImportExport extends Backend
 
         $Template = new BackendTemplate('be_iao_import_csv');
         $Template->headline = $GLOBALS['TL_LANG']['tl_iao_invoice']['importInvoices'][1];
+        $Template->backlink = ampersand(str_replace('&key=importInvoices', '', $this->Environment->request));
         $Template->message = \Message::generate();
         $Template->csv_seperators = $GLOBALS['IAO']['csv_seperators'];
         $Template->lang_array = $GLOBALS['TL_LANG']['tl_iao_invoice'];
