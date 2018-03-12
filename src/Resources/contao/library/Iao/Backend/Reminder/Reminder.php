@@ -9,6 +9,7 @@ namespace Iao\Backend\Reminder;
  * @filesource
  */
 
+use Contao\Backend;
 use Iao\Backend\IaoBackend;
 use Contao\Database;
 
@@ -16,7 +17,7 @@ use Contao\Database;
  * Class Reminder
  * @package Iao\Backend\Reminder
  */
-class Reminder extends IaoBackend
+class Reminder
 {
 	/**
 	 * check all Invoices of reminder
@@ -26,26 +27,27 @@ class Reminder extends IaoBackend
         $Database = Database::getInstance();
 
 		//get all invoices where is active, not paid and have not reminder
-		$invoiceObj = $Database->prepare('SELECT * FROM `tl_iao_invoice` WHERE `status`=? AND `published`=? AND `expiry_date`<?')
+		$objInvoice = $Database->prepare('SELECT * FROM `tl_iao_invoice` WHERE `status`=? AND `published`=? AND `expiry_date`<?')
 										->execute(1,1,time());
 
-		if($invoiceObj->numRows > 0)
+		if($objInvoice->numRows > 0)
 		{
-			while($invoiceObj->next())
+			while($objInvoice->next())
 			{
 			    // kontrollieren ob es wirklich diese Erinnerung gibt
                 $objCheckReminder = $Database->prepare('SELECT * FROM tl_iao_reminder WHERE id=?')
                 ->limit(1)
-                ->execute((int) $invoiceObj->reminder_id);
-
-//                if($invoiceObj->id == 24) { print_r($objCheckReminder->numRows); exit();}
+                ->execute((int) $objInvoice->reminder_id);
 
                 if($objCheckReminder->numRows < 1)
 				{
                     $set = array
 					(
-						'invoice_id' => $invoiceObj->id,
-						'status' => $invoiceObj->status,
+						'invoice_id' => $objInvoice->id,
+						'pid' => $objInvoice->pid,
+						'setting_id' => $objInvoice->setting_id,
+						'reminder_tstamp' => time(),
+						'status' => $objInvoice->status,
 						'tstamp' => time()
 					);
 					$reminderID = $Database->prepare("INSERT INTO `tl_iao_reminder` %s")->set($set)->execute()->insertId;
@@ -53,7 +55,7 @@ class Reminder extends IaoBackend
 				}
 				else
 				{
-					$reminderID = $invoiceObj->reminder_id;
+					$reminderID = $objInvoice->reminder_id;
 				}
 
 				$reminderObj = Database::getInstance()->prepare('SELECT * FROM `tl_iao_reminder` WHERE `id`=?')
@@ -70,7 +72,7 @@ class Reminder extends IaoBackend
 				// drop all where status = 2
 				if($reminderObj->status == 2) continue;
 
-				$this->fillReminderFields($invoiceObj->id, $reminderObj);
+				IaoBackend::getInstance()->fillReminderFields($objInvoice, $reminderObj);
 
 			}
 		}
@@ -78,6 +80,6 @@ class Reminder extends IaoBackend
 		\Message::addConfirmation($GLOBALS['TL_LANG']['tl_iao_reminder']['Reminder_is_checked']);
 
 		setcookie('BE_PAGE_OFFSET', 0, 0, '/');
-		$this->redirect(str_replace('&key=checkReminder', '', $this->Environment->request));
+        Backend::redirect(str_replace('&key=checkReminder', '',  \Environment::get('request')));
 	}
 }

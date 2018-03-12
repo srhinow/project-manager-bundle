@@ -386,23 +386,21 @@ abstract class IaoBackend extends Iao
 	}
 
     /**
-     * fill Reminderfields
-     * @param int $invoiceID
-     * @param $reminderObj
+     * @param $objInvoice
+     * @param $objReminderj
      */
-	public function fillReminderFields($invoiceID = 0, $reminderObj)
+	public function fillReminderFields($objInvoice, $objReminder)
 	{
         $settings = [];
+        $address_text = '';
 
-		$objMember = DB::getInstance()->prepare('SELECT `m`.*,`i`.`price_brutto`,`i`.`address_text`,`i`.`invoice_id_str` FROM `tl_iao_invoice` as `i` LEFT JOIN `tl_member` as `m` ON `i`.member = `m`.`id` WHERE `i`.`id`=?')
-									->limit(1)
-									->execute($invoiceID);
+        $objMember = MemberModel::findByIdOrAlias((int) $objInvoice->member);
 
-		if(!empty($objMember->address_text))
+		if(!empty($objInvoice->address_text))
 		{
-			$address_text = $objMember->address_text;
+			$address_text = $objInvoice->address_text;
 		}
-		else
+		elseif($objMember != null)
 		{
 			$address_text = '<p>'.$objMember->company.'<br />'.($objMember->gender!='' ? $GLOBALS['TL_LANG']['tl_iao_reminder']['gender'][$objMember->gender].' ':'').($objMember->title ? $objMember->title.' ':'').$objMember->firstname.' '.$objMember->lastname.'<br />'.$objMember->street.'</p>';
 			$address_text .='<p>'.$objMember->postal.' '.$objMember->city.'</p>';
@@ -410,58 +408,57 @@ abstract class IaoBackend extends Iao
 
 		$testStepObj = DB::getInstance()->prepare('SELECT `step`,`sum` FROM `tl_iao_reminder` WHERE `invoice_id`=? AND `id`!=? ORDER BY `id` DESC')
 										->limit(1)
-										->execute($invoiceID,$reminderObj->id);
+										->execute($objInvoice->id, $objReminder->id);
+
 //        print $testStepObj->numRows; exit();
 		$newStep = ($testStepObj->numRows > 0) ? (int) $testStepObj->step +1 : 1;
 
 		//set an error if newStep > 4
 		if($newStep > 4)
 		{
-			$_SESSION['TL_ERROR'][] = $GLOBALS['TL_LANG']['tl_iao_reminder']['to_much_steps'].$objMember->invoice_id_str;
-			$_SESSION['TL_CONFIRM'] = '';
-			setcookie('BE_PAGE_OFFSET', 0, 0, '/');
-			$this->redirect(str_replace('&act=create', '', $this->Environment->request));
+            \Message::addError(sprintf($GLOBALS['TL_LANG']['tl_iao_reminder']['to_much_steps'], $objInvoice->invoice_id_str));
+            $this->reload();
 		}
 
 		$newUnpaid = (($testStepObj->numRows > 0) && ((int) $testStepObj->sum > 0)) ? $testStepObj->sum : $objMember->price_brutto;
 		$tax =  (float) $settings['iao_reminder_'.$newStep.'_tax'];
 		$postage = (float) $settings['iao_reminder_'.$newStep.'_postage'];
-		$periode_date = (int) $this->getPeriodeDate($reminderObj);
+		$periode_date = (int) $this->getPeriodeDate($objReminder);
 
 		$set = array
 		(
-			'title' => $GLOBALS['TL_LANG']['tl_iao_reminder']['steps'][$newStep].'::'.$invoiceID,
-			'address_text' => $address_text,
-			'member' =>  $objMember->id,
-			'unpaid' => $newUnpaid,
-			'step' => $newStep,
-			'text' => $settings['iao_reminder_'.$newStep.'_text'],
-			'periode_date' => $periode_date,
-			'tax' => $tax,
-			'postage' =>  $postage
+			'title' => (string) $GLOBALS['TL_LANG']['tl_iao_reminder']['steps'][$newStep].'::'.$objInvoice->id,
+			'address_text' => (string) $address_text,
+			'member' =>  (int) $objMember->id,
+			'unpaid' => (float) $newUnpaid,
+			'step' => (int) $newStep,
+			'text' => (string) $settings['iao_reminder_'.$newStep.'_text'],
+			'periode_date' => (int) $periode_date,
+			'tax' => (int) $tax,
+			'postage' =>  (int) $postage
 		);
 
-		DB::getInstance()->prepare('UPDATE `tl_iao_reminder` %s WHERE `id`=?')
+		$resultReminder = DB::getInstance()->prepare('UPDATE `tl_iao_reminder` %s WHERE `id`=?')
 						->set($set)
-						->execute($reminderObj->id);
-
+						->execute($objReminder->id);
+//        print_r($objReminder->id); exit();
 		//set sum after other facts is saved
-		$text_finish = $this->changeIAOTags($settings['iao_reminder_'.$newStep.'_text'],'reminder',$reminderObj);
+		$text_finish = $this->changeIAOTags($settings['iao_reminder_'.$newStep.'_text'],'reminder', $objReminder);
 		$text_finish = $this->changeTags($text_finish);
 
 		$set = array
 		(
-	    	'sum' => $this->getReminderSum($reminderObj->id),
+	    	'sum' => $this->getReminderSum($objReminder->id),
 	    	'text_finish' => $text_finish
 		);
 
 		DB::getInstance()->prepare('UPDATE `tl_iao_reminder` %s WHERE `id`=?')
 						->set($set)
-						->execute($reminderObj->id);
+						->execute($objReminder->id);
 
 		//update invoice-data with current reminder-step
 		DB::getInstance()->prepare('UPDATE `tl_iao_invoice` SET `reminder_id` = ?  WHERE `id`=?')
-						->execute($reminderObj->id, $invoiceID);
+						->execute($objReminder->id, $objInvoice->id);
 	}
 
 	/**
@@ -471,7 +468,7 @@ abstract class IaoBackend extends Iao
 	* @param array
 	* @param object
 	*/
-	public function setMemmberfieldsFromProject($table, $id, $set, $obj)
+	public function setMemberfieldsFromProject($table, $id, $set, $obj)
 	{
 		if(\Input::get('onlyproj') == 1 && (int) $set['pid'] > 0)
 		{
