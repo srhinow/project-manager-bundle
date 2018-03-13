@@ -740,10 +740,13 @@ class Invoice extends IaoBackend
 
             // schreibe das Textfeld
             $set =['before_text' => $text];
+
             DB::getInstance()->prepare('UPDATE `tl_iao_invoice` %s WHERE `id`=?')
                 ->set($set)
                 ->limit(1)
                 ->execute($dc->id);
+
+            $this->reload();
         }
 		return $varValue;
 	}
@@ -774,6 +777,8 @@ class Invoice extends IaoBackend
 				->set($set)
                 ->limit(1)
 				->execute($dc->id);
+
+            $this->reload();
 		}
 		return $varValue;
 	}

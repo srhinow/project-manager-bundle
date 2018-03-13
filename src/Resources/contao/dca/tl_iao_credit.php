@@ -546,6 +546,8 @@ class Credit  extends IaoBackend
 		    DB::getInstance()->prepare('UPDATE `tl_iao_credit` SET `before_text`=? WHERE `id`=?')
 				   ->limit(1)
 				   ->execute($text, $dc->id);
+
+            $this->reload();
 		}
 		return $varValue;
 	}
@@ -575,6 +577,8 @@ class Credit  extends IaoBackend
 		    DB::getInstance()->prepare('UPDATE `tl_iao_credit` SET `after_text`=? WHERE `id`=?')
 				   ->limit(1)
 				   ->execute($objTemplate->text,$dc->id);
+
+            $this->reload();
 		}
 		return $varValue;
 	}
