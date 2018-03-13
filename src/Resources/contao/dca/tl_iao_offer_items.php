@@ -62,7 +62,7 @@ $GLOBALS['TL_DCA']['tl_iao_offer_items'] = array
 			'flag'                    => 1,
 			'headerFields'            => array('title', 'tstamp', 'price','member','price_netto','price_brutto'),
 			'panelLayout'             => '',
-			'child_record_callback'   => array('tl_iao_offer_items', 'listItems')
+			'child_record_callback'   => array('Iao\Dca\OfferItems', 'listItems')
 		),
 		'label' => array
 		(
@@ -118,7 +118,7 @@ $GLOBALS['TL_DCA']['tl_iao_offer_items'] = array
 				'label'               => &$GLOBALS['TL_LANG']['tl_iao_offer_items']['toggle'],
 				'icon'                => 'visible.gif',
 				'attributes'          => 'onclick="Backend.getScrollOffset(); return AjaxRequest.toggleVisibility(this, %s);"',
-				'button_callback'     => array('tl_iao_offer_items', 'toggleIcon')
+				'button_callback'     => array('Iao\Dca\OfferItems', 'toggleIcon')
 			),
 			'show' => array
 			(
@@ -131,7 +131,7 @@ $GLOBALS['TL_DCA']['tl_iao_offer_items'] = array
 				'label'               => &$GLOBALS['TL_LANG']['tl_iao_offer_items']['postentemplate'],
 				'href'                => 'key=addPostenTemplate',
 				'icon'                => 'system/modules/invoice_and_offer/html/icons/posten_templates_16.png',
-				'button_callback'     => array('tl_iao_offer_items', 'addPostenTemplate')
+				'button_callback'     => array('Iao\Dca\OfferItems', 'addPostenTemplate')
 			)
 		)
 	),
@@ -405,11 +405,12 @@ class OfferItems extends IaoBackend
 			$vat = ($arrRow['vat_incl']==1) ? 'netto' : 'brutto';
 			$pagebreak = ($arrRow['pagebreak_after']==1) ? ' pagebreak' : '';
 
-			return '<div class="cte_type' . $key . $pagebreak . '">
-			<strong>' . $arrRow['headline'] . '</strong>
-		 	<br />Netto: '.number_format($arrRow['price_netto'],2,',','.') .$GLOBALS['TL_CONFIG']['iao_currency_symbol'].'
+			return '<div class="cte_type' . $key . $pagebreak . '"><strong>' . $arrRow['headline'] . '</strong></div>
+		 	<div class="limit_height h100"><p>
+		 	Netto: '.number_format($arrRow['price_netto'],2,',','.') .$GLOBALS['TL_CONFIG']['iao_currency_symbol'].'
 		 	<br />Brutto: ' . number_format($arrRow['price_brutto'],2,',','.') .$GLOBALS['TL_CONFIG']['iao_currency_symbol']. ' (inkl. '.$arrRow['vat'].'% MwSt.)
-		 	<br />'.$arrRow['text'].'
+		 	</p>
+		 	'.$arrRow['text'].'
 		 	</div>' . "\n";
 		}
 	}
@@ -513,9 +514,9 @@ class OfferItems extends IaoBackend
 			$this->toggleVisibility(\Input::get('tid'), (\Input::get('state') == 1));
 			$this->redirect($this->getReferer());
 		}
-
+        $User = User::getInstance();
 		// Check permissions AFTER checking the tid, so hacking attempts are logged
-		if (!$this->User->isAdmin && !$this->User->hasAccess('tl_iao_offer_items::published', 'alexf'))
+		if (!$User->isAdmin && !$User->hasAccess('tl_iao_offer_items::published', 'alexf'))
 		{
 			return '';
 		}

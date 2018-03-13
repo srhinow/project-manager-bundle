@@ -2,7 +2,8 @@
     background: url('./icons/blackboard_steps.png') 0 0 no-repeat;
 }
 .cte_type {
-    font-size:0.9rem;
+    font-size:0.85rem;
+    line-height:1.4rem;
 }
 .cte_type.status1 {
     color:#CC5555;

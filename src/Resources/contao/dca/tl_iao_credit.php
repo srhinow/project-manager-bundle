@@ -236,7 +236,7 @@ $GLOBALS['TL_DCA']['tl_iao_credit'] = array
 			'eval'                    => array('doNotCopy'=>true, 'spaceToUnderscore'=>true, 'maxlength'=>128, 'tl_class'=>'w50'),
 			'save_callback' => array
 			(
-				array('Iao\Dca\Credit', 'createCreditNumberStr')
+				array('Iao\Dca\Credit', 'setFieldCreditNumberStr')
 			),
 			'sql'					  => "varchar(255) NOT NULL default ''"
 		),
@@ -773,11 +773,13 @@ class Credit  extends IaoBackend
 	    $row = $result->fetchAssoc();
 
 		return '
-		<div class="comment_wrap">
 		<div class="cte_type status' . $arrRow['status'] . '"><strong>' . $arrRow['title'] . '</strong> '.$arrRow['credit_id_str'].'</div>
-		<div>'.$GLOBALS['TL_LANG']['tl_iao_credit']['price_brutto'][0].': <strong>'.number_format($arrRow['price_brutto'],2,',','.').' '.$GLOBALS['TL_CONFIG']['currency_symbol'].'</strong></div>
-		<div>'.$GLOBALS['TL_LANG']['tl_iao_credit']['member'][0].': '.$row['firstname'].' '.$row['lastname'].' ('.$row['company'].')</div>
-		'.(($arrRow['notice'])?"<div>".$GLOBALS['TL_LANG']['tl_iao_credit']['notice'][0].":".$arrRow['notice']."</div>": '').'
+		<div class="limit_height">
+		'.$GLOBALS['TL_LANG']['tl_iao_credit']['price_brutto'][0].': <strong>'.number_format($arrRow['price_brutto'],2,',','.').' '.$GLOBALS['TL_CONFIG']['currency_symbol'].'</strong>
+		<br>
+		'.$GLOBALS['TL_LANG']['tl_iao_credit']['member'][0].': '.$row['firstname'].' '.$row['lastname'].' ('.$row['company'].')
+		<br>
+		'.(($arrRow['notice'])? $GLOBALS['TL_LANG']['tl_iao_credit']['notice'][0].":".$arrRow['notice']: '').'
 		</div>' . "\n    ";
     }
 

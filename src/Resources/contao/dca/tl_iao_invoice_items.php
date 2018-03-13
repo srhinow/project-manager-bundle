@@ -401,12 +401,13 @@ class InvoiceItems extends IaoBackend
 			$vat = ($arrRow['vat_incl']==1) ? 'netto' : 'brutto';
 			$pagebreak = ($arrRow['pagebreak_after']==1) ? ' pagebreak' : '';
 
-			return '<div class="cte_type' . $key . $pagebreak . '">
-			<strong>' . $arrRow['headline'] . '</strong>
-			<br />Netto: '.number_format($arrRow['price_netto'],2,',','.') .$this->settings['iao_currency_symbol'].'
-			<br />Brutto: ' . number_format($arrRow['price_brutto'],2,',','.') .$this->settings['iao_currency_symbol']. ' (inkl. '.$arrRow['vat'].'% MwSt.)
-			<br />'.$arrRow['text'].'
-			</div>' . "\n";
+            return '<div class="cte_type' . $key . $pagebreak . '"><strong>' . $arrRow['headline'] . '</strong></div>
+		 	<div class="limit_height h100"><p>
+		 	Netto: '.number_format($arrRow['price_netto'],2,',','.') .$GLOBALS['TL_CONFIG']['iao_currency_symbol'].'
+		 	<br />Brutto: ' . number_format($arrRow['price_brutto'],2,',','.') .$GLOBALS['TL_CONFIG']['iao_currency_symbol']. ' (inkl. '.$arrRow['vat'].'% MwSt.)
+		 	</p>
+		 	'.$arrRow['text'].'
+		 	</div>' . "\n";
 		}
 	}
 
