@@ -45,7 +45,7 @@ $GLOBALS['TL_DCA']['tl_iao_invoice'] = array
 		'oncreate_callback' => array
 		(
 			array('Iao\Dca\Invoice', 'preFillFields'),
-			array('Iao\Dca\Invoice', 'setMemmberfieldsFromProject'),
+			array('Iao\Dca\Invoice', 'setMemberfieldsFromProject'),
 		),
 		'sql' => array
 		(
@@ -1007,12 +1007,15 @@ class Invoice extends IaoBackend
 		$row = $result->fetchAssoc();
 
 		return '
-		<div class="comment_wrap">
 		<div class="cte_type status' . $arrRow['status'] . '"><strong>' . $arrRow['title'] . '</strong> '.$arrRow['invoice_id_str'].'</div>
-		<div>'.$GLOBALS['TL_LANG']['tl_iao_invoice']['price_brutto'][0].': <strong>'.number_format($arrRow['price_brutto'],2,',','.').' '.$settings['iao_currency_symbol'].'</strong></div>
-		<div>'.$GLOBALS['TL_LANG']['tl_iao_invoice']['remaining'][0].': <strong>'.number_format($arrRow['remaining'],2,',','.').' '.$settings['iao_currency_symbol'].'</strong></div>
-		<div>'.$GLOBALS['TL_LANG']['tl_iao_invoice']['member'][0].': '.$row['firstname'].' '.$row['lastname'].' ('.$row['company'].')</div>
-		'.(($arrRow['notice'])?"<div>".$GLOBALS['TL_LANG']['tl_iao_invoice']['notice'][0].":".$arrRow['notice']."</div>": '').'
+		<div class="limit_height">
+		'.$GLOBALS['TL_LANG']['tl_iao_invoice']['price_brutto'][0].': <strong>'.number_format($arrRow['price_brutto'],2,',','.').' '.$settings['iao_currency_symbol'].'</strong>
+		<br>
+		'.$GLOBALS['TL_LANG']['tl_iao_invoice']['remaining'][0].': <strong>'.number_format($arrRow['remaining'],2,',','.').' '.$settings['iao_currency_symbol'].'</strong>
+		<br>
+		'.$GLOBALS['TL_LANG']['tl_iao_invoice']['member'][0].': '.$row['firstname'].' '.$row['lastname'].' ('.$row['company'].')
+		<br>
+		'.(($arrRow['notice'])? $GLOBALS['TL_LANG']['tl_iao_invoice']['notice'][0].":".$arrRow['notice']: '').'
 		</div>' . "\n    ";
     }
 
