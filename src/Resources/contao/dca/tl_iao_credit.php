@@ -40,7 +40,7 @@ $GLOBALS['TL_DCA']['tl_iao_credit'] = array
 		'oncreate_callback' => array
 		(
 			array('Iao\Dca\Credit', 'preFillFields'),
-			array('Iao\Dca\Credit', 'setMemmberfieldsFromProject'),
+			array('Iao\Dca\Credit', 'setMemberfieldsFromProject'),
 		),
 		'sql' => array
 		(
