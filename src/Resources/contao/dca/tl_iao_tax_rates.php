@@ -143,7 +143,7 @@ $GLOBALS['TL_DCA']['tl_iao_tax_rates'] = array
 			'filter'                  => true,
 			'inputType'               => 'text',
 			'eval'                    => array('mandatory'=>true,'rgxp'=>'digit','tl_class'=>'w50'),
-			'sql'                     => "int(10) unsigned NOT NULL default '0'"
+			'sql'                     => "float unsigned NOT NULL default '0.00'"
 		)
 	)
 );

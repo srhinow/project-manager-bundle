@@ -280,7 +280,7 @@ $GLOBALS['TL_DCA']['tl_iao_offer_items'] = array
 			'inputType'               => 'select',
 			'options_callback'        => array('Iao\Dca\OfferItems', 'getTaxRatesOptions'),
 			'eval'                    => array('tl_class'=>'w50'),
-			'sql'					  => "int(10) unsigned NOT NULL default '19'"
+            'sql'					  => "float unsigned NOT NULL"
 		),
 		'vat_incl' => array
 		(

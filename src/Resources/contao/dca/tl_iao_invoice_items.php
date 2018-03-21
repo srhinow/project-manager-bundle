@@ -277,7 +277,7 @@ $GLOBALS['TL_DCA']['tl_iao_invoice_items'] = array
 			'inputType'               => 'select',
 			'options_callback'        => array('Iao\Dca\InvoiceItems', 'getTaxRatesOptions'),
 			'eval'                    => array('tl_class'=>'w50'),
-			'sql'					  => "int(10) unsigned NOT NULL default '19'"
+			'sql'					  => "float unsigned NOT NULL"
 		),
 		'vat_incl' => array
 		(
@@ -749,7 +749,7 @@ class InvoiceItems extends IaoBackend
 										->limit(1)
 										->execute($dc->activeRecord->pid);
 
-			$paidsArr = unserialize($parentObj->fetchRow());
+			$paidsArr = unserialize($parentObj->paid_on_dates);
 			$already = 0;
 			$lastPayDate = '';
 
