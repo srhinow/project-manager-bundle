@@ -429,7 +429,7 @@ class OfferItems extends IaoBackend
 			return;
 		}
 
-		$itemObj = $this->Database->prepare('SELECT `price`,`count`,`vat`,`vat_incl` FROM `tl_iao_offer_items` WHERE `pid`=? AND published =?')
+		$itemObj = DB::getInstance()->prepare('SELECT `price`,`count`,`vat`,`vat_incl` FROM `tl_iao_offer_items` WHERE `pid`=? AND published =?')
 						->execute($dc->activeRecord->pid,1);
 
 		if($itemObj->numRows > 0)
