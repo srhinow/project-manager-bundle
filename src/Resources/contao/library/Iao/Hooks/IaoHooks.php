@@ -66,7 +66,7 @@ class iaoHooks extends Frontend
 
             if($objResult !== null)
             {
-                return $objResult->$split[2];
+                return $objResult->{$split[2]};
             }
 	    }
 
