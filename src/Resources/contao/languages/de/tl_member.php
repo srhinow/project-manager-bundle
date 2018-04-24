@@ -26,3 +26,7 @@ $GLOBALS['TL_LANG']['tl_member']['myid'] = array('Kunden-ID','Falls Datensätze 
 $GLOBALS['TL_LANG']['tl_member']['import_settings'] = 'Import-Einstellungen';
 $GLOBALS['TL_LANG']['tl_member']['new']    = array('Neuer Kunde', 'Einen neuen Kunden anlegen');
 $GLOBALS['TL_LANG']['tl_member']['title']    = array('Titel', 'z.B. Dr. oder Prof.');
+$GLOBALS['TL_LANG']['tl_member']['text_generate'] = array('Adresstext aus Kundendaten generieren','VORSICHT! Der evtl. bestehende Adresstext wird gelöscht.');
+$GLOBALS['TL_LANG']['tl_member']['address_text'] = array('Anschrift-Adresstext','Adresse die in die PDF-Datei geschrieben wird.');
+
+$GLOBALS['TL_LANG']['tl_member']['custom_addresstext_legend'] = 'angepasster Adresstext';
