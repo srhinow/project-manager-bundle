@@ -38,6 +38,7 @@ $GLOBALS['TL_LANG']['tl_iao_invoice']['status'] = array('Status dieser Rechnung'
 $GLOBALS['TL_LANG']['tl_iao_invoice']['price_netto'] = array('Rechnung-Höhe (Netto)','');
 $GLOBALS['TL_LANG']['tl_iao_invoice']['price_brutto'] = array('Rechnung-Höhe (Brutto)','');
 $GLOBALS['TL_LANG']['tl_iao_invoice']['member'] = array('Kunde','');
+$GLOBALS['TL_LANG']['tl_iao_invoice']['text_generate'] = array('Adresstext aus Kundendaten generieren','VORSICHT! Der evtl. bestehende Adresstext wird gelöscht.');
 $GLOBALS['TL_LANG']['tl_iao_invoice']['noVat'] = array('keine MwSt. ausweisen','z.B. Rechnung in nicht Bundesrepublik Deutschland');
 $GLOBALS['TL_LANG']['tl_iao_invoice']['notice'] = array('Notiz','');
 $GLOBALS['TL_LANG']['tl_iao_invoice']['discount'] = array('Rabatt/Skonto',' Rabatt/Skonto auf die Gesamtsumme');

@@ -153,7 +153,7 @@ $GLOBALS['TL_DCA']['tl_iao_invoice'] = array
 	'palettes' => array
 	(
 		'__selector__'                => array('discount'),
-		'default'                     => '{settings_legend},setting_id,pid;{title_legend},title;{invoice_id_legend:hide},invoice_id,invoice_id_str,invoice_tstamp,agreement_id,invoice_pdf_file,execute_date,expiry_date;{address_legend},member,address_text;{text_before_legend},before_template,before_text,beforetext_as_template;{text_after_legend},after_template,after_text,aftertext_as_template;{status_legend},published;{paid_legend},priceall_brutto,status,paid_on_dates,remaining;{extend_legend},noVat,discount;{notice_legend:hide},notice',
+		'default'                     => '{settings_legend},setting_id,pid;{title_legend},title;{invoice_id_legend:hide},invoice_id,invoice_id_str,invoice_tstamp,agreement_id,invoice_pdf_file,execute_date,expiry_date;{address_legend},member,text_generate,address_text;{text_before_legend},before_template,before_text,beforetext_as_template;{text_after_legend},after_template,after_text,aftertext_as_template;{status_legend},published;{paid_legend},priceall_brutto,status,paid_on_dates,remaining;{extend_legend},noVat,discount;{notice_legend:hide},notice',
 	),
 
 	// Subpalettes
@@ -301,13 +301,21 @@ $GLOBALS['TL_DCA']['tl_iao_invoice'] = array
 			'flag'                    => 11,
 			'inputType'               => 'select',
 			'options_callback'        => array('Iao\Dca\Invoice', 'getMemberOptions'),
-			'eval'                    => array('tl_class'=>'w50','includeBlankOption'=>true,'submitOnChange'=>true, 'chosen'=>true),
-			'save_callback' => array
-			(
-				array('Iao\Dca\Invoice', 'fillAdressText')
-			),
+			'eval'                    => array('tl_class'=>'w50','includeBlankOption'=>true, 'chosen'=>true),
 			'sql'					  => "varbinary(128) NOT NULL default ''"
 		),
+        'text_generate' => array
+        (
+            'label'                   => &$GLOBALS['TL_LANG']['tl_iao_invoice']['text_generate'],
+            'flag'                    => 1,
+            'inputType'               => 'checkbox',
+            'eval'                    => array('tl_class'=>'clr','submitOnChange'=>true),
+            'save_callback' => array
+            (
+                array('Iao\Dca\Invoice', 'fillAdressText')
+            ),
+            'sql'                     => "char(1) NOT NULL default ''"
+        ),
 		'address_text' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_iao_invoice']['address_text'],
@@ -705,17 +713,24 @@ class Invoice extends IaoBackend
      * @param DataContainer $dc
      * @return mixed
      */
-	public function fillAdressText($intMember, DataContainer $dc)
+	public function fillAdressText($varValue, DataContainer $dc)
 	{
-		if(trim(strip_tags($dc->activeRecord->address_text)) == '')
-		{
+        if($varValue == 1) {
+
+	        $intMember = $dc->activeRecord->member;
             $text = $this->getAdressText($intMember);
 
-			DB::getInstance()->prepare('UPDATE `tl_iao_invoice` SET `address_text`=? WHERE `id`=?')
-			->limit(1)
-			->execute($text, $dc->id);
-		}
-		return $intMember;
+            $set = array(
+                'address_text' => $text,
+                'text_generate' => ''
+            );
+
+			DB::getInstance()->prepare('UPDATE `tl_iao_invoice` %s WHERE `id`=?')
+                ->set($set)
+			    ->limit(1)
+			    ->execute($dc->id);
+        }
+		return '';
 	}
 
     /**
