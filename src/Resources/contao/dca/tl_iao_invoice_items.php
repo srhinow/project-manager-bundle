@@ -697,29 +697,41 @@ class InvoiceItems extends IaoBackend
 
 		if(strlen($varValue)<=0) return $varValue;
 
-		$result = DB::getInstance()->prepare('SELECT * FROM `tl_iao_templates_items` WHERE `id`=?')
-					->limit(1)
-					->execute($varValue);
+        //Posten-Template holen
+        $postenTemplObj = $this->getTemplateObject('tl_iao_templates_items',$varValue);
+
+        if($postenTemplObj->numRows > 0)
+        {
+            $headline = $this->changeIAOTags($postenTemplObj->headline,'agreement',(object) $postenTemplObj->row());
+            $date = $postenTemplObj->date;
+            $time = $postenTemplObj->time;
+            $text = $this->changeIAOTags($postenTemplObj->text,'agreement',(object) $postenTemplObj->row());
+        } else {
+            $headline = $text = '';
+            $time = $date = 0;
+        }
+
 
 		//Insert Invoice-Entry
 		$postenset = array
 		(
 			'tstamp' => time(),
-			'headline' => $result->headline,
-			'headline_to_pdf' => $result->headline_to_pdf,
-			'sorting' => $result->sorting,
-			'date' => $result->date,
-			'time' => $result->time,
-			'text' => $result->text,
-			'count' => $result->count,
-			'price' => $result->price,
-			'amountStr' => $result->amountStr,
-			'operator' => $result->operator,
-			'price_netto' => $result->price_netto,
-			'price_brutto' => $result->price_brutto,
-			'published' => $result->published,
-			'vat' => $result->vat,
-			'vat_incl' => $result->vat_incl
+			'headline' => $headline,
+			'headline_to_pdf' => $postenTemplObj->headline_to_pdf,
+			'sorting' => $postenTemplObj->sorting,
+			'date' => $date,
+			'time' => $time,
+			'text' => $text,
+			'count' => $postenTemplObj->count,
+			'price' => $postenTemplObj->price,
+			'amountStr' => $postenTemplObj->amountStr,
+			'operator' => $postenTemplObj->operator,
+			'price_netto' => $postenTemplObj->price_netto,
+			'price_brutto' => $postenTemplObj->price_brutto,
+			'published' => $postenTemplObj->published,
+			'vat' => $postenTemplObj->vat,
+			'vat_incl' => $postenTemplObj->vat_incl,
+            'posten_template'=>0
 		);
 
 		DB::getInstance()->prepare('UPDATE `tl_iao_invoice_items` %s WHERE `id`=?')
