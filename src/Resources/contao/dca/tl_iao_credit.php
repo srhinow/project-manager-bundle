@@ -135,7 +135,7 @@ $GLOBALS['TL_DCA']['tl_iao_credit'] = array
 	'palettes' => array
 	(
 		'__selector__'                => array(),
-		'default'                     => '{settings_legend},setting_id,pid;title;{credit_id_legend:hide},credit_id,credit_id_str,credit_tstamp,credit_pdf_file,expiry_date;{address_legend},member,address_text;{text_legend},before_template,before_text,after_template,after_text;{extend_legend},noVat;{status_legend},published,status;{notice_legend:hide},notice'
+		'default'                     => '{settings_legend},setting_id,pid;title;{credit_id_legend:hide},credit_id,credit_id_str,credit_tstamp,credit_pdf_file,expiry_date;{address_legend},member,text_generate,address_text;{text_legend},before_template,before_text,after_template,after_text;{extend_legend},noVat;{status_legend},published,status;{notice_legend:hide},notice'
 	),
 
 	// Subpalettes
@@ -257,13 +257,21 @@ $GLOBALS['TL_DCA']['tl_iao_credit'] = array
 			'flag'                    => 11,
 			'inputType'               => 'select',
 			'options_callback'        => array('Iao\Dca\Credit', 'getMemberOptions'),
-			'eval'                    => array('tl_class'=>'w50','includeBlankOption'=>true,'submitOnChange'=>true, 'chosen'=>true),
-			'save_callback' => array
-			(
-				array('Iao\Dca\Credit', 'fillAdressText')
-			),
+			'eval'                    => array('tl_class'=>'w50','includeBlankOption'=>true, 'chosen'=>true),
 			'sql'					  => "varbinary(128) NOT NULL default ''"
 		),
+        'text_generate' => array
+        (
+            'label'                   => &$GLOBALS['TL_LANG']['tl_iao_credit']['text_generate'],
+            'flag'                    => 1,
+            'inputType'               => 'checkbox',
+            'eval'                    => array('tl_class'=>'clr','submitOnChange'=>true),
+            'save_callback' => array
+            (
+                array('Iao\Dca\Credit', 'fillAddressText')
+            ),
+            'sql'                     => "char(1) NOT NULL default ''"
+        ),
 		'address_text' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_iao_credit']['address_text'],
@@ -508,17 +516,26 @@ class Credit  extends IaoBackend
 	 * @param $dc object
 	 * @return integer
 	 */
-	public function fillAdressText($intMember, \DataContainer $dc)
+	public function fillAddressText($varValue, \DataContainer $dc)
 	{
-		if(trim(strip_tags($dc->activeRecord->address_text)) == '')
-		{
-            $text = $this->getAdressText($intMember);
+        if($varValue == 1) {
 
-			DB::getInstance()->prepare('UPDATE `tl_iao_credit` SET `address_text`=? WHERE `id`=?')
-				   ->limit(1)
-				   ->execute($text, $dc->id);
+            $intMember = $dc->activeRecord->member;
+            $text = $this->getAddressText($intMember);
+
+            $set = array(
+                'address_text' => $text,
+                'text_generate' => ''
+            );
+
+            $text = $this->getAddressText($intMember);
+
+			DB::getInstance()->prepare('UPDATE `tl_iao_credit` %s WHERE `id`=?')
+                ->set($set)
+				->limit(1)
+				->execute($dc->id);
 		}
-		return $intMember;
+		return '';
 	}
 
 	/**

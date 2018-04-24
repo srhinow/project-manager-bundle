@@ -39,6 +39,10 @@ $GLOBALS['TL_DCA']['tl_iao_agreements'] = array
 		(
 		    array('Iao\Dca\Agreements','saveNettoAndBrutto')
 		),
+        'oncreate_callback' => array
+        (
+            array('Iao\Dca\Agreements', 'setMemberfieldsFromProject'),
+        ),
 		'sql' => array
 		(
 			'keys' => array
@@ -122,7 +126,7 @@ $GLOBALS['TL_DCA']['tl_iao_agreements'] = array
 		'default'                     => '{settings_legend},setting_id,pid;
 										  {title_legend},title;
 										  {agreement_legend:hide},agreement_pdf_file;
-										  {address_legend},member,address_text;
+										  {address_legend},member,text_generate,address_text;
 										  {other_legend},price,vat,vat_incl,count,amountStr;
 										  {status_legend},agreement_date,periode,beginn_date,end_date,status,terminated_date,new_generate;
 										  {email_legend},sendEmail;
@@ -317,13 +321,21 @@ $GLOBALS['TL_DCA']['tl_iao_agreements'] = array
 			'flag'                    => 11,
 			'inputType'               => 'select',
 			'options_callback'        => array('Iao\Dca\Agreements', 'getMemberOptions'),
-			'eval'                    => array('tl_class'=>'w50','includeBlankOption'=>true,'submitOnChange'=>true, 'chosen'=>true),
-			'save_callback' => array
-			(
-				array('Iao\Dca\Agreements', 'fillAdressText')
-			),
+			'eval'                    => array('tl_class'=>'w50','includeBlankOption'=>true, 'chosen'=>true),
 			'sql'                     => "varbinary(128) NOT NULL default ''"
 		),
+        'text_generate' => array
+        (
+            'label'                   => &$GLOBALS['TL_LANG']['tl_iao_agreements']['text_generate'],
+            'flag'                    => 1,
+            'inputType'               => 'checkbox',
+            'eval'                    => array('tl_class'=>'clr','submitOnChange'=>true),
+            'save_callback' => array
+            (
+                array('Iao\Dca\Agreements', 'fillAddressText')
+            ),
+            'sql'                     => "char(1) NOT NULL default ''"
+        ),
 		'address_text' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_iao_agreements']['address_text'],
@@ -521,17 +533,26 @@ class Agreements extends IaoBackend
      * @param $dc object
      * @return integer
 	 */
-	public function fillAdressText($intMember, DataContainer $dc)
+	public function fillAddressText($varValue, DataContainer $dc)
 	{
-		if(strip_tags($dc->activeRecord->address_text) == '')
-		{
-            $text = $this->getAdressText($intMember);
+        if($varValue == 1) {
 
-			DB::getInstance()->prepare('UPDATE `tl_iao_agreements` SET `address_text`=? WHERE `id`=?')
-			->limit(1)
-			->execute($text,$dc->id);
+            $intMember = $dc->activeRecord->member;
+            $text = $this->getAddressText($intMember);
+
+            $set = array(
+                'address_text' => $text,
+                'text_generate' => ''
+            );
+
+            $text = $this->getAddressText($varValue);
+
+			DB::getInstance()->prepare('UPDATE `tl_iao_agreements` %s WHERE `id`=?')
+                ->set($set)
+			    ->limit(1)
+			    ->execute($dc->id);
 		}
-		return $intMember;
+		return '';
 	}
 
 	/**

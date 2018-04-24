@@ -20,7 +20,7 @@ $GLOBALS['TL_LANG']['tl_iao_offer']['title'] = array('Angebot-Titel','Diese Beze
 $GLOBALS['TL_LANG']['tl_iao_offer']['alias'] = array('Alias','');
 $GLOBALS['TL_LANG']['tl_iao_offer']['offer_id'] = array('Angebots-ID','Dieses Feld wird hauptsächlich zum hochzählen des nächsten Angebots benötigt.');
 $GLOBALS['TL_LANG']['tl_iao_offer']['offer_id_str'] = array('Rechnungs-ID-Name','Dieses Feld wird für den PDF-Namen und direkt auf dem Angebot ausgegeben.');
-$GLOBALS['TL_LANG']['tl_iao_offer']['address_text'] = array('Angebots-Adresse','Adresse die in der Angebot-PDF-Datei geschrieben wird.');
+
 $GLOBALS['TL_LANG']['tl_iao_offer']['before_text'] = array('Text vor den Posten','');
 $GLOBALS['TL_LANG']['tl_iao_offer']['after_text'] = array('Text nach den Posten','');
 $GLOBALS['TL_LANG']['tl_iao_offer']['published'] = array('veröffentlicht','');
@@ -28,6 +28,8 @@ $GLOBALS['TL_LANG']['tl_iao_offer']['status'] = array('Status des Angebotes','')
 $GLOBALS['TL_LANG']['tl_iao_offer']['price_netto'] = array('Angebot-Höhe (Netto)','');
 $GLOBALS['TL_LANG']['tl_iao_offer']['price_brutto'] = array('Angebot-Höhe (Brutto)','');
 $GLOBALS['TL_LANG']['tl_iao_offer']['member'] = array('Kunde','');
+$GLOBALS['TL_LANG']['tl_iao_offer']['text_generate'] = array('Adresstext aus Kundendaten generieren','VORSICHT! Der evtl. bestehende Adresstext wird gelöscht.');
+$GLOBALS['TL_LANG']['tl_iao_offer']['address_text'] = array('Angebots-Adresse','Adresse die in der Angebot-PDF-Datei geschrieben wird.');
 $GLOBALS['TL_LANG']['tl_iao_offer']['noVat'] = array('keine MwSt. ausweisen','z.B. Rechnung in nicht Bundesrepublik Deutschland');
 $GLOBALS['TL_LANG']['tl_iao_offer']['offer_date'] = array('Angebotsdatum','wenn es leer bleibt dann wird das aktuelle Datum eingetragen. Unter normalen Umständen sollte dieses Feld leer bleiben. Es ist hauptsächlich für Importe gedacht.');
 $GLOBALS['TL_LANG']['tl_iao_offer']['offer_tstamp'] = array('Angebotsdatum','Wenn es leer bleibt, dann wird das aktuelle Datum eingetragen.');

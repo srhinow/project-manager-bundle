@@ -21,6 +21,7 @@ $GLOBALS['TL_LANG']['tl_iao_credit']['title']	=	array('Bezeichnung','Bezeichnung
 $GLOBALS['TL_LANG']['tl_iao_credit']['alias']	=	array('Alias','');
 
 $GLOBALS['TL_LANG']['tl_iao_credit']['member']	=	array('Kunde','Adresse aus gespeicherten Kunden in nachstehendes Feld befüllen');
+$GLOBALS['TL_LANG']['tl_iao_credit']['text_generate'] = array('Adresstext aus Kundendaten generieren','VORSICHT! Der evtl. bestehende Adresstext wird gelöscht.');
 $GLOBALS['TL_LANG']['tl_iao_credit']['address_text']	=	array('Gutschrift-Adresse','Adresse die in der Gutschrift-PDF-Datei geschrieben wird.');
 $GLOBALS['TL_LANG']['tl_iao_credit']['before_text']	=	array('Text vor den Posten','');
 $GLOBALS['TL_LANG']['tl_iao_credit']['before_template']	=	array('Text-Template vor den Posten','');

@@ -479,7 +479,7 @@ abstract class IaoBackend extends Iao
 				$set = array
 				(
 					'member' => $objProject->member,
-					'address_text' => $this->getAdressText($objProject->member)
+					'address_text' => $this->getAddressText($objProject->member)
 				);
 
 				DB::getInstance()->prepare('UPDATE '.$table.' %s WHERE `id`=?')
@@ -552,7 +552,7 @@ abstract class IaoBackend extends Iao
      * @param $intMember
      * @return string
      */
-    public function getAdressText($intMember) {
+    public function getAddressText($intMember) {
 
         if((int) $intMember < 1) return $text;
 

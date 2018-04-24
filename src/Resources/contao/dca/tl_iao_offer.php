@@ -1,6 +1,7 @@
 <?php
 namespace Iao\Dca;
 
+use Contao\DataContainer;
 use Iao\Backend\IaoBackend;
 use Srhinow\IaoTemplatesModel;
 use Srhinow\IaoOfferModel;
@@ -156,7 +157,7 @@ $GLOBALS['TL_DCA']['tl_iao_offer'] = array
 	'palettes' => array
 	(
 		'__selector__'                => array(),
-		'default'                     => '{settings_legend},setting_id,pid;{title_legend},title;{offer_id_legend:hide},offer_id,offer_id_str,offer_tstamp,offer_pdf_file,expiry_date;{address_legend},member,address_text;{text_legend},before_template,before_text,after_template,after_text;{status_legend},published,status;{extend_legend},noVat;{notice_legend:hide},notice'
+		'default'                     => '{settings_legend},setting_id,pid;{title_legend},title;{offer_id_legend:hide},offer_id,offer_id_str,offer_tstamp,offer_pdf_file,expiry_date;{address_legend},member,text_generate,address_text;{text_legend},before_template,before_text,after_template,after_text;{status_legend},published,status;{extend_legend},noVat;{notice_legend:hide},notice'
 	),
 
 	// Subpalettes
@@ -287,13 +288,21 @@ $GLOBALS['TL_DCA']['tl_iao_offer'] = array
 			'inputType'               => 'select',
 			// 'foreignKey'              => 'tl_member.company',
 			'options_callback'        => array('Iao\Dca\Offer', 'getMemberOptions'),
-			'eval'                    => array('tl_class'=>'w50','includeBlankOption'=>true,'submitOnChange'=>true, 'chosen'=>true),
-			'save_callback' => array
-			(
-				array('Iao\Dca\Offer', 'fillAddressSaveCallback')
-			),
+			'eval'                    => array('tl_class'=>'w50','includeBlankOption'=>true, 'chosen'=>true),
 			'sql'					  => "varbinary(128) NOT NULL default ''"
 		),
+        'text_generate' => array
+        (
+            'label'                   => &$GLOBALS['TL_LANG']['tl_iao_offer']['text_generate'],
+            'flag'                    => 1,
+            'inputType'               => 'checkbox',
+            'eval'                    => array('tl_class'=>'clr','submitOnChange'=>true),
+            'save_callback' => array
+            (
+                array('Iao\Dca\Offer', 'fillAddressText')
+            ),
+            'sql'                     => "char(1) NOT NULL default ''"
+        ),
 		'address_text' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_iao_offer']['address_text'],
@@ -582,41 +591,34 @@ class Offer extends IaoBackend
         return $varValue;
     }
 	/**
-	 * fill Adress-Text
+	 * fill Address-Text
      * @param $varValue mixed
 	 * @param $dc object
 	 * @return mixed
 	 */
-	public function fillAddressSaveCallback($varValue, \DataContainer $dc)
+	public function fillAddressText($varValue, DataContainer $dc)
 	{
-        if(strlen($varValue) < 1) return $varValue;
+        if($varValue == 1) {
 
-        $text = $this->getAddressText($varValue);
+            $intMember = $dc->activeRecord->member;
+            $text = $this->getAddressText($intMember);
 
-        DB::getInstance()->prepare('UPDATE `tl_iao_offer` SET `address_text`=? WHERE `id`=?')
+            $set = array(
+                'address_text' => $text,
+                'text_generate' => ''
+            );
+
+            $text = $this->getAddressText($varValue);
+
+            DB::getInstance()->prepare('UPDATE `tl_iao_offer` %s WHERE `id`=?')
+                ->set($set)
                 ->limit(1)
-                ->execute($text,$dc->id);
-
-		return $varValue;
-	}
-
-	/**
-	 * get address text
-     * @param $memberId integer
-	 * @return string
-	 */
-	public function getAddressText($memberId)
-	{
-        $text = '';
-        $objMember = \MemberModel::findById((int) $memberId);
-
-        if(is_object($objMember)) {
-            $text = '<p>'.$objMember->company.'<br />'.($objMember->gender!='' ? $GLOBALS['TL_LANG']['tl_iao_offer']['gender'][$objMember->gender].' ':'').($objMember->title ? $objMember->title.' ':'').$objMember->firstname.' '.$objMember->lastname.'<br />'.$objMember->street.'</p>';
-            $text .='<p>'.$objMember->postal.' '.$objMember->city.'</p>';
+                ->execute($dc->id);
         }
-
-		return $text;
+        //leere checkbox zurueck geben
+		return '';
 	}
+
 
 	/**
      * fill Text before if this field is empty

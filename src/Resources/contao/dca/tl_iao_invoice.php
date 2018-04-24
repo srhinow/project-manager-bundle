@@ -312,7 +312,7 @@ $GLOBALS['TL_DCA']['tl_iao_invoice'] = array
             'eval'                    => array('tl_class'=>'clr','submitOnChange'=>true),
             'save_callback' => array
             (
-                array('Iao\Dca\Invoice', 'fillAdressText')
+                array('Iao\Dca\Invoice', 'fillAddressText')
             ),
             'sql'                     => "char(1) NOT NULL default ''"
         ),
@@ -708,17 +708,17 @@ class Invoice extends IaoBackend
 	}
 
     /**
-     * fill Adress-Text
+     * fill Address-Text
      * @param $intMember int
      * @param DataContainer $dc
      * @return mixed
      */
-	public function fillAdressText($varValue, DataContainer $dc)
+	public function fillAddressText($varValue, DataContainer $dc)
 	{
         if($varValue == 1) {
 
 	        $intMember = $dc->activeRecord->member;
-            $text = $this->getAdressText($intMember);
+            $text = $this->getAddressText($intMember);
 
             $set = array(
                 'address_text' => $text,

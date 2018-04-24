@@ -54,7 +54,7 @@ $GLOBALS['TL_DCA']['tl_member']['fields']['text_generate'] = array
     'eval'                    => array('tl_class'=>'clr','submitOnChange'=>true),
     'save_callback' => array
     (
-        array('Iao\Dca\IaoMember', 'fillAdressText')
+        array('Iao\Dca\IaoMember', 'fillAddressText')
     ),
     'sql'                     => "char(1) NOT NULL default ''"
 );
@@ -91,12 +91,12 @@ class IaoMember
     }
 
     /**
-     * fill Adress-Text
+     * fill Address-Text
      * @param $intMember int
      * @param DataContainer $dc
      * @return mixed
      */
-    public function fillAdressText($varValue, DataContainer $dc)
+    public function fillAddressText($varValue, DataContainer $dc)
     {
 //        print_r($varValue); exit();
 
