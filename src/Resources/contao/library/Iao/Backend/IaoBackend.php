@@ -476,15 +476,10 @@ abstract class IaoBackend extends Iao
 
 			if($objProject !== null)
 			{
-				$objMember = MemberModel::findById($objProject->member);
-
-				$text = '<p>'.$objMember->company.'<br />'.($objMember->gender!='' ? $GLOBALS['TL_LANG']['tl_iao_invoice']['gender'][$objMember->gender].' ':'').($objMember->title ? $objMember->title.' ':'').$objMember->firstname.' '.$objMember->lastname.'<br />'.$objMember->street.'</p>';
-				$text .='<p>'.$objMember->postal.' '.$objMember->city.'</p>';
-
 				$set = array
 				(
 					'member' => $objProject->member,
-					'address_text' => $text
+					'address_text' => $this->getAdressText($objProject->member)
 				);
 
 				DB::getInstance()->prepare('UPDATE '.$table.' %s WHERE `id`=?')
@@ -559,14 +554,17 @@ abstract class IaoBackend extends Iao
      */
     public function getAdressText($intMember) {
 
-        $text = '';
         if((int) $intMember < 1) return $text;
 
         $objMember = MemberModel::findById($intMember);
 
-        $text = '<p>'.$objMember->company.'<br />'.($objMember->gender!='' ? $GLOBALS['TL_LANG']['tl_iao']['gender'][$objMember->gender].' ':'').($objMember->title ? $objMember->title.' ':'').$objMember->firstname.' '.$objMember->lastname.'<br />'.$objMember->street.'</p>';
-        $text .='<p>'.$objMember->postal.' '.$objMember->city.'</p>';
+        $text = $objMember->address_text;
 
+        if(trim(strip_tags($objMember->address_text)) == '') {
+            $text = '<p>'.$objMember->company.'<br />'.($objMember->gender!='' ? $GLOBALS['TL_LANG']['tl_iao']['gender'][$objMember->gender].' ':'').($objMember->title ? $objMember->title.' ':'').$objMember->firstname.' '.$objMember->lastname.'<br />'.$objMember->street.'</p>';
+            $text .='<p>'.$objMember->postal.' '.$objMember->city.'</p>';
+        }
+        
         return $text;
     }
 }
