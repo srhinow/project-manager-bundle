@@ -235,7 +235,7 @@ $GLOBALS['TL_DCA']['tl_iao_agreements'] = array
 			'eval'                    => array('tl_class'=>'clr'),
 			'save_callback'				=> array
 			(
-				array('Iao\Dca\Agreements','generateNewCycle')
+				array('Iao\Dca\Agreements','setNewCycle')
 			),
 			'sql'                     => "char(1) NOT NULL default ''"
 		),
@@ -567,7 +567,16 @@ class Agreements extends IaoBackend
 
 		if (\Input::get('key') == 'addInvoice' && \Input::get('id') == $row['id'])
 		{
-			$beforeTemplObj = $this->getTemplateObject('tl_iao_templates',$row['before_template']);
+            //zuerst die neue range setzen damit fuer die Rechnung auch gleich der richtige Zeitraum steht
+            $data['id'] = $row['id'];
+            $data['beginn'] = $row['beginn_date'];
+            $data['end'] = $row['end_date'];
+            $data['periode'] = strlen($row['periode'] > 0)?:$GLOBALS['IAO']['default_agreement_cycle'];
+            $data['today'] = time();
+
+            $this->generateNewCycle($data);
+
+		    $beforeTemplObj = $this->getTemplateObject('tl_iao_templates',$row['before_template']);
 			$afterTemplObj = $this->getTemplateObject('tl_iao_templates',$row['after_template']);
             $invoiceId = $this->generateInvoiceNumber(0,$this->settings);
             $invoiceIdStr = $this->generateInvoiceNumberStr($invoiceId, time(), $this->settings);
@@ -634,7 +643,7 @@ class Agreements extends IaoBackend
 					'published' => '1',
 					'vat' => $row['vat'],
 					'vat_incl' => $row['vat_incl'],
-					'posten_template' => $row['posten_template']
+					'posten_template' => 0
 				);
 
 				$newposten = DB::getInstance()->prepare('INSERT INTO `tl_iao_invoice_items` %s')
@@ -872,34 +881,41 @@ class Agreements extends IaoBackend
 		return $button;
 	}
 
+    public function generateNewCycle($data) {
+
+        if($data['periode'] == '') $data['periode'] = $GLOBALS['IAO']['default_agreement_cycle'];
+
+	    if($data['end'] && $data['beginn'])
+        {
+            $new_beginn = strtotime($data['periode'], $data['beginn']);
+            $set = array
+            (
+                'beginn_date' => $new_beginn,
+                'end_date' => strtotime($data['periode'].' -1 day', $new_beginn),
+                'new_generate' => ''
+            );
+
+            DB::getInstance()->prepare('UPDATE `tl_iao_agreements` %s WHERE `id`=?')
+                ->set($set)
+                ->execute($data['id']);
+        }
+    }
     /**
      * @param $varValue
      * @param DataContainer $dc
      * @return string
      */
-	public function generateNewCycle($varValue, DataContainer $dc)
+	public function setNewCycle($varValue, DataContainer $dc)
 	{
 		if($varValue == 1)
 		{
-			$agreement = $dc->activeRecord->agreement_date;
-			$beginn = $dc->activeRecord->beginn_date;
-			$end = $dc->activeRecord->end_date;
-			$periode = $dc->activeRecord->periode;
-			$today = time();
+			$data['id'] = $dc->id;
+			$data['beginn'] = $dc->activeRecord->beginn_date;
+			$data['end'] = $dc->activeRecord->end_date;
+			$data['periode'] = $dc->activeRecord->periode;
+			$data['today'] = time();
 
-			if($end && $beginn && ($today > $end))
-			{
-				$new_beginn = strtotime($periode, $beginn);
-				$set = array
-				(
-					'beginn_date' => $new_beginn,
-					'end_date' => strtotime($periode.' -1 day', $new_beginn),
-					'new_generate' => ''
-				);
-				DB::getInstance()->prepare('UPDATE `tl_iao_agreements` %s WHERE `id`=?')
-							->set($set)
-							->execute($dc->id);
-			}
+            $this->generateNewCycle($data);
 		}
 		return '';
 	}
