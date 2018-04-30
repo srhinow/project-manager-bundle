@@ -28,6 +28,7 @@ $GLOBALS['TL_LANG']['tl_iao_item_units']['majority'][0]          = 'Name als Meh
 $GLOBALS['TL_LANG']['tl_iao_item_units']['majority'][1]          = 'z.B. Stunden oder Tage';
 $GLOBALS['TL_LANG']['tl_iao_item_units']['sorting'][0]				= 'Sortierung';
 $GLOBALS['TL_LANG']['tl_iao_item_units']['sorting'][1]             = 'Um die Sortierung anzupassen, tragen Sie hier eine Zahl ein.';
+$GLOBALS['TL_LANG']['tl_iao_item_units']['default_value'] = array('Standart-Wert','Dieser Wert wird beim neuanlegen als Vorauswahl angezeigt.');
 
 
 

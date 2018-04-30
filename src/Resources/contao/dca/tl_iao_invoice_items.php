@@ -32,6 +32,10 @@ $GLOBALS['TL_DCA']['tl_iao_invoice_items'] = array
 		'dataContainer'               => 'Table',
 		'ptable'                      => 'tl_iao_invoice',
 		'enableVersioning'            => true,
+		'oncreate_callback'     => array(
+		    array('Iao\Dca\InvoiceItems','setDefaultTaxRate'),
+		    array('Iao\Dca\InvoiceItems','setDefaultItemUnit')
+        ),
 		'onload_callback'		=> array
 		(
 			array('Iao\Dca\InvoiceItems','setIaoSettings'),
@@ -277,7 +281,7 @@ $GLOBALS['TL_DCA']['tl_iao_invoice_items'] = array
 			'inputType'               => 'select',
 			'options_callback'        => array('Iao\Dca\InvoiceItems', 'getTaxRatesOptions'),
 			'eval'                    => array('tl_class'=>'w50'),
-			'sql'					  => "float unsigned NOT NULL"
+			'sql'					  => "float unsigned NOT NULL default 0"
 		),
 		'vat_incl' => array
 		(

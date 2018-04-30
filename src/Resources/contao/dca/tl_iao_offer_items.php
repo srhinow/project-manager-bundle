@@ -33,6 +33,10 @@ $GLOBALS['TL_DCA']['tl_iao_offer_items'] = array
 		'dataContainer'               => 'Table',
 		'ptable'                      => 'tl_iao_offer',
 		'enableVersioning'            => true,
+        'oncreate_callback'     => array(
+            array('Iao\Dca\OfferItems','setDefaultTaxRate'),
+            array('Iao\Dca\OfferItems','setDefaultItemUnit')
+        ),
 		'onload_callback'		=> array(
 			array('Iao\Dca\OfferItems','setIaoSettings'),
 			array('Iao\Dca\OfferItems', 'checkPermission'),
@@ -280,7 +284,7 @@ $GLOBALS['TL_DCA']['tl_iao_offer_items'] = array
 			'inputType'               => 'select',
 			'options_callback'        => array('Iao\Dca\OfferItems', 'getTaxRatesOptions'),
 			'eval'                    => array('tl_class'=>'w50'),
-            'sql'					  => "float unsigned NOT NULL"
+            'sql'					  => "float unsigned NOT NULL default 0"
 		),
 		'vat_incl' => array
 		(

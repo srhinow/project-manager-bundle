@@ -34,6 +34,10 @@ $GLOBALS['TL_DCA']['tl_iao_credit_items'] = array
 		'dataContainer'		=> 'Table',
 		'ptable'			=> 'tl_iao_credit',
 		'enableVersioning'	=> true,
+        'oncreate_callback'     => array(
+            array('Iao\Dca\CreditItems','setDefaultTaxRate'),
+            array('Iao\Dca\CreditItems','setDefaultItemUnit')
+        ),
 		'onload_callback'		=> array
 		(
 			array('Iao\Dca\CreditItems','setIaoSettings'),
@@ -297,7 +301,7 @@ $GLOBALS['TL_DCA']['tl_iao_credit_items'] = array
 			'inputType'               => 'select',
 			'options_callback'        => array('Iao\Dca\CreditItems', 'getTaxRatesOptions'),
 			'eval'                    => array('tl_class'=>'w50'),
-            'sql'					  => "float unsigned NOT NULL"
+            'sql'					  => "float unsigned NOT NULL default 0"
 		),
 		'vat_incl' => array
 		(

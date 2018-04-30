@@ -46,8 +46,8 @@ $GLOBALS['TL_DCA']['tl_iao_tax_rates'] = array
 		),
 		'label' => array
 		(
-			'fields'                  => array('name', 'value'),
-			'format'                  => '%s <span style="color:#b3b3b3; padding-left:3px;">[%s]</span>',
+			'fields'                  => array('name', 'default_value'),
+            'label_callback'          => array('Iao\Dca\TaxRates', 'listEntries'),
 		),
 		'global_operations' => array
 		(
@@ -100,7 +100,7 @@ $GLOBALS['TL_DCA']['tl_iao_tax_rates'] = array
 	// Palettes
 	'palettes' => array
 	(
-		'default' => 'name,value,sorting'
+		'default' => 'name,value,sorting,default_value'
 	),
 
 	// Subpalettes
@@ -144,7 +144,17 @@ $GLOBALS['TL_DCA']['tl_iao_tax_rates'] = array
 			'inputType'               => 'text',
 			'eval'                    => array('mandatory'=>true,'rgxp'=>'digit','tl_class'=>'w50'),
 			'sql'                     => "float unsigned NOT NULL default '0.00'"
-		)
+		),
+        'default_value' => array
+        (
+            'label'                   => &$GLOBALS['TL_LANG']['tl_iao_tax_rates']['default_value'],
+            'exclude'                 => true,
+            'filter'                  => true,
+            'flag'                    => 1,
+            'inputType'               => 'checkbox',
+            'eval'			          => array('tl_class'=>'clr'),
+            'sql'					  => "char(1) NOT NULL default ''"
+        ),
 	)
 );
 
@@ -169,4 +179,17 @@ class TaxRates extends IaoBackend
 	{
 		$this->checkIaoSettingsPermission('tl_iao_tax_rates');
 	}
+
+    /**
+     * List a particular record
+     * @param array
+     * @return string
+     */
+    public function listEntries($arrRow)
+    {
+        $return = $arrRow['name'];
+        if($arrRow['default_value']) $return .= ' <span style="color:#b3b3b3; padding-left:3px;">[Standart]</span>';
+
+        return $return;
+    }
 }

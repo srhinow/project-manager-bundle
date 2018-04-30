@@ -12,6 +12,8 @@ namespace Iao\Dca;
 /**
  * Table tl_iao_item_units
  */
+use Iao\Backend\IaoBackend;
+
 $GLOBALS['TL_DCA']['tl_iao_item_units'] = array
 (
 
@@ -40,8 +42,8 @@ $GLOBALS['TL_DCA']['tl_iao_item_units'] = array
 		),
 		'label' => array
 		(
-			'fields'                  => array('name', 'value'),
-			'format'                  => '%s <span style="color:#b3b3b3; padding-left:3px;">[%s]</span>',
+			'fields'                  => array('name', 'default_value'),
+            'label_callback'          => array('Iao\Dca\ItemUnits', 'listEntries'),
 		),
 		'global_operations' => array
 		(
@@ -94,7 +96,7 @@ $GLOBALS['TL_DCA']['tl_iao_item_units'] = array
 	// Palettes
 	'palettes' => array
 	(
-		'default' => 'name,value,singular,majority,sorting'
+		'default' => 'name,value,singular,majority,sorting,default_value'
 	),
 
 	// Subpalettes
@@ -157,7 +159,43 @@ $GLOBALS['TL_DCA']['tl_iao_item_units'] = array
 			'eval'                    => array('maxlength'=>255, 'tl_class'=>'w50'),
 			'sql'                     => "varchar(25) NOT NULL default ''"
 		),
+        'default_value' => array
+        (
+            'label'                   => &$GLOBALS['TL_LANG']['tl_iao_item_units']['default_value'],
+            'exclude'                 => true,
+            'filter'                  => true,
+            'flag'                    => 1,
+            'inputType'               => 'checkbox',
+            'eval'			          => array('tl_class'=>'clr'),
+            'sql'					  => "char(1) NOT NULL default ''"
+        ),
 
 	)
 );
+/**
+ * Class TaxRates
+ * @package Iao\Dca
+ */
+class ItemUnits extends IaoBackend
+{
+    /**
+     * TaxRates constructor.
+     */
+    public function __construct()
+    {
+        parent::__construct();
+    }
 
+    /**
+     * List a particular record
+     * @param array
+     * @return string
+     */
+    public function listEntries($arrRow)
+    {
+        $return = $arrRow['name'];
+        if($arrRow['default_value']) $return .= ' <span style="color:#b3b3b3; padding-left:3px;">[Standart]</span>';
+
+        return $return;
+    }
+}

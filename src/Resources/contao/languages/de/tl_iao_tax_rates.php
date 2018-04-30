@@ -24,7 +24,7 @@ $GLOBALS['TL_LANG']['tl_iao_tax_rates']['value'][0]				= 'Wert (%)';
 $GLOBALS['TL_LANG']['tl_iao_tax_rates']['value'][1]             = 'z.B. 19 pder 7 oder 0';
 $GLOBALS['TL_LANG']['tl_iao_tax_rates']['sorting'][0]				= 'Sortierung';
 $GLOBALS['TL_LANG']['tl_iao_tax_rates']['sorting'][1]             = 'Um die Sortierung anzupassen, tragen Sie hier eine Zahl ein.';
-
+$GLOBALS['TL_LANG']['tl_iao_tax_rates']['default_value'] = array('Standart-Wert','Dieser Wert wird beim neuanlegen als Vorauswahl angezeigt.');
 
 /**
  * Buttons

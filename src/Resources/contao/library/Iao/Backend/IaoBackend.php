@@ -282,6 +282,30 @@ abstract class IaoBackend extends Iao
 		}
 	}
 
+    /**
+     * set the default-value for tax-field
+     * @param $table
+     * @param $id
+     */
+	public function setDefaultTaxRate($table, $id) {
+        $objDefault = DB::getInstance()
+            ->prepare('SELECT `value` FROM `tl_iao_tax_rates` WHERE `default_value`=?')
+            ->limit(1)
+            ->execute(1);
+
+        if($objDefault->numRows > 0) {
+            $set = [
+              'vat' =>   $objDefault->value
+            ];
+
+            DB::getInstance()
+                ->prepare("UPDATE $table %s WHERE id=?")
+                ->set($set)
+                ->limit(1)
+                ->execute($id);
+        }
+    }
+
 	/**
 	 * get options for tax rates
 	 * @param object
@@ -291,7 +315,7 @@ abstract class IaoBackend extends Iao
 	{
 		$varValue= array();
 
-		$all = DB::getInstance()->prepare('SELECT `value`,`name` FROM `tl_iao_tax_rates`  ORDER BY `sorting` ASC')
+		$all = DB::getInstance()->prepare('SELECT `value`,`name` FROM `tl_iao_tax_rates`  ORDER BY `default_value` DESC,`sorting` ASC')
 				->execute();
 
 		while($all->next())
@@ -301,6 +325,30 @@ abstract class IaoBackend extends Iao
 
 		return $varValue;
 	}
+
+    /**
+     * set the default-value for tax-field
+     * @param $table
+     * @param $id
+     */
+    public function setDefaultItemUnit($table, $id) {
+        $objDefault = DB::getInstance()
+            ->prepare('SELECT `value` FROM `tl_iao_item_units` WHERE `default_value`=?')
+            ->limit(1)
+            ->execute(1);
+
+        if($objDefault->numRows > 0) {
+            $set = [
+                'amountStr' =>   $objDefault->value
+            ];
+
+            DB::getInstance()
+                ->prepare("UPDATE $table %s WHERE id=?")
+                ->set($set)
+                ->limit(1)
+                ->execute($id);
+        }
+    }
 
 	/**
 	 * get options for item units
@@ -391,7 +439,9 @@ abstract class IaoBackend extends Iao
      */
 	public function fillReminderFields($objInvoice, $objReminder)
 	{
-        $settings = [];
+//        print_r($objInvoice);
+//        exit();
+	    $settings = [];
         $address_text = '';
 
         $objMember = MemberModel::findByIdOrAlias((int) $objInvoice->member);
