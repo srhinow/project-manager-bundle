@@ -2,6 +2,7 @@
 namespace Iao\Dca;
 
 use Contao\DataContainer;
+use Contao\Input;
 use Iao\Backend\IaoBackend;
 use Srhinow\IaoTemplatesModel;
 use Srhinow\IaoOfferModel;
@@ -600,7 +601,7 @@ class Offer extends IaoBackend
 	{
         if($varValue == 1) {
 
-            $intMember = $dc->activeRecord->member;
+            $intMember = Input::post(member);
             $text = $this->getAddressText($intMember);
 
             $set = array(

@@ -10,6 +10,7 @@ namespace Iao\Dca;
  */
 
 use Contao\FilesModel;
+use Contao\Input;
 use Iao\Backend\IaoBackend;
 use Contao\Database as DB;
 use Contao\DataContainer;
@@ -536,8 +537,7 @@ class Agreements extends IaoBackend
 	public function fillAddressText($varValue, DataContainer $dc)
 	{
         if($varValue == 1) {
-
-            $intMember = $dc->activeRecord->member;
+            $intMember = Input::post(member);
             $text = $this->getAddressText($intMember);
 
             $set = array(

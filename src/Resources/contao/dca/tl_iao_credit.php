@@ -1,6 +1,7 @@
 <?php
 namespace Iao\Dca;
 
+use Contao\Input;
 use Iao\Backend\IaoBackend;
 use Srhinow\IaoTemplatesModel;
 use Srhinow\IaoCreditModel;
@@ -520,7 +521,7 @@ class Credit  extends IaoBackend
 	{
         if($varValue == 1) {
 
-            $intMember = $dc->activeRecord->member;
+            $intMember = Input::post(member);
             $text = $this->getAddressText($intMember);
 
             $set = array(

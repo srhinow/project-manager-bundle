@@ -21,6 +21,7 @@ $GLOBALS['TL_LANG']['tl_iao_agreements']['pid']	=	array('Projekt','Optional kön
 $GLOBALS['TL_LANG']['tl_iao_agreements']['title'] = array('Bezeichnung','Bezeichnung des Elementes');
 $GLOBALS['TL_LANG']['tl_iao_agreements']['agreement_pdf_file'] = array('Vertrag','Vertrag als PDF-Datei zuweisen.');
 $GLOBALS['TL_LANG']['tl_iao_agreements']['member'] = array('Kunde','Adresse aus gespeicherten Kunden in nachstehendes Feld befüllen');
+$GLOBALS['TL_LANG']['tl_iao_agreements']['text_generate'] = array('Adresstext aus Kundendaten generieren','VORSICHT! Der evtl. bestehende Adresstext wird gelöscht.');
 $GLOBALS['TL_LANG']['tl_iao_agreements']['address_text'] = array('Mahnungs-Adresse','Adresse die in der Mahnungs-PDF-Datei geschrieben wird.');
 $GLOBALS['TL_LANG']['tl_iao_agreements']['published'] = array('veröffentlicht','');
 $GLOBALS['TL_LANG']['tl_iao_agreements']['status'] = array('Status dieses Vertrages','');

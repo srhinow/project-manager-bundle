@@ -1,6 +1,7 @@
 <?php
 namespace Iao\Dca;
 
+use Contao\Input;
 use Contao\StringUtil;
 use Iao\Backend\IaoBackend;
 use Srhinow\IaoTemplatesModel as TemplModel;
@@ -717,7 +718,7 @@ class Invoice extends IaoBackend
 	{
         if($varValue == 1) {
 
-	        $intMember = $dc->activeRecord->member;
+            $intMember = Input::post(member);
             $text = $this->getAddressText($intMember);
 
             $set = array(
