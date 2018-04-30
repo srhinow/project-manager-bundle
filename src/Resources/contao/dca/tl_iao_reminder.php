@@ -1,6 +1,7 @@
 <?php
 namespace Iao\Dca;
 
+use Contao\Input;
 use Iao\Backend\IaoBackend;
 use iao\iaoPDF;
 use Srhinow\IaoReminderModel;
@@ -136,7 +137,7 @@ $GLOBALS['TL_DCA']['tl_iao_reminder'] = array
 	'palettes' => array
 	(
 		'__selector__'                => array(),
-		'default'                     => '{settings_legend},setting_id,pid;{invoice_legend},invoice_id,title,address_text,unpaid,step,reminder_tstamp,periode_date,tax,postage,sum,text,text_finish;{status_legend},published,status,paid_on_date;{notice_legend:hide},notice'
+		'default'                     => '{settings_legend},setting_id,pid;{invoice_legend},invoice_id,step,set_step_values,title,reminder_tstamp,periode_date,tax,postage,unpaid,sum;{address_legend},member,text_generate,address_text;{reminder_legend},text,text_finish;{status_legend},published,status,paid_on_date;{notice_legend:hide},notice'
 	),
 
 	// Subpalettes
@@ -212,7 +213,7 @@ $GLOBALS['TL_DCA']['tl_iao_reminder'] = array
 			'label'                   => &$GLOBALS['TL_LANG']['tl_iao_reminder']['reminder_tstamp'],
 			'exclude'                 => true,
 			'inputType'               => 'text',
-			'eval'                    => array('doNotCopy'=>true,'rgxp'=>'datim', 'datepicker'=>$this->getDatePickerString(), 'tl_class'=>'w50 wizard'),
+			'eval'                    => array('doNotCopy'=>true,'rgxp'=>'datim', 'datepicker'=>$this->getDatePickerString(), 'tl_class'=>'clr w50 wizard'),
 			'load_callback' => array
 			(
 				array('Iao\Dca\Reminder', 'generateReminderTstamp')
@@ -224,6 +225,7 @@ $GLOBALS['TL_DCA']['tl_iao_reminder'] = array
 			'label'                   => &$GLOBALS['TL_LANG']['tl_iao_reminder']['periode_date'],
 			'exclude'                 => true,
 			'inputType'               => 'text',
+			'default'                 => strtotime('+14 days'),
 			'eval'                    => array('rgxp'=>'date', 'datepicker'=>$this->getDatePickerString(), 'tl_class'=>'w50 wizard'),
 			'sql'					  => "int(10) unsigned NOT NULL default '0'"
 		),
@@ -242,79 +244,36 @@ $GLOBALS['TL_DCA']['tl_iao_reminder'] = array
 			'flag'                    => 1,
 			'inputType'               => 'select',
 			'options_callback'        => array('Iao\Dca\Reminder', 'getInvoices'),
-                        'eval'			  => array('tl_class'=>'w50','includeBlankOption'=>true,'submitOnChange'=>true, 'chosen'=>true),
+            'eval'			          => array('tl_class'=>'w50','includeBlankOption'=>true, 'chosen'=>true),
 			'save_callback' => array
 			(
-				array('Iao\Dca\Reminder', 'fillFields')
+//				array('Iao\Dca\Reminder', 'fillFields')
 			),
 			'sql'					  => "int(10) unsigned NOT NULL default '0'"
 		),
-		'member' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_iao_reminder']['member'],
-			'filter'                  => true,
-			'search'                  => true,
-			'sorting'                 => true,
-			'flag'                    => 11,
-			'inputType'               => 'select',
-			'options_callback'        => array('Iao\Dca\Reminder', 'getMemberOptions'),
-			'eval'                    => array('tl_class'=>'w50','includeBlankOption'=>true,'submitOnChange'=>true, 'chosen'=>true),
-			'save_callback' => array
-			(
-				array('Iao\Dca\Reminder', 'fillAdressText')
-			),
-			'sql'					  => "varbinary(128) NOT NULL default ''"
-		),
-		'address_text' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_iao_reminder']['address_text'],
-			'exclude'                 => true,
-			'search'                  => true,
-			'inputType'               => 'textarea',
-			'eval'                    => array('rte'=>'tinyMCE','style'=>'height:60px;', 'tl_class'=>'clr'),
-			'explanation'             => 'insertTags',
-			'sql'					  => "mediumtext NULL"
-		),
-		'published' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_iao_reminder']['published'],
-			'exclude'                 => true,
-			'filter'                  => true,
-			'flag'                    => 1,
-			'inputType'               => 'checkbox',
-			'eval'                    => array('doNotCopy'=>true),
-			'sql'					  => "char(1) NOT NULL default ''"
-		),
-		'status' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_iao_reminder']['status'],
-			'exclude'                 => true,
-			'filter'                  => true,
-			'flag'                    => 1,
-			'inputType'               => 'select',
-			'options'                 => &$GLOBALS['TL_LANG']['tl_iao_reminder']['status_options'],
-                        'eval'			  => array('tl_class'=>'w50'),
-                        'save_callback' => array
-			(
-				array('Iao\Dca\Reminder', 'updateStatus')
-			),
-			'sql'					  => "char(1) NOT NULL default ''"
-		),
-		'step' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_iao_reminder']['step'],
-			'exclude'                 => true,
-			'filter'                  => true,
-			'flag'                    => 1,
-			'inputType'               => 'select',
-			'options'                 => &$GLOBALS['TL_LANG']['tl_iao_reminder']['steps'],
-			'eval'                    => array('tl_class'=>'w50','includeBlankOption'=>true,'submitOnChange'=>true),
-			'save_callback' => array
-			(
-				array('Iao\Dca\Reminder', 'fillStepFields')
-			),
-			'sql'					  => "varchar(255) NOT NULL default ''"
-		),
+        'step' => array
+        (
+            'label'                   => &$GLOBALS['TL_LANG']['tl_iao_reminder']['step'],
+            'exclude'                 => true,
+            'filter'                  => true,
+            'flag'                    => 1,
+            'inputType'               => 'select',
+            'options'                 => &$GLOBALS['TL_LANG']['tl_iao_reminder']['steps'],
+            'eval'                    => array('tl_class'=>'w50','includeBlankOption'=>true),
+            'sql'					  => "varchar(255) NOT NULL default ''"
+        ),
+        'set_step_values' => array
+        (
+            'label'                   => &$GLOBALS['TL_LANG']['tl_iao_reminder']['set_step_values'],
+            'flag'                    => 1,
+            'inputType'               => 'checkbox',
+            'eval'                    => array('tl_class'=>'w50','submitOnChange'=>true),
+            'save_callback' => array
+            (
+                array('Iao\Dca\Reminder', 'fillStepFields')
+            ),
+            'sql'                     => "char(1) NOT NULL default ''"
+        ),
 		'unpaid' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_iao_reminder']['unpaid'],
@@ -359,6 +318,65 @@ $GLOBALS['TL_DCA']['tl_iao_reminder'] = array
 			'eval'                    => array('maxlength'=>25, 'tl_class'=>'w50'),
 			'sql'					  => "varchar(25) NOT NULL default '0'"
 		),
+        'member' => array
+        (
+            'label'                   => &$GLOBALS['TL_LANG']['tl_iao_reminder']['member'],
+            'filter'                  => true,
+            'search'                  => true,
+            'sorting'                 => true,
+            'flag'                    => 11,
+            'inputType'               => 'select',
+            'options_callback'        => array('Iao\Dca\Reminder', 'getMemberOptions'),
+            'eval'                    => array('tl_class'=>'w50','includeBlankOption'=>true, 'chosen'=>true),
+            'sql'					  => "varbinary(128) NOT NULL default ''"
+        ),
+        'text_generate' => array
+        (
+            'label'                   => &$GLOBALS['TL_LANG']['tl_iao_reminder']['text_generate'],
+            'flag'                    => 1,
+            'inputType'               => 'checkbox',
+            'eval'                    => array('tl_class'=>'clr','submitOnChange'=>true),
+            'save_callback' => array
+            (
+                array('Iao\Dca\Reminder', 'fillAddressText')
+            ),
+            'sql'                     => "char(1) NOT NULL default ''"
+        ),
+        'address_text' => array
+        (
+            'label'                   => &$GLOBALS['TL_LANG']['tl_iao_reminder']['address_text'],
+            'exclude'                 => true,
+            'search'                  => true,
+            'inputType'               => 'textarea',
+            'eval'                    => array('rte'=>'tinyMCE','style'=>'height:60px;', 'tl_class'=>'clr'),
+            'explanation'             => 'insertTags',
+            'sql'					  => "mediumtext NULL"
+        ),
+        'published' => array
+        (
+            'label'                   => &$GLOBALS['TL_LANG']['tl_iao_reminder']['published'],
+            'exclude'                 => true,
+            'filter'                  => true,
+            'flag'                    => 1,
+            'inputType'               => 'checkbox',
+            'eval'                    => array('doNotCopy'=>true),
+            'sql'					  => "char(1) NOT NULL default ''"
+        ),
+        'status' => array
+        (
+            'label'                   => &$GLOBALS['TL_LANG']['tl_iao_reminder']['status'],
+            'exclude'                 => true,
+            'filter'                  => true,
+            'flag'                    => 1,
+            'inputType'               => 'select',
+            'options'                 => &$GLOBALS['TL_LANG']['tl_iao_reminder']['status_options'],
+            'eval'			  => array('tl_class'=>'w50'),
+            'save_callback' => array
+            (
+                array('Iao\Dca\Reminder', 'updateStatus')
+            ),
+            'sql'					  => "char(1) NOT NULL default ''"
+        ),
 		'notice' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_iao_reminder']['notice'],
@@ -422,28 +440,6 @@ class Reminder extends iaoBackend
 	}
 
     /**
-     * fill Adress-Text
-     * @param $varValue
-     * @param DataContainer $dc
-     * @return mixed
-     * @throws \Exception
-     */
-	public function fillFields($varValue, DataContainer $dc)
-	{
-        $objDB = IaoReminderModel::findById($dc->id);
-        if(!is_object($objDB)) throw new \Exception('Error in fillFields in tl_iao_reminder');
-
-		if($varValue == $objDB->invoice_id) return $varValue;
-
-		if(!$dc->activeRecord->step)
-		{
-			$this->fillReminderFields($varValue,$dc->activeRecord);
-		}
-	    return $varValue;
-	}
-
-
-    /**
      * get all invoices
      * @param DataContainer $dc
      * @return array
@@ -453,9 +449,16 @@ class Reminder extends iaoBackend
 		$settings = $this->getSettings($dc->activeRecord->setting_id);
         $varValue= array();
 
-		$all = DB::getInstance()->prepare('SELECT `i`.*, `m`.`company` FROM `tl_iao_invoice` as `i` LEFT JOIN `tl_member` as `m` ON `i`.`member` = `m`.`id` ORDER BY `invoice_id_str` DESC')
-                    ->execute();
+        if($dc->activeRecord->pid > 0) {
 
+            $all = DB::getInstance()
+                ->prepare('SELECT `i`.*, `m`.`company` FROM `tl_iao_invoice` as `i` LEFT JOIN `tl_member` as `m` ON `i`.`member` = `m`.`id` WHERE `i`.`pid`=? ORDER BY `invoice_id_str` DESC')
+                ->execute($dc->activeRecord->pid);
+
+        } else {
+            $all = DB::getInstance()->prepare('SELECT `i`.*, `m`.`company` FROM `tl_iao_invoice` as `i` LEFT JOIN `tl_member` as `m` ON `i`.`member` = `m`.`id` ORDER BY `invoice_id_str` DESC')
+                        ->execute();
+        }
 		while($all->next())
 		{
 			$varValue[$all->id] = $all->invoice_id_str.' :: '.\StringUtil::substr($all->title,20).' ('.number_format($all->price_brutto,2,',','.').' '.$settings['currency_symbol'].')';
@@ -473,42 +476,45 @@ class Reminder extends iaoBackend
 	 */
 	public function fillStepFields($varValue, DataContainer $dc)
 	{
-		$settings = $this->getSettings($dc->activeRecord->setting_id);
+        if($varValue != 1) return $varValue;
 
-		if(!$varValue) return $varValue;
+//        $step = $dc->activeRecord->step;
+//	    $settings = $this->getSettings($dc->activeRecord->setting_id);
+//        $objReminder = IaoReminderModel::findById($dc->id);
 
-        $dbObj = IaoReminderModel::findById($dc->id);
-        if(!is_object($dbObj)) throw new \Exception('fillStepFields() ist fehlgeschlagen.');
+//        if(!is_object($objReminder)) throw new \Exception('fillStepFields() ist fehlgeschlagen.');
 
-		if($varValue == $dbObj->step) return $varValue;
+        $this->fillReminderFields($dc->activeRecord);
 
-		$text = $settings['iao_reminder_'.$varValue.'_text'];
-		$text_finish = $this->changeIAOTags($text,'reminder',$dbObj);
+//		$text = $settings['iao_reminder_'.$step.'_text'];
+//		$text_finish = $this->changeIAOTags($text,'reminder',$dbObj);
+//
+//
+//        $tax =  $settings['iao_reminder_'.$step.'_tax'];
+//		$postage =  $settings['iao_reminder_'.$step.'_postage'];
+//		$periode_date = $this->getPeriodeDate($dc->activeRecord);
+//
+//		$set = [
+//			'tax' => $tax,
+//			'postage' => $postage,
+//			'text' =>  $text,
+//			'text_finish' => $text_finish,
+//			'periode_date' => $periode_date,
+//            'set_step_values' => ''
+//        ];
+//
+//	    DB::getInstance()->prepare('UPDATE `tl_iao_reminder` %s WHERE `id`=?')
+//										->set($set)
+//										->execute($dc->id);
+//
+//		//update invoice-data with current reminder-step
+//        $set = ['reminder_id'=>$dc->id];
+//
+//		DB::getInstance()->prepare('UPDATE `tl_iao_invoice` %s  WHERE `id`=?')
+//                        ->set($set)
+//						->execute($dc->activeRecord->invoice_id);
 
-		$tax =  $settings['iao_reminder_'.$varValue.'_tax'];
-		$postage =  $settings['iao_reminder_'.$varValue.'_postage'];
-		$periode_date = $this->getPeriodeDate($dc->activeRecord);
-
-		$set = [
-			'tax' => $tax,
-			'postage' => $postage,
-			'text' =>  $text,
-			'text_finish' => $text_finish,
-			'periode_date' => $periode_date
-        ];
-
-	    DB::getInstance()->prepare('UPDATE `tl_iao_reminder` %s WHERE `id`=?')
-										->set($set)
-										->execute($dc->id);
-
-		//update invoice-data with current reminder-step
-        $set = ['reminder_id'=>$dc->id];
-
-		DB::getInstance()->prepare('UPDATE `tl_iao_invoice` %s  WHERE `id`=?')
-                        ->set($set)
-						->execute($dc->activeRecord->invoice_id);
-
-		return $varValue;
+		return '';
 	}
 
     /**
@@ -521,14 +527,13 @@ class Reminder extends iaoBackend
         $obj = IaoReminderModel::findById($dc->id);
         if(!is_object($obj)) throw new \Exception('getTextFinish() ist fehlgeschlagen.');
 
-        if(!$obj->text_finish)
-        {
-			$text_finish = $this->changeIAOTags($obj->text,'reminder',$obj);
+        $text_finish = $this->changeIAOTags($obj->text,'reminder',$obj);
 
-        }
-        else $text_finish =  $obj->text_finish;
+		return '<div class="clr widget">
+                <h3><label for="ctrl_text_finish">'.$GLOBALS['TL_LANG']['tl_iao_reminder']['text_finish'][0].'</label></h3>
+                <div id="ctrl_text_finish" class="preview" style="border:1px solid #ddd; padding:15px;">'.$text_finish.'</div>
+                </div>';
 
-		return '<h3><label for="ctrl_text_finish">'.$GLOBALS['TL_LANG']['tl_iao_reminder']['text_finish'][0].'</label></h3><div id="ctrl_text_finish" class="preview" style="border:1px solid #ddd; padding:5px;">'.$text_finish.'</div>';
 	}
 
     /**
@@ -556,17 +561,25 @@ class Reminder extends iaoBackend
      * @param DataContainer $dc
      * @return mixed
      */
-    public function fillAdressText($intMember, DataContainer $dc)
+    public function fillAddressText($varValue, DataContainer $dc)
     {
-        if(trim(strip_tags($dc->activeRecord->address_text)) == '')
-        {
-            $text = $this->getAdressText($intMember);
+        if($varValue == 1) {
 
-            DB::getInstance()->prepare('UPDATE `tl_iao_reminder` SET `address_text`=? WHERE `id`=?')
+            $intMember = Input::post(member);
+
+            $text = $this->getAddressText($intMember);
+
+            $set = array(
+                'address_text' => $text,
+                'text_generate' => ''
+            );
+
+            DB::getInstance()->prepare('UPDATE `tl_iao_reminder` %s WHERE `id`=?')
+                ->set($set)
                 ->limit(1)
-                ->execute($text, $dc->id);
+                ->execute($dc->id);
         }
-        return $intMember;
+        return '';
     }
 	/**
 	 * Return the edit header button
@@ -880,18 +893,21 @@ class Reminder extends iaoBackend
 		$visibility = $blnVisible==1 ? '1' : '2';
 
 		// Update the database
-		DB::getInstance()->prepare("UPDATE tl_iao_reminder SET status=? WHERE id=?")
-					   ->execute($visibility, $intId);
+		DB::getInstance()
+            ->prepare("UPDATE tl_iao_reminder SET status=? WHERE id=?")
+            ->execute($visibility, $intId);
 
 		//get reminder-Data
-		$remindObj = DB::getInstance()->prepare('SELECT * FROM `tl_iao_reminder` WHERE `id`=?')
-									->limit(1)
-									->execute($intId);
+		$remindObj = DB::getInstance()
+            ->prepare('SELECT * FROM `tl_iao_reminder` WHERE `id`=?')
+            ->limit(1)
+            ->execute($intId);
 
 		if($remindObj->numRows)
 		{
-			$dbObj = DB::getInstance()->prepare("UPDATE `tl_iao_invoice` SET `status`=?, `notice` = `notice`+?  WHERE id=?")
-									->execute($visibility, $remindObj->notice, $remindObj->invoice_id);
+		    $dbObj = DB::getInstance()
+                ->prepare("UPDATE `tl_iao_invoice` SET `status`=?, `notice` = `notice`+?  WHERE id=?")
+                ->execute($visibility, $remindObj->notice, $remindObj->invoice_id);
 		}
 
         $logger->create();
@@ -913,8 +929,14 @@ class Reminder extends iaoBackend
 
 			$newReminderID = ($otherReminderObj->numRows > 0) ? $otherReminderObj->id : 0;
 
-			DB::getInstance()->prepare('UPDATE `tl_iao_invoice` SET `reminder_id`=? WHERE `id`=?')
-							->execute($newReminderID, $invoiceID);
+            $set = array(
+                'reminder_id'=>$newReminderID
+            );
+
+            DB::getInstance()
+                ->prepare('UPDATE `tl_iao_invoice` %s WHERE `id`=?')
+                ->set($set)
+                ->execute($invoiceID);
 	     }
 	 }
 
@@ -923,24 +945,40 @@ class Reminder extends iaoBackend
      */
 	public function changeStatusReminder(DataContainer $dc)
 	{
-		$state = \Input::get('state');
-		$reminderID = \Input::get('id');
+		$state = Input::get('state');
+		$reminderID = Input::get('id');
 		$invoiceID = $dc->activeRecord->invoice_id;
 
 		if($state == 2)
 		{
 			if($invoiceID)
 			{
-				DB::getInstance()->prepare('UPDATE `tl_iao_invoice` SET `reminder_id`=?, `paid_on_date`=?, `status`=? WHERE `id`=?')
-								->execute($reminderID, time(), 2, $invoiceID);
+                $set = array(
+                    'reminder_id'=>$reminderID,
+                    'paid_on_date'=>time(),
+                    'status'=>2
+                );
+
+			    DB::getInstance()
+                    ->prepare('UPDATE `tl_iao_invoice` %s WHERE `id`=?')
+                    ->set($set)
+                    ->execute($invoiceID);
 			}
 		}
 		elseif($state == 1)
 		{
 			if($invoiceID)
 			{
-				DB::getInstance()->prepare('UPDATE `tl_iao_invoice` SET `reminder_id`=?, `paid_on_date`=?,`status`=?  WHERE `id`=?')
-								->execute('', '', 1, $invoiceID);
+				$set = array(
+				    'reminder_id'=>'',
+                    'paid_on_date'=>'',
+                    'status'=>1
+                );
+
+			    DB::getInstance()
+                    ->prepare('UPDATE `tl_iao_invoice` %s  WHERE `id`=?')
+                    ->set($set)
+                    ->execute($invoiceID);
 			}
 		}
 	}

@@ -16,11 +16,14 @@
 
 $GLOBALS['TL_LANG']['tl_iao_reminder']['title'] = array('Bezeichnung','Bezeichnung des Elementes');
 $GLOBALS['TL_LANG']['tl_iao_reminder']['pid']	=	array('Projekt','das entsprechende Projekt auswählen.');
+$GLOBALS['TL_LANG']['tl_iao_reminder']['setting_id'] = array('zugehörige Einstellungen','');
 $GLOBALS['TL_LANG']['tl_iao_reminder']['alias'] = array('Alias','');
 $GLOBALS['TL_LANG']['tl_iao_reminder']['member'] = array('Kunde','Adresse aus gespeicherten Kunden in nachstehendes Feld befüllen');
+$GLOBALS['TL_LANG']['tl_iao_reminder']['text_generate'] = array('Adresstext aus Kundendaten generieren','VORSICHT! Der evtl. bestehende Adresstext wird gelöscht.');
 $GLOBALS['TL_LANG']['tl_iao_reminder']['address_text'] = array('Mahnungs-Adresse','Adresse die in der Mahnungs-PDF-Datei geschrieben wird.');
 $GLOBALS['TL_LANG']['tl_iao_reminder']['text'] = array('Mahnungs-Text','');
 $GLOBALS['TL_LANG']['tl_iao_reminder']['text_finish'] = array('Mahnungs-Text (Vorschau)','');
+$GLOBALS['TL_LANG']['tl_iao_reminder']['reminder_tstamp'] = array('Datum der Erinnerung/Mahnung','');
 $GLOBALS['TL_LANG']['tl_iao_reminder']['published'] = array('veröffentlicht','');
 $GLOBALS['TL_LANG']['tl_iao_reminder']['status'] = array('Status dieser Mahnung','');
 $GLOBALS['TL_LANG']['tl_iao_reminder']['new'] = array('Neue Erinnerung','Eine neue Erinnerung anlegen');
@@ -36,6 +39,7 @@ $GLOBALS['TL_LANG']['tl_iao_reminder']['member'] = array('Kunde','');
 $GLOBALS['TL_LANG']['tl_iao_reminder']['periode_date'] = array('zu zahlen bis','');
 $GLOBALS['TL_LANG']['tl_iao_reminder']['notice'] = array('Notiz','');
 $GLOBALS['TL_LANG']['tl_iao_reminder']['step'] = array('Mahnungs-Schritt','');
+$GLOBALS['TL_LANG']['tl_iao_reminder']['set_step_values'] = array('Werte setzen','Zu dem links ausgewählten Mahnungsschritt werden alle zugehörigen Felder befüllt.');
 $GLOBALS['TL_LANG']['tl_iao_reminder']['unpaid'] = array('Schuld (&euro;)','Die Eingabe muss mit dem Dezimal-Trennzeichen . angelegt werden.');
 $GLOBALS['TL_LANG']['tl_iao_reminder']['tax'] = array('Zins','optional');
 $GLOBALS['TL_LANG']['tl_iao_reminder']['postage'] = array('Versand/Porto (&euro;)','optional');
@@ -56,6 +60,7 @@ $GLOBALS['TL_LANG']['tl_iao_reminder']['to_much_steps'] = 'Es gibt keine weitere
 /**
  * Legend
  */
+$GLOBALS['TL_LANG']['tl_iao_reminder']['settings_legend'] = 'Haupteinstellungen';
 $GLOBALS['TL_LANG']['tl_iao_reminder']['invoice_legend'] = 'erweiterte Mahnungs-Einstellungen';
 $GLOBALS['TL_LANG']['tl_iao_reminder']['address_legend'] = 'Adress-Angaben';
 $GLOBALS['TL_LANG']['tl_iao_reminder']['text_legend'] = 'Mahnungs-Texte';

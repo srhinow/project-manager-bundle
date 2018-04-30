@@ -11,6 +11,7 @@ use Contao\CoreBundle\Session;
 use Contao\DataContainer;
 use Contao\MemberModel;
 use Iao\Iao;
+use Srhinow\IaoInvoiceModel;
 use Srhinow\IaoProjectsModel;
 use Exception;
 
@@ -437,14 +438,20 @@ abstract class IaoBackend extends Iao
      * @param $objInvoice
      * @param $objReminderj
      */
-	public function fillReminderFields($objInvoice, $objReminder)
+	public function fillReminderFields($objReminder)
 	{
 //        print_r($objInvoice);
 //        exit();
-	    $settings = [];
+	    $settings = $this->getSettings($objReminder->setting_id);
         $address_text = '';
 
+        $objInvoice = IaoInvoiceModel::findById($objReminder->invoice_id);
+
+        if(!is_object($objInvoice)) throw new \Exception('Keine passende Rechnung in fillReminderFields() gefunden.');
+
         $objMember = MemberModel::findByIdOrAlias((int) $objInvoice->member);
+
+        if(!is_object($objMember)) throw new \Exception('Keinen passenden Kunden in fillReminderFields() gefunden.');
 
 		if(!empty($objInvoice->address_text))
 		{
@@ -470,7 +477,7 @@ abstract class IaoBackend extends Iao
             $this->reload();
 		}
 
-		$newUnpaid = (($testStepObj->numRows > 0) && ((int) $testStepObj->sum > 0)) ? $testStepObj->sum : $objMember->price_brutto;
+		$newUnpaid = (($testStepObj->numRows > 0) && ((int) $testStepObj->sum > 0)) ? $testStepObj->sum : $objInvoice->price_brutto;
 		$tax =  (float) $settings['iao_reminder_'.$newStep.'_tax'];
 		$postage = (float) $settings['iao_reminder_'.$newStep.'_postage'];
 		$periode_date = (int) $this->getPeriodeDate($objReminder);
@@ -491,24 +498,26 @@ abstract class IaoBackend extends Iao
 		$resultReminder = DB::getInstance()->prepare('UPDATE `tl_iao_reminder` %s WHERE `id`=?')
 						->set($set)
 						->execute($objReminder->id);
-//        print_r($objReminder->id); exit();
+
 		//set sum after other facts is saved
 		$text_finish = $this->changeIAOTags($settings['iao_reminder_'.$newStep.'_text'],'reminder', $objReminder);
 		$text_finish = $this->changeTags($text_finish);
 
-		$set = array
-		(
+		$set = [
 	    	'sum' => $this->getReminderSum($objReminder->id),
 	    	'text_finish' => $text_finish
-		);
+        ];
 
 		DB::getInstance()->prepare('UPDATE `tl_iao_reminder` %s WHERE `id`=?')
 						->set($set)
 						->execute($objReminder->id);
 
 		//update invoice-data with current reminder-step
-		DB::getInstance()->prepare('UPDATE `tl_iao_invoice` SET `reminder_id` = ?  WHERE `id`=?')
-						->execute($objReminder->id, $objInvoice->id);
+        $set = ['reminder_id'=>$dc->id];
+		DB::getInstance()
+            ->prepare('UPDATE `tl_iao_invoice` SET `reminder_id` = ?  WHERE `id`=?')
+            ->set($set)
+            ->execute($objReminder->id, $objInvoice->id);
 	}
 
 	/**
