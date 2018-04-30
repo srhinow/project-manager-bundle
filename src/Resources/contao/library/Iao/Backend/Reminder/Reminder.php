@@ -12,6 +12,7 @@ namespace Iao\Backend\Reminder;
 use Contao\Backend;
 use Iao\Backend\IaoBackend;
 use Contao\Database;
+use Srhinow\IaoReminderModel;
 
 /**
  * Class Reminder
@@ -44,6 +45,7 @@ class Reminder
                     $set = array
 					(
 						'invoice_id' => $objInvoice->id,
+						'member' => $objInvoice->member,
 						'pid' => $objInvoice->pid,
 						'setting_id' => $objInvoice->setting_id,
 						'reminder_tstamp' => time(),
@@ -58,9 +60,7 @@ class Reminder
 					$reminderID = $objInvoice->reminder_id;
 				}
 
-				$reminderObj = Database::getInstance()->prepare('SELECT * FROM `tl_iao_reminder` WHERE `id`=?')
-											->limit(1)
-						 					->execute($reminderID);
+				$reminderObj = IaoReminderModel::findById($reminderID);
 
 
 				// only the invoices in past
@@ -72,7 +72,7 @@ class Reminder
 				// drop all where status = 2
 				if($reminderObj->status == 2) continue;
 
-				IaoBackend::getInstance()->fillReminderFields($objInvoice, $reminderObj);
+				IaoBackend::getInstance()->fillReminderFields($reminderObj);
 
 			}
 		}

@@ -35,7 +35,7 @@ $GLOBALS['TL_DCA']['tl_iao_reminder'] = array
 		'enableVersioning'		=> false,
 		'onload_callback'		=> array
 		(
-			array('Iao\Dca\Reminder', 'generateInvoicePDF'),
+			array('Iao\Dca\Reminder', 'checkPDF'),
 			array('Iao\Dca\Reminder', 'checkPermission'),
 		),
 		'onsubmit_callback'	=> array(
@@ -567,8 +567,9 @@ class Reminder extends iaoBackend
      * wenn GET-Parameter passen dann wird eine PDF erzeugt
      * @param DataContainer $dc
      */
-	public function generateInvoicePDF(DataContainer $dc)
-	{	    if(\Input::get('key') == 'pdf' && (int) \Input::get('id') > 0) $this->generateReminderPDF((int) \Input::get('id'), 'reminder');
+	public function checkPDF(DataContainer $dc)
+	{
+	    if(\Input::get('key') == 'pdf' && (int) \Input::get('id') > 0) $this->generateReminderPDF((int) \Input::get('id'), 'reminder');
 	}
 
     /**

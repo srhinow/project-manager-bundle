@@ -197,7 +197,7 @@ class Iao extends Controller
             {
                 // get table - Data
                 case 'member':
-                    $objInfo = DB::getInstance()->prepare('SELECT `m`.* FROM `tl_member` `m` WHERE `m`.`id`=?')
+                    $objInfo = DB::getInstance()->prepare('SELECT * FROM `tl_member` WHERE id=?')
                         ->limit(1)
                         ->execute($obj->member);
 

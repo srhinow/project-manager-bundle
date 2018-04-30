@@ -440,8 +440,6 @@ abstract class IaoBackend extends Iao
      */
 	public function fillReminderFields($objReminder)
 	{
-//        print_r($objInvoice);
-//        exit();
 	    $settings = $this->getSettings($objReminder->setting_id);
         $address_text = '';
 
@@ -451,7 +449,7 @@ abstract class IaoBackend extends Iao
 
         $objMember = MemberModel::findByIdOrAlias((int) $objInvoice->member);
 
-        if(!is_object($objMember)) throw new \Exception('Keinen passenden Kunden in fillReminderFields() gefunden.');
+//        if(!is_object($objMember)) throw new \Exception('Keinen passenden Kunden in fillReminderFields() gefunden.');
 
 		if(!empty($objInvoice->address_text))
 		{
