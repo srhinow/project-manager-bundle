@@ -126,8 +126,8 @@ $GLOBALS['TL_DCA']['tl_iao_reminder'] = array
 			'pdf' => array
 			(
 				'label'               => &$GLOBALS['TL_LANG']['tl_iao_reminder']['pdf'],
-				'href'                => 'key=pdf',
-				'icon'                => 'iconPDF.gif',
+                'href'                => 'key=pdf',
+                'icon'                => 'iconPDF.gif',
 				'button_callback'     => array('Iao\Dca\Reminder', 'showPDFButton')
 			)
 		)
@@ -467,52 +467,19 @@ class Reminder extends iaoBackend
 		return $varValue;
 	}
 
-	/**
-	 * fill Text
-     * @param $varValue integer
-	 * @param $dc object
-	 * @throws \Exception
-     * @return integer
-	 */
+    /**
+     * fill Text
+     * @param $varValue
+     * @param DataContainer $dc
+     * @return string
+     * @throws \Exception
+     */
+
 	public function fillStepFields($varValue, DataContainer $dc)
 	{
         if($varValue != 1) return $varValue;
 
-//        $step = $dc->activeRecord->step;
-//	    $settings = $this->getSettings($dc->activeRecord->setting_id);
-//        $objReminder = IaoReminderModel::findById($dc->id);
-
-//        if(!is_object($objReminder)) throw new \Exception('fillStepFields() ist fehlgeschlagen.');
-
         $this->fillReminderFields($dc->activeRecord);
-
-//		$text = $settings['iao_reminder_'.$step.'_text'];
-//		$text_finish = $this->changeIAOTags($text,'reminder',$dbObj);
-//
-//
-//        $tax =  $settings['iao_reminder_'.$step.'_tax'];
-//		$postage =  $settings['iao_reminder_'.$step.'_postage'];
-//		$periode_date = $this->getPeriodeDate($dc->activeRecord);
-//
-//		$set = [
-//			'tax' => $tax,
-//			'postage' => $postage,
-//			'text' =>  $text,
-//			'text_finish' => $text_finish,
-//			'periode_date' => $periode_date,
-//            'set_step_values' => ''
-//        ];
-//
-//	    DB::getInstance()->prepare('UPDATE `tl_iao_reminder` %s WHERE `id`=?')
-//										->set($set)
-//										->execute($dc->id);
-//
-//		//update invoice-data with current reminder-step
-//        $set = ['reminder_id'=>$dc->id];
-//
-//		DB::getInstance()->prepare('UPDATE `tl_iao_invoice` %s  WHERE `id`=?')
-//                        ->set($set)
-//						->execute($dc->activeRecord->invoice_id);
 
 		return '';
 	}
@@ -746,9 +713,9 @@ class Reminder extends iaoBackend
 		$settings = $this->getSettings($row['setting_id']);
 
 		// wenn kein Admin dann kein PDF-Link
-		if (!$this->User->isAdmin)	return false;
+        if (!User::getInstance()->isAdmin)	return '';
 
-		$href = 'contao/main.php?do=reminder&amp;key=pdf&amp;id='.$row['id'];
+		$href = 'contao/main.php?do=iao_reminder&amp;key=pdf&amp;id='.$row['id'];
 		return '<a href="'.$href.'" title="'.specialchars($title).'">'.Image::getHtml($icon, $label).'</a> ';
 	}
 
