@@ -52,6 +52,12 @@ class ModulePublicProjectDetails extends Module
 			\Input::setGet('project', \Input::get('auto_item'));
 		}
 
+        // Ajax Requests abfangen
+        if(\Input::get('project') && \Environment::get('isAjaxRequest')){
+            $this->generateAjax();
+            exit;
+        }
+
 		// Do not index or cache the page if no news item has been specified
 		if (!\Input::get('project'))
 		{
@@ -72,51 +78,73 @@ class ModulePublicProjectDetails extends Module
 	{
 		global $objPage;
 
-	    $conditions['finished'] = 1;
-	    $conditions['in_reference'] = 1;
-
-		// Get the total number of items
-		$objProject = IaoProjectsModel::findProjectByIdOrAlias(\Input::get('project'));
-
-		// falsche Abfragen verhindern
-		$falseCondition = false;
-		foreach($conditions as $con => $val)
-		{
-			if($objProject->$con != $val) $falseCondition = true;
-		}
-
-		if ($objProject === null || $falseCondition)
-		{
-			// Do not index or cache the page
-			$objPage->noSearch = 1;
-			$objPage->cache = 0;
-
-			// Send a 404 header
-			header('HTTP/1.1 404 Not Found');
-			$this->Template->articles = '<p class="error">' . sprintf($GLOBALS['TL_LANG']['MSC']['invalidPage'], \Input::get('items')) . '</p>';
-			return;
-		}
-
-		$projectData = $objProject->row();
-
-		// Website
-		$projectData['url'] = (substr($projectData['url'],0,4) != 'http') ? 'http://'.$projectData['url'] : $projectData['url'];
-
-		// Add the article image as enclosure
-		$image = '';
-
-		if ($projectData['singleSRC'] !== null)
-		{
-			$objFile = \FilesModel::findByUuid($projectData['singleSRC']);
-
-			if ($objFile !== null)
-			{
-				$projectData['image'] = $objFile->path;
-			}
-		}
-
-		$this->Template->data = $projectData;
+		$this->Template->setData($this->getProjectData());
+        $objTemplate->isAjax = false;
 		$this->Template->referer = 'javascript:history.go(-1)';
 		$this->Template->back = $GLOBALS['TL_LANG']['MSC']['goBack'];
 	}
+
+    /**
+     * generiert die Details ohne den kompletten DOM
+     */
+	public function generateAjax() {
+        /** @var FrontendTemplate|object $objTemplate */
+        $objTemplate = new \FrontendTemplate($this->fe_iao_template);
+        $objTemplate->setData($this->getProjectData());
+        $objTemplate->isAjax = true;
+        echo $objTemplate->parse();
+    }
+
+    /**
+     * holt die Projekt-Referenz-Daten fürs Template
+     * @return array|void
+     */
+    protected function getProjectData() {
+
+        $conditions['finished'] = 1;
+        $conditions['in_reference'] = 1;
+        $projectData = array();
+
+        // Get the total number of items
+        $objProject = IaoProjectsModel::findProjectByIdOrReferenceAlias(\Input::get('project'));
+
+        // falsche Abfragen verhindern
+        $falseCondition = false;
+        foreach($conditions as $con => $val)
+        {
+            if($objProject->{$con} != $val) $falseCondition = true;
+        }
+
+        if ($objProject === null || $falseCondition)
+        {
+            // Do not index or cache the page
+            $objPage->noSearch = 1;
+            $objPage->cache = 0;
+
+            // Send a 404 header
+            header('HTTP/1.1 404 Not Found');
+            $this->Template->articles = '<p class="error">' . sprintf($GLOBALS['TL_LANG']['MSC']['invalidPage'], \Input::get('items')) . '</p>';
+            return;
+        }
+
+        $projectData = $objProject->row();
+
+        // Website
+        $projectData['url'] = (substr($projectData['url'],0,4) != 'http') ? 'http://'.$projectData['url'] : $projectData['url'];
+
+        // Add the article image as enclosure
+        $image = '';
+
+        if ($projectData['singleSRC'] !== null)
+        {
+            $objFile = \FilesModel::findByUuid($projectData['singleSRC']);
+
+            if ($objFile !== null)
+            {
+                $projectData['image'] = $objFile->path;
+            }
+        }
+
+        return $projectData;
+    }
 }
