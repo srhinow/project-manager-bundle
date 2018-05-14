@@ -2,6 +2,8 @@
 namespace Iao\Dca;
 
 use Contao\Config;
+use Contao\DataContainer;
+use Contao\StringUtil;
 use Contao\User;
 use Contao\Image;
 use Contao\Database;
@@ -33,7 +35,7 @@ $GLOBALS['TL_DCA']['tl_iao_projects'] = array
 		(
 			'keys' => array
 			(
-				'id' => 'primary'
+				'id' => 'primary',
 			)
 		)
 	),
@@ -136,7 +138,7 @@ $GLOBALS['TL_DCA']['tl_iao_projects'] = array
 	// Subpalettes
 	'subpalettes' => array
 	(
-		'in_reference' => 'reference_title,reference_short_title,reference_subtitle,reference_customer,reference_todo,reference_desription,tags,singleSRC,multiSRC,orderSRC',
+		'in_reference' => 'reference_title,reference_alias,reference_short_title,reference_subtitle,reference_customer,reference_todo,reference_desription,tags,singleSRC,multiSRC,orderSRC',
 		'finished' => 'finished_date',
 	),
 
@@ -206,16 +208,30 @@ $GLOBALS['TL_DCA']['tl_iao_projects'] = array
 			'exclude'                 => true,
 			'search'                  => true,
 			'inputType'               => 'text',
-			'eval'                    => array('mandatory'=>false, 'maxlength'=>255),
+			'eval'                    => array('mandatory'=>false, 'maxlength'=>255, 'tl_class'=>'w50'),
 			'sql'                     => "varchar(255) NOT NULL default ''"
 		),
-		'reference_short_title' => array
+        'reference_alias' => array
+        (
+            'label'                   => &$GLOBALS['TL_LANG']['tl_iao_projects']['reference_alias'],
+            'exclude'                 => true,
+            'search'                  => true,
+            'inputType'               => 'text',
+            'eval'                    => array('rgxp'=>'alias', 'doNotCopy'=>true, 'unique'=>true, 'maxlength'=>128, 'tl_class'=>'w50'),
+            'save_callback' => array
+            (
+                array('Iao\Dca\Projects', 'generateReferenceAlias')
+            ),
+            'sql'                     => "varchar(128) COLLATE utf8_bin NOT NULL default ''"
+        ),
+
+        'reference_short_title' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_iao_projects']['reference_short_title'],
 			'exclude'                 => true,
 			'search'                  => true,
 			'inputType'               => 'text',
-			'eval'                    => array('mandatory'=>false, 'maxlength'=>255),
+			'eval'                    => array('mandatory'=>false, 'maxlength'=>255, 'tl_class'=>'clr'),
 			'sql'                     => "varchar(255) NOT NULL default ''"
 		),
 		'reference_subtitle' => array
@@ -384,4 +400,41 @@ class Projects  extends IaoBackend
 		</div>' . "\n    ";
     }
 
+    /**
+     * Auto-generate the reference alias if it has not been set yet
+     *
+     * @param mixed         $varValue
+     * @param DataContainer $dc
+     *
+     * @return string
+     *
+     * @throws Exception
+     */
+    public function generateReferenceAlias($varValue, DataContainer $dc)
+    {
+        $autoAlias = false;
+
+        // Generate alias if there is none
+        if ($varValue == '')
+        {
+            $autoAlias = true;
+            $varValue = StringUtil::generateAlias($dc->activeRecord->reference_title);
+        }
+
+        $objAlias = Database::getInstance()->prepare("SELECT id FROM tl_iao_projects WHERE reference_alias=? AND id!=?")
+            ->execute($varValue, $dc->id);
+
+        // Check whether the news alias exists
+        if ($objAlias->numRows)
+        {
+            if (!$autoAlias)
+            {
+                throw new Exception(sprintf($GLOBALS['TL_LANG']['ERR']['aliasExists'], $varValue));
+            }
+
+            $varValue .= '-' . $dc->id;
+        }
+
+        return $varValue;
+    }
 }
