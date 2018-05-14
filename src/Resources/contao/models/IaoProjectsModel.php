@@ -47,11 +47,37 @@ class IaoProjectsModel extends Model
 	 *
 	 * @return \Model|null The IaoProjectsModel or null if there are no news
 	 */
-	public static function findProjectByIdOrAlias($varId, array $arrOptions=array())
+	public static function findProjectByIdOrReferenceAlias($varId, array $arrOptions=array())
 	{
-		$t = static::$strTable;
+        $isAlias = !is_numeric($varId);
 
-		return static::findOneBy('id', $varId, $arrOptions);
+        // Try to load from the registry
+        if (!$isAlias && empty($arrOptions))
+        {
+            $objModel = \Model\Registry::getInstance()->fetch(static::$strTable, $varId);
+
+            if ($objModel !== null)
+            {
+                return $objModel;
+            }
+        }
+
+        $t = static::$strTable;
+
+        $arrOptions = array_merge
+        (
+            array
+            (
+                'limit'  => 1,
+                'column' => $isAlias ? array("$t.reference_alias=?") : array("$t.id=?"),
+                'value'  => $varId,
+                'return' => 'Model'
+            ),
+
+            $arrOptions
+        );
+
+        return static::find($arrOptions);
 	}
 
 	/**
