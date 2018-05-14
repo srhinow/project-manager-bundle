@@ -166,7 +166,7 @@ class ModulePublicProjectList extends Module
 				if($this->jumpTo)
 				{
 					$objDetailPage = \PageModel::findByPk($this->jumpTo);
-					$detailUrl = ampersand( $this->generateFrontendUrl($objDetailPage->row(),'/'.$itemsObj->id) );			
+					$detailUrl = ampersand( $this->generateFrontendUrl($objDetailPage->row(),'/'.((strlen($itemsObj->reference_alias)>0)?$itemsObj->reference_alias:$itemsObj->id) ) );
 				}
 
 	    		$itemsArray[] = array(
