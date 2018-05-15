@@ -79,7 +79,7 @@ class ModulePublicProjectDetails extends Module
 		global $objPage;
 
 		$this->Template->setData($this->getProjectData());
-        $objTemplate->isAjax = false;
+        $this->Template->isAjax = false;
 		$this->Template->referer = 'javascript:history.go(-1)';
 		$this->Template->back = $GLOBALS['TL_LANG']['MSC']['goBack'];
 	}
