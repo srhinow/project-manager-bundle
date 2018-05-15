@@ -78,10 +78,23 @@ class ModulePublicProjectDetails extends Module
 	{
 		global $objPage;
 
-		$this->Template->setData($this->getProjectData());
+		$arrProjectData = $this->getProjectData();
+
+		$this->Template->setData($arrProjectData);
         $this->Template->isAjax = false;
 		$this->Template->referer = 'javascript:history.go(-1)';
 		$this->Template->back = $GLOBALS['TL_LANG']['MSC']['goBack'];
+
+        //SEO-Werte setzen
+        if(strlen($arrProjectData['reference_title']) > 0) {
+            $objPage->title = strip_tags(strip_insert_tags($arrProjectData['reference_title']));
+//            $objPage->pageTitle = strip_tags(strip_insert_tags($arrProjectData['reference_title']));
+        }
+//        if(strlen($arrProjectData['reference_subtitle']) > 0) $objPage->pageTitle .= ' - '.$arrProjectData['reference_subtitle'];
+
+        if(strlen($arrProjectData['reference_todo']) > 0) $GLOBALS['TL_KEYWORDS'] .= strip_tags(strip_insert_tags($arrProjectData['reference_todo']));
+        $objPage->description = \Contao\StringUtil::substr($arrProjectData['reference_customer'].' '.$arrProjectData['reference_todo'].' '.$arrProjectData['reference_desription'],320);
+
 	}
 
     /**
