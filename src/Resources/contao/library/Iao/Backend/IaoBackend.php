@@ -529,7 +529,7 @@ abstract class IaoBackend extends Iao
 	{
 		if(\Input::get('onlyproj') == 1 && (int) $set['pid'] > 0)
 		{
-			$objProject = iaoProjectsModel::findProjectByIdOrAlias($set['pid']);
+			$objProject = iaoProjectsModel::findById($set['pid']);
 
 			if($objProject !== null)
 			{

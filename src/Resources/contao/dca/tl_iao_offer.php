@@ -486,7 +486,7 @@ class Offer extends IaoBackend
 	*/
 	public function preFillFields($table, $id, $set)
 	{
-		$objProject = IaoProjectsModel::findProjectByIdOrAlias($set['pid']);
+		$objProject = IaoProjectsModel::findById($set['pid']);
 		$settingId = ($objProject !== null && $objProject->setting_id != 0) ? $objProject->setting_id : 1;
 		$settings = $this->getSettings($settingId);
 
@@ -563,7 +563,7 @@ class Offer extends IaoBackend
     {
         if((strlen($varValue) < 1)) return $varValue;
 
-        $objProj = IaoProjectsModel::findProjectByIdOrAlias($varValue);
+        $objProj = IaoProjectsModel::findById($varValue);
         if(is_object($objProj))
         {
             if((int) $objProj->member > 0)
