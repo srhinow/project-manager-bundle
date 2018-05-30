@@ -434,7 +434,7 @@ class Credit  extends IaoBackend
 	*/
 	public function preFillFields($table, $id, $set, $obj)
 	{
-		$objProject = IaoProjectsModel::findProjectByIdOrAlias($set['pid']);
+		$objProject = IaoProjectsModel::findByIdOrAlias($set['pid']);
 		$settingId = ($objProject !== null && $objProject->setting_id != 0) ? $objProject->setting_id : 1;
 		$settings = $this->getSettings($settingId);
 		$creditId = $this->generateCreditNumber(0, $settings);
