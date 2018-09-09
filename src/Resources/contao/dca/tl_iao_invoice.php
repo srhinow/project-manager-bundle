@@ -639,7 +639,7 @@ class Invoice extends IaoBackend
 	public function preFillFields($table, $id, $set, $obj)
 	{
 
-		$objProject = IaoProjectsModel::findByIdOrAlias($set['pid']);
+		$objProject = IaoProjectsModel::findById($set['pid']);
 		$settingId = ($objProject !== null && $objProject->setting_id != 0) ? $objProject->setting_id : 1;
 		$settings = $this->getSettings($settingId);
 		$invoiceId = $this->generateInvoiceNumber(0, $settings);
@@ -730,6 +730,8 @@ class Invoice extends IaoBackend
                 ->set($set)
 			    ->limit(1)
 			    ->execute($dc->id);
+
+			$this->reload();
         }
 		return '';
 	}
