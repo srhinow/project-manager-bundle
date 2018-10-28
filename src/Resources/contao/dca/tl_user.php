@@ -12,8 +12,8 @@
 /**
  * Extend default palette
  */
-$GLOBALS['TL_DCA']['tl_user']['palettes']['extend'] = $GLOBALS['TL_DCA']['tl_user']['palettes']['extend'].'{iaolegend},iaomodules,iaomodulep,iaosettings,iaosettingp;';
-$GLOBALS['TL_DCA']['tl_user']['palettes']['custom'] = $GLOBALS['TL_DCA']['tl_user']['palettes']['custom'].'{iaolegend},iaomodules,iaomodulep,iaosettings,iaosettingp;';
+$GLOBALS['TL_DCA']['tl_user']['palettes']['extend'] = $GLOBALS['TL_DCA']['tl_user']['palettes']['extend'].';{iaolegend},iaomodules,iaomodulep,iaosettings,iaosettingp';
+$GLOBALS['TL_DCA']['tl_user']['palettes']['custom'] = $GLOBALS['TL_DCA']['tl_user']['palettes']['custom'].';{iaolegend},iaomodules,iaomodulep,iaosettings,iaosettingp';
 
 
 /**
