@@ -621,7 +621,7 @@ class Iao extends Controller
         while($resultObj->next())
         {
             //zum rechnen evtl vorhandenes deutsches format in english umwandeln
-            $resultObj->price = str_replace(',','.',$resultObj->price);
+            $resultObj->price_netto = str_replace(',','.',$resultObj->price_netto);
 
             //$einzelpreis = ($resultObj->vat_incl == 1) ? $this->getBruttoPrice($resultObj->price,$resultObj->vat) : $resultObj->price;
 
@@ -636,12 +636,25 @@ class Iao extends Controller
 
             $formatCount = stripos($resultObj->count, '.') ? number_format($resultObj->count,1,',','.') : $resultObj->count;
 
+            // wenn netto-Preis eingegeben wurde
+            if($resultObj->vat_incl == 1){
+                $single_price = $resultObj->price_brutto / $resultObj->count;
+                $count_price = $resultObj->price_brutto;
+            }
+            // wenn Brutto-Preis eingegeben wurde
+            else {
+                $single_price = $resultObj->price_netto / $resultObj->count;
+                $count_price = $resultObj->price_brutto;
+            }
+
+            $netto_price = $this->getNettoPrice($count_price,$resultObj->vat);
+
             $posten['fields'][] = array
             (
                 $formatCount.' '.(((float)$resultObj->count <= 1) ? $unitObj->singular : $unitObj->majority),
                 $resultObj->text,
-                number_format($resultObj->price,2,',','.'),
-                number_format(($resultObj->price * $resultObj->count),2,',','.')
+                number_format($single_price,2,',','.'),
+                number_format($count_price,2,',','.')
             );
 
             $posten['pagebreak_after'][] = $resultObj->pagebreak_after;
@@ -649,18 +662,16 @@ class Iao extends Controller
 
             $posten['discount'] = false;
 
-            //aktuell berechnete netto-summe
-            $netto = $resultObj->price * $resultObj->count;
 
             if($resultObj->operator == '-')
             {
-                $posten['summe']['price'] -= $resultObj->price;
-                $posten['summe']['netto'] -= $netto;
+                $posten['summe']['single_price'] -= $single_price;
+                $posten['summe']['count_price'] -= $count_price;
             }
             else
             {
-                $posten['summe']['price'] += $resultObj->price;
-                $posten['summe']['netto'] += $netto;
+                $posten['summe']['single_price'] += $single_price;
+                $posten['summe']['count_price'] += $count_price;
             }
 
             $parentObj = DB::getInstance()->prepare('SELECT * FROM `tl_iao_'.$type.'` WHERE `id`=?')
@@ -669,13 +680,14 @@ class Iao extends Controller
 
             if($parentObj->noVat != 1)
             {
-                $posten['summe']['mwst'][$resultObj->vat] += $this->getUmstAmount($netto,$resultObj->vat);
+                $posten['summe']['mwst'][$resultObj->vat] += $this->getUmstAmount($netto_price,$resultObj->vat);
             }
         }
 
-        $posten['summe']['netto_format'] =  number_format($posten['summe']['netto'],2,',','.');
-        $posten['summe']['brutto'] = $this->getBruttoPrice($posten['summe']['netto'],$resultObj->vat);
-        $posten['summe']['brutto_format'] =  number_format($posten['summe']['brutto'],2,',','.');
+        $netto = $this->getNettoPrice($posten['summe']['count_price'],$resultObj->vat);
+        $posten['summe']['netto_format'] =  number_format($netto,2,',','.');
+
+        $posten['summe']['brutto_format'] =  number_format($posten['summe']['count_price'],2,',','.');
 
         return $posten;
     }
