@@ -489,7 +489,7 @@ class InvoiceItems extends IaoBackend
 		}
 
 		//von den Haupteinstellungen holen ob diese MwSt befreit ist, dann Brutto und Netto gleich setzen.
-		$invoiceObj = DB::getInstance()->prepare('SELECT * FROM `tl_iao_invoice` WHERE `id`=?')
+        $parentObj = DB::getInstance()->prepare('SELECT * FROM `tl_iao_invoice` WHERE `id`=?')
 					 ->limit(1)
 					 ->execute($dc->activeRecord->pid);
 
@@ -508,14 +508,14 @@ class InvoiceItems extends IaoBackend
 			$Brutto = $englprice;
 		}
 
-		if($invoiceObj->noVat)
+		if($parentObj->noVat)
 		{
 			$Netto = $englprice;
 			$Brutto = $englprice;
 	    }
 
-	    $nettoSum = round($Netto,2) * $dc->activeRecord->count;
-	    $bruttoSum = round($Brutto,2) * $dc->activeRecord->count;
+	    $nettoSum = $Netto * $dc->activeRecord->count;
+	    $bruttoSum = $Brutto * $dc->activeRecord->count;
 
 		DB::getInstance()->prepare('UPDATE `tl_iao_invoice_items` SET `price_netto`=?, `price_brutto`=? WHERE `id`=?')
 			->limit(1)
