@@ -2,7 +2,7 @@
 namespace Iao\Backend\Offer;
 
 /**
- * @copyright  Sven Rhinow 2011-2018
+ * @copyright  Sven Rhinow 2011-2019
  * @author     sr-tag Sven Rhinow Webentwicklung <http://www.sr-tag.de>
  * @package    project-manager-bundle
  * @license    LGPL
@@ -16,7 +16,11 @@ use Contao\Files;
 use Contao\FilesModel;
 use Contao\FileTree;
 use Contao\Input;
+use Contao\Message;
+use Contao\StringUtil;
 use Iao\Backend\ImportFrom\InvoiceAndOffer;
+use Srhinow\IaoOfferItemsModel;
+use Srhinow\IaoOfferModel;
 
 /**
  * Class ImportExport
@@ -35,12 +39,12 @@ class ImportExport extends Backend
 
 		if (Input::post('FORM_SUBMIT') == $formId)
 		{
-            $ObjCsvExportFolder = \FilesModel::findByUuid(\StringUtil::uuidToBin(Input::post('csv_export_dir', true)));
+            $ObjCsvExportFolder = \FilesModel::findByUuid(StringUtil::uuidToBin(Input::post('csv_export_dir', true)));
 
             // Check the file names
             if (!$ObjCsvExportFolder === null || strlen($ObjCsvExportFolder->path) < 1)
             {
-                \Message::addError($GLOBALS['TL_LANG']['ERR']['all_fields']);
+                Message::addError($GLOBALS['TL_LANG']['ERR']['all_fields']);
                 $this->reload();
             }
 
@@ -49,14 +53,14 @@ class ImportExport extends Backend
 			// Skip invalid entries
 			if (!is_dir(TL_ROOT . '/' . $csv_export_dir))
 			{
-                \Message::addError($GLOBALS['TL_LANG']['ERR']['importFolder'], $csv_export_dir);
+                Message::addError($GLOBALS['TL_LANG']['ERR']['importFolder'], $csv_export_dir);
                 $this->reload();
 			}
 
 			// check if the directory writeable
 			if (!is_writable(TL_ROOT . '/' . $csv_export_dir))
 			{
-                \Message::addError($GLOBALS['TL_LANG']['ERR']['PermissionDenied'],TL_ROOT . '/' . $csv_export_dir);
+                Message::addError($GLOBALS['TL_LANG']['ERR']['PermissionDenied'],TL_ROOT . '/' . $csv_export_dir);
                 $this->reload();
 			}
 
@@ -69,13 +73,13 @@ class ImportExport extends Backend
 			$offer_items_export_csv = Input::post('export_item_filename').'.csv';
 
 			// work on tl_iao_offer
-			$dbObj = $DB->prepare('SELECT * FROM `tl_iao_offer`')->execute();
+            $dbObj = IaoOfferModel::findAll();
 
 			$isOneLine = true;
             $oneLine = [];
             $linesArr = [];
 
-			while($dbObj->next())
+			if(null !== $dbObj) while($dbObj->next())
 			{
                 $lineA  = [];
 
@@ -104,9 +108,10 @@ class ImportExport extends Backend
 			}
 
             $File->fclose($fp);
+            $dbObj = null;
 
 			// work on tl_iao_offer_items
-			$dbObj = $DB->prepare('SELECT * FROM `tl_iao_offer_items`')->execute();
+            $dbObj = IaoOfferItemsModel::findAll();
 
 			$isOneLine = true;
 			$oneLine = array();
@@ -143,15 +148,15 @@ class ImportExport extends Backend
 
 			//after ready export
 			$_SESSION['TL_ERROR'] = '';
-            \Message::addConfirmation(sprintf($GLOBALS['TL_LANG']['tl_iao_offer']['Offer_exported']));
+            Message::addConfirmation(sprintf($GLOBALS['TL_LANG']['tl_iao_offer']['Offer_exported']));
             setcookie('BE_PAGE_OFFSET', 0, 0, '/');
 			$this->redirect(str_replace('&key=exportOffer', '', \Environment::get('request')));
 		}
 
         $Template = new BackendTemplate('be_iao_export_csv');
-        $Template->headline = $GLOBALS['TL_LANG']['tl_iao_offer']['exportInvoices'][1];
+        $Template->headline = $GLOBALS['TL_LANG']['tl_iao_offer']['exportOffer'][1];
         $Template->backlink = ampersand(str_replace('&key=exportOffer', '', $this->Environment->request));
-        $Template->message = \Message::generate();
+        $Template->message = Message::generate();
         $Template->csv_seperators = $GLOBALS['IAO']['csv_seperators'];
         $Template->lang_array = $GLOBALS['TL_LANG']['tl_iao_offer'];
         $Template->default_name = 'tl_iao_offer_'.date('Y-m-d');
@@ -173,21 +178,22 @@ class ImportExport extends Backend
 
 		if (Input::post('FORM_SUBMIT') == $formId)
 		{
-            $ObjCsvOfferFile = FilesModel::findByUuid(\StringUtil::uuidToBin(Input::post('csv_source', true)));
+            $ObjCsvOfferFile = FilesModel::findByUuid(StringUtil::uuidToBin(Input::post('csv_source', true)));
 
             // Check the file names
             if (!$ObjCsvOfferFile === null || strlen($ObjCsvOfferFile->path) < 1)
             {
-                \Message::addError($GLOBALS['TL_LANG']['ERR']['all_fields']);
+                Message::addError($GLOBALS['TL_LANG']['ERR']['all_fields']);
                 $this->reload();
             }
             $csv_source = $ObjCsvOfferFile->path;
 
-            $ObjCsvOfferItemFile = FilesModel::findByUuid(\StringUtil::uuidToBin(Input::post('csv_posten_source', true)));
+            $ObjCsvOfferItemFile = FilesModel::findByUuid(StringUtil::uuidToBin(Input::post('csv_posten_source', true)));
+
             // Check the file names
             if (!$ObjCsvOfferItemFile === null || strlen($ObjCsvOfferItemFile->path) < 1)
             {
-                \Message::addError($GLOBALS['TL_LANG']['ERR']['all_fields']);
+                Message::addError($GLOBALS['TL_LANG']['ERR']['all_fields']);
                 $this->reload();
             }
             $csv_posten_source = $ObjCsvOfferItemFile->path;
@@ -195,29 +201,29 @@ class ImportExport extends Backend
 			// Skip invalid offer-entries
 			if (is_dir(TL_ROOT . '/' . $csv_source))
 			{
-                \Message::addError(sprintf($GLOBALS['TL_LANG']['ERR']['importFolder'], basename($csv_source)));
+                Message::addError(sprintf($GLOBALS['TL_LANG']['ERR']['importFolder'], basename($csv_source)));
                 $this->reload();
 			}
 
 			// Skip invalid posten-entries
 			if (is_dir(TL_ROOT . '/' . $csv_posten_source))
 			{
-                \Message::addError(sprintf($GLOBALS['TL_LANG']['ERR']['importFolder'], basename($csv_source)));
+                Message::addError(sprintf($GLOBALS['TL_LANG']['ERR']['importFolder'], basename($csv_source)));
                 $this->reload();
 			}
 
 
-			// Skip anything but .cto files
+			// Skip anything but .csv files
 			if ($ObjCsvOfferFile->extension != 'csv')
 			{
-                \Message::addError(sprintf($GLOBALS['TL_LANG']['ERR']['filetype'], $ObjCsvOfferFile->extension));
+                Message::addError(sprintf($GLOBALS['TL_LANG']['ERR']['filetype'], $ObjCsvOfferFile->extension));
 				$this->reload();
 			}
 
-			// Skip anything but .cto files
+			// Skip anything but .csv files
 			if ($ObjCsvOfferItemFile->extension != 'csv')
 			{
-                \Message::addError(sprintf($GLOBALS['TL_LANG']['ERR']['filetype'], $ObjCsvOfferItemFile->extension));
+                Message::addError(sprintf($GLOBALS['TL_LANG']['ERR']['filetype'], $ObjCsvOfferItemFile->extension));
 				$this->reload();
 			}
 
@@ -234,7 +240,7 @@ class ImportExport extends Backend
         $Template = new BackendTemplate('be_iao_import_csv');
         $Template->headline = $GLOBALS['TL_LANG']['tl_iao_offer']['importInvoices'][1];
         $Template->backlink = ampersand(str_replace('&key=importOffer', '', $this->Environment->request));
-        $Template->message = \Message::generate();
+        $Template->message = Message::generate();
         $Template->csv_seperators = $GLOBALS['IAO']['csv_seperators'];
         $Template->lang_array = $GLOBALS['TL_LANG']['tl_iao_offer'];
         $Template->objTree4PDF = new FileTree(FileTree::getAttributesFromDca($GLOBALS['TL_DCA']['tl_iao_offer']['fields']['pdf_import_dir'], 'pdf_import_dir', null, 'pdf_import_dir', 'tl_iao_offer'));
