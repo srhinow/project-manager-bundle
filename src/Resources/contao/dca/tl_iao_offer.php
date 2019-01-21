@@ -415,25 +415,30 @@ $GLOBALS['TL_DCA']['tl_iao_offer'] = array
         'csv_export_dir' => array
         (
             'label'                 => &$GLOBALS['TL_LANG']['tl_iao_offer']['csv_export_dir'],
+            'inputType'               => 'fileTree',
             'eval'                  => array('mandatory'=>true, 'required'=>true, 'fieldType'=>'radio'),
+            'sql'					  => "binary(16) NULL"
         ),
 		'pdf_import_dir' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_iao_offer']['pdf_import_dir'],
+            'inputType'               => 'fileTree',
 			'eval'                    => array('fieldType'=>'radio', 'files'=>false, 'filesOnly'=>false, 'class'=>'mandatory'),
-			'sql'					  => "text NULL"
+            'sql'					  => "binary(16) NULL"
 		),
 		'csv_source' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_iao_offer']['csv_source'],
+            'inputType'               => 'fileTree',
 			'eval'                    => array('fieldType'=>'radio', 'files'=>true, 'filesOnly'=>true, 'extensions'=>'csv', 'class'=>'mandatory'),
-			'sql'					  => "text NULL"
+            'sql'					  => "binary(16) NULL"
 		),
 		'csv_posten_source' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_iao_offer']['csv_posten_source'],
+            'inputType'               => 'fileTree',
 			'eval'                    => array('fieldType'=>'radio', 'files'=>true, 'filesOnly'=>true, 'extensions'=>'csv', 'class'=>'mandatory'),
-			'sql'					  => "text NULL"
+            'sql'					  => "binary(16) NULL"
 		),
 		// -- Backport C2 SQL-Import
 		'sendEmail' => array(

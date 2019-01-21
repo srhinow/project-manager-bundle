@@ -478,33 +478,22 @@ class OfferItems extends IaoBackend
 			return;
 		}
 
-        //von den Haupteinstellungen holen ob diese MwSt befreit ist, dann Brutto und Netto gleich setzen.
-        $parentObj = DB::getInstance()->prepare('SELECT * FROM `tl_iao_offer` WHERE `id`=?')
-            ->limit(1)
-            ->execute($dc->activeRecord->pid);
-
 		$englprice = str_replace(',','.',$dc->activeRecord->price);
-        $Netto = $nettoSum = $Brutto = $bruttoSum = 0;
+		$priceSum = $englprice * $dc->activeRecord->count;
 
-        if($dc->activeRecord->vat_incl == 1)
-        {
-            $Netto = $englprice;
-            $Brutto = $this->getBruttoPrice($englprice,$dc->activeRecord->vat);
-        }
-        else
-        {
-            $Netto = $this->getNettoPrice($englprice,$dc->activeRecord->vat);
-            $Brutto = $englprice;
-        }
+		$Netto = 0;
+		$Brutto = 0;
 
-        if($parentObj->noVat)
-        {
-            $Netto = $englprice;
-            $Brutto = $englprice;
-        }
-
-        $nettoSum = $Netto * $dc->activeRecord->count;
-        $bruttoSum = $Brutto * $dc->activeRecord->count;
+		if($dc->activeRecord->vat_incl == 1)
+		{
+			$Netto = $priceSum;
+			$Brutto = $this->getBruttoPrice($priceSum,$dc->activeRecord->vat);
+		}
+		else
+		{
+			$Netto = $this->getNettoPrice($priceSum,$dc->activeRecord->vat);
+			$Brutto = $priceSum;
+		}
 
 		DB::getInstance()->prepare('UPDATE `tl_iao_offer_items` SET `price_netto`=?, `price_brutto`=? WHERE `id`=?')
 				->limit(1)

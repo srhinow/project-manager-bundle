@@ -310,6 +310,7 @@ $GLOBALS['TL_DCA']['tl_iao_invoice'] = array
             'label'                   => &$GLOBALS['TL_LANG']['tl_iao_invoice']['text_generate'],
             'flag'                    => 1,
             'inputType'               => 'checkbox',
+            'default'                 => '',
             'eval'                    => array('tl_class'=>'clr','submitOnChange'=>true),
             'save_callback' => array
             (
@@ -332,6 +333,7 @@ $GLOBALS['TL_DCA']['tl_iao_invoice'] = array
 			'sorting'                 => true,
 			'flag'                    => 11,
 			'inputType'               => 'select',
+            'default'                 => '',
 			'options_callback'        => array('Iao\Dca\Invoice', 'getBeforeTemplate'),
 			'eval'                    => array('tl_class'=>'w50','includeBlankOption'=>true,'submitOnChange'=>true, 'chosen'=>true),
 			'save_callback' => array
@@ -355,6 +357,7 @@ $GLOBALS['TL_DCA']['tl_iao_invoice'] = array
 			'filter'                  => true,
 			'flag'                    => 1,
 			'inputType'               => 'checkbox',
+            'default'                 => '',
 			'eval'                    => array('doNotCopy'=>true),
 			'sql'					  => "char(1) NOT NULL default ''",
 			'save_callback' => array
@@ -368,6 +371,7 @@ $GLOBALS['TL_DCA']['tl_iao_invoice'] = array
 			'sorting'                 => true,
 			'flag'                    => 11,
 			'inputType'               => 'select',
+            'default'                 => 0,
 			'options_callback'        => array('Iao\Dca\Invoice', 'getAfterTemplate'),
 			'eval'                    => array('tl_class'=>'w50','includeBlankOption'=>true,'submitOnChange'=>true, 'chosen'=>true),
 			'save_callback' => array
@@ -381,6 +385,7 @@ $GLOBALS['TL_DCA']['tl_iao_invoice'] = array
 			'label'                   => &$GLOBALS['TL_LANG']['tl_iao_invoice']['after_text'],
 			'search'                  => true,
 			'inputType'               => 'textarea',
+            'default'                 => '',
 			'eval'                    => array('rte'=>'tinyMCE', 'helpwizard'=>true,'style'=>'height:60px;', 'tl_class'=>'clr'),
 			'explanation'             => 'insertTags',
 			'sql'					  => "text NULL"
@@ -391,6 +396,7 @@ $GLOBALS['TL_DCA']['tl_iao_invoice'] = array
 			'filter'                  => true,
 			'flag'                    => 1,
 			'inputType'               => 'checkbox',
+            'default'                 => '',
 			'eval'                    => array('doNotCopy'=>true),
 			'sql'					  => "char(1) NOT NULL default ''",
 			'save_callback' => array
@@ -405,6 +411,7 @@ $GLOBALS['TL_DCA']['tl_iao_invoice'] = array
 			'filter'                  => true,
 			'flag'                    => 1,
 			'inputType'               => 'checkbox',
+            'default'                 => '',
 			'eval'                    => array('doNotCopy'=>true),
 			'sql'					  => "char(1) NOT NULL default ''"
 		),
@@ -415,6 +422,7 @@ $GLOBALS['TL_DCA']['tl_iao_invoice'] = array
 			'filter'                => true,
 			'flag'                  => 1,
 			'inputType'             => 'select',
+            'default'                 => '',
 			'options'				=>  &$GLOBALS['TL_LANG']['tl_iao_invoice']['status_options'],
             'eval'					=> array('doNotCopy'=>true),
 			'save_callback' => array
@@ -470,6 +478,7 @@ $GLOBALS['TL_DCA']['tl_iao_invoice'] = array
 			'label'                   => &$GLOBALS['TL_LANG']['tl_iao_invoice']['remaining'],
 			'filter'				=> true,
 			'inputType'               => 'text',
+            'default'                 => 0,
 			'eval'                    => array('readonly'=>true,'style'=>'border:0'),
 			'load_callback'			=> array
 			(
@@ -494,6 +503,7 @@ $GLOBALS['TL_DCA']['tl_iao_invoice'] = array
 			'filter'                  => true,
 			'flag'                    => 1,
 			'inputType'               => 'checkbox',
+            'default'                 => '',
 			'eval'                    => array('doNotCopy'=>true),
 			'sql'					  => "char(1) NOT NULL default ''"
 		),
@@ -503,6 +513,7 @@ $GLOBALS['TL_DCA']['tl_iao_invoice'] = array
 			'filter'                  => true,
 			'flag'                    => 1,
 			'inputType'               => 'checkbox',
+            'default'                 => '',
 			'eval'                    => array('doNotCopy'=>true,'submitOnChange'=>true),
 			'sql'					  => "char(1) NOT NULL default ''"
 		),
@@ -511,6 +522,7 @@ $GLOBALS['TL_DCA']['tl_iao_invoice'] = array
 			'label'                   => &$GLOBALS['TL_LANG']['tl_iao_invoice']['discount_title'],
 			'search'                  => true,
 			'inputType'               => 'text',
+            'default'                 => '',
 			'eval'                    => array('maxlength'=>255,'tl_class'=>'w50'),
 			'sql'					  => "varchar(64) NOT NULL default 'Skonto'"
 		),
@@ -519,6 +531,7 @@ $GLOBALS['TL_DCA']['tl_iao_invoice'] = array
 			'label'                   => &$GLOBALS['TL_LANG']['tl_iao_invoice']['discount_value'],
 			'search'                  => true,
 			'inputType'               => 'text',
+            'default'                 => '',
 			'eval'                    => array('maxlength'=>255,'tl_class'=>'w50'),
 			'sql'					  => "varchar(64) NOT NULL default '3'"
 		),
@@ -528,6 +541,7 @@ $GLOBALS['TL_DCA']['tl_iao_invoice'] = array
 			'filter'                  => true,
 			'flag'                    => 1,
 			'inputType'               => 'select',
+            'default'                 => '',
 			'options'                 => &$GLOBALS['TL_LANG']['tl_iao_invoice']['discount_operators'],
             'eval'			  		  => array('tl_class'=>'w50'),
             'sql'					  => "char(1) NOT NULL default '%'"
@@ -538,6 +552,7 @@ $GLOBALS['TL_DCA']['tl_iao_invoice'] = array
 			'search'		  => true,
 			'filter'                  => false,
 			'inputType'               => 'textarea',
+            'default'                 => '',
 			'eval'                    => array('mandatory'=>false, 'cols'=>'10','rows'=>'10','style'=>'height:100px','rte'=>false),
 			'sql'					  => "text NULL"
 
@@ -551,6 +566,7 @@ $GLOBALS['TL_DCA']['tl_iao_invoice'] = array
 			'sorting'                 => false,
 			'flag'                    => 11,
 			'inputType'               => 'select',
+            'default'                 => 0,
 			'options_callback'        => array('Iao\Dca\Invoice', 'getAgreements'),
 			'eval'                    => array('tl_class'=>'w50','includeBlankOption'=>true, 'chosen'=>true),
 			'sql'					  => "int(10) unsigned NOT NULL default '0'"
@@ -566,25 +582,30 @@ $GLOBALS['TL_DCA']['tl_iao_invoice'] = array
 		'pdf_import_dir' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_iao_offer']['pdf_import_dir'],
+            'inputType'               => 'fileTree',
 			'eval'                    => array('fieldType'=>'radio', 'files'=>false, 'filesOnly'=>false, 'class'=>'mandatory'),
-			'sql'					  => "text NULL"
+			'sql'					  => "binary(16) NULL"
 		),
         'csv_export_dir' => array
         (
             'label'                 => &$GLOBALS['TL_LANG']['tl_iao_invoice']['csv_export_dir'],
+            'inputType'               => 'fileTree',
             'eval'                  => array('mandatory'=>true, 'required'=>true, 'fieldType'=>'radio'),
+            'sql'					  => "binary(16) NULL"
         ),
 		'csv_source' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_iao_invoice']['csv_source'],
+            'inputType'               => 'fileTree',
 			'eval'                    => array('fieldType'=>'radio', 'files'=>true, 'filesOnly'=>true, 'extensions'=>'csv', 'class'=>'mandatory'),
-			'sql'					  => "text NULL"
+			'sql'					  => "binary(16) NULL"
 		),
 		'csv_posten_source' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_iao_invoice']['csv_posten_source'],
+            'inputType'               => 'fileTree',
 			'eval'                    => array('fieldType'=>'radio', 'files'=>true, 'filesOnly'=>true, 'extensions'=>'csv', 'class'=>'mandatory'),
-			'sql'					  => "text NULL"
+			'sql'					  => "binary(16) NULL"
 		),
 		// -- Backport C2 SQL-Import
 		'sendEmail' => array(
