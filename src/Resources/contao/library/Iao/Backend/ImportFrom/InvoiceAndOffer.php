@@ -94,10 +94,10 @@ class InvoiceAndOffer
 				//exclude index Fields
 				if($i_field['type']=='index') continue;
 				$actkey = $headfields[$i_field['name']];
-				$lineA[$i_field['name']] =  $data[$actkey];
+				$lineA[$i_field['name']] =  $data[$actkey]?:$i_field['default'];
 			}
 			$InvoiceSet = $lineA;
-
+			
 			//PDF-Datei pruefen
 			$pdf_dir = Input::post('pdf_import_dir');
 			$pdf_file_name = $InvoiceSet['invoice_id_str'].'.pdf';
@@ -112,10 +112,10 @@ class InvoiceAndOffer
 		// import Invoice-Item-File
 		$handle = Files::getInstance()->fopen($Files['invoice_items'],'r');
 		$counter = 0;
-		$csvhead = array();
+		$csvhead = $headfields = array();
 		$InvoiceItemSet = '';
 
-		while (($data = fgetcsv ($handle, 1000, $seperators[Input::post('separator')])) !== FALSE )
+		while (($data = fgetcsv ($handle, 2000, $seperators[Input::post('separator')])) !== FALSE )
 		{
 			$counter ++;
 			if($counter == 1 && Input::post('drop_first_row')==1)
@@ -127,24 +127,17 @@ class InvoiceAndOffer
 
 			$lineA  = array();
 
-//			print_r($invoice_items_fields); exit();
-
 			foreach($invoice_items_fields as  $ii_field)
 			{
 				//exclude index Fields
 				if($ii_field['type']=='index') continue;
 				$actkey = $headfields[$ii_field['name']];
 
-                if(in_array($ii_field['type'],['int']) && $ii_field['null']=='NOT NULL') $lineA[$ii_field['name']] = (int) $data[$actkey];
-                elseif(in_array($ii_field['type'],['varchar','char']) && $ii_field['null']=='NOT NULL') $lineA[$ii_field['name']] = (string) $data[$actkey];
-				else $lineA[$ii_field['name']] = $data[$actkey];
+                $lineA[$ii_field['name']] =  $data[$actkey]?:$ii_field['default'];
 			}
-			$InvoiceItemSet = $lineA;
 
-			// get compare invoice
-			/*$parentObj = $this->Database->prepare('SELECT * FROM `tl_iao_invoice` WHERE `invoice_id`=?')
-			->limit(1)
-			->execute($InvoiceSet['invoice_id']);*/
+			$InvoiceItemSet = $lineA;
+			if($InvoiceItemSet['id']== 5.2) {print_r($InvoiceItemSet); die();}
 
 			// Update the datatbase
 			if(Input::post('drop_exist_entries')==1)  $Database->prepare('DELETE FROM `tl_iao_invoice_items` WHERE `id`=?')->execute($InvoiceItemSet['id']);
@@ -207,7 +200,7 @@ class InvoiceAndOffer
 				//exclude index Fields
 				if($i_field['type']=='index') continue;
 				$actkey = $headfields[$i_field['name']];
-				$lineA[$i_field['name']] =  $data[$actkey];
+                $lineA[$i_field['name']] =  $data[$actkey]?:$i_field['default'];
 			}
 			$OfferSet = $lineA;
 
@@ -226,7 +219,7 @@ class InvoiceAndOffer
 		*/
 		$handle = Files::getInstance()->fopen($Files['offer_items'],'r');
 		$counter = 0;
-		$csvhead = array();
+		$csvhead = $headfields = [];
 		$OfferItemSet = '';
 
 		while (($data = fgetcsv ($handle, 1000, $seperators[Input::post('separator')])) !== FALSE )
@@ -246,14 +239,9 @@ class InvoiceAndOffer
 				//exclude index Fields
 				if($ii_field['type']=='index') continue;
 				$actkey = $headfields[$ii_field['name']];
-				$lineA[$ii_field['name']] =  $data[$actkey];
+                $lineA[$ii_field['name']] =  $data[$actkey]?:$ii_field['default'];
 			}
 			$OfferItemSet = $lineA;
-
-			// get compare offer
-			/*$parentObj = $this->Database->prepare('SELECT * FROM `tl_iao_offer` WHERE `offer_id`=?')
-			->limit(1)
-			->execute($offerSet['offer_id']);*/
 
 			// Update the datatbase
 			if(Input::post('drop_exist_entries')==1)  $Database->prepare('DELETE FROM `tl_iao_offer_items` WHERE `id`=?')->execute($OfferItemSet['id']);
