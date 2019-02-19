@@ -9,6 +9,7 @@ namespace Iao\Modules\Fe;
  * @filesource
  */
 
+use Contao\CoreBundle\Exception\PageNotFoundException;
 use Contao\Module;
 use Srhinow\IaoProjectsModel;
 
@@ -20,37 +21,37 @@ use Srhinow\IaoProjectsModel;
 class ModulePublicProjectDetails extends Module
 {
 
-	/**
-	 * Template
-	 * @var string
-	 */
-	protected $strTemplate = 'iao_public_project_details';
+    /**
+     * Template
+     * @var string
+     */
+    protected $strTemplate = 'iao_public_project_details';
 
 
-	/**
-	 * Display a wildcard in the back end
-	 * @return string
-	 */
-	public function generate()
-	{
-		if (TL_MODE == 'BE')
-		{
-			$objTemplate = new \BackendTemplate('be_wildcard');
+    /**
+     * Display a wildcard in the back end
+     * @return string
+     */
+    public function generate()
+    {
+        if (TL_MODE == 'BE')
+        {
+            $objTemplate = new \BackendTemplate('be_wildcard');
 
-			$objTemplate->wildcard = '### IAO PUBLIC PROJECT DETAILS ###';
-			$objTemplate->title = $this->headline;
-			$objTemplate->id = $this->id;
-			$objTemplate->link = $this->name;
-			$objTemplate->href = 'contao/main.php?do=themes&amp;table=tl_module&amp;act=edit&amp;id=' . $this->id;
+            $objTemplate->wildcard = '### IAO PUBLIC PROJECT DETAILS ###';
+            $objTemplate->title = $this->headline;
+            $objTemplate->id = $this->id;
+            $objTemplate->link = $this->name;
+            $objTemplate->href = 'contao/main.php?do=themes&amp;table=tl_module&amp;act=edit&amp;id=' . $this->id;
 
-			return $objTemplate->parse();
-		}
+            return $objTemplate->parse();
+        }
 
-		// Set the item from the auto_item parameter
-		if (!isset($_GET['project']) && $GLOBALS['TL_CONFIG']['useAutoItem'] && isset($_GET['auto_item']))
-		{
-			\Input::setGet('project', \Input::get('auto_item'));
-		}
+        // Set the item from the auto_item parameter
+        if (!isset($_GET['project']) && $GLOBALS['TL_CONFIG']['useAutoItem'] && isset($_GET['auto_item']))
+        {
+            \Input::setGet('project', \Input::get('auto_item'));
+        }
 
         // Ajax Requests abfangen
         if(\Input::get('project') && \Environment::get('isAjaxRequest')){
@@ -58,32 +59,32 @@ class ModulePublicProjectDetails extends Module
             exit;
         }
 
-		// Do not index or cache the page if no news item has been specified
-		if (!\Input::get('project'))
-		{
-			global $objPage;
-			$objPage->noSearch = 1;
-			$objPage->cache = 0;
-			return '';
-		}
+        // Do not index or cache the page if no news item has been specified
+        if (!\Input::get('project'))
+        {
+            global $objPage;
+            $objPage->noSearch = 1;
+            $objPage->cache = 0;
+            return '';
+        }
 
-		return parent::generate();
-	}
+        return parent::generate();
+    }
 
 
-	/**
-	 * Generate the module
-	 */
-	protected function compile()
-	{
-		global $objPage;
+    /**
+     * Generate the module
+     */
+    protected function compile()
+    {
+        global $objPage;
 
-		$arrProjectData = $this->getProjectData();
+        $arrProjectData = $this->getProjectData();
 
-		$this->Template->setData($arrProjectData);
+        $this->Template->setData($arrProjectData);
         $this->Template->isAjax = false;
-		$this->Template->referer = 'javascript:history.go(-1)';
-		$this->Template->back = $GLOBALS['TL_LANG']['MSC']['goBack'];
+        $this->Template->referer = 'javascript:history.go(-1)';
+        $this->Template->back = $GLOBALS['TL_LANG']['MSC']['goBack'];
 
         //SEO-Werte setzen
         if(strlen($arrProjectData['reference_title']) > 0) {
@@ -95,12 +96,12 @@ class ModulePublicProjectDetails extends Module
         if(strlen($arrProjectData['reference_todo']) > 0) $GLOBALS['TL_KEYWORDS'] .= strip_tags(strip_insert_tags($arrProjectData['reference_todo']));
         $objPage->description = \Contao\StringUtil::substr($arrProjectData['reference_customer'].' '.$arrProjectData['reference_todo'].' '.$arrProjectData['reference_desription'],320);
 
-	}
+    }
 
     /**
      * generiert die Details ohne den kompletten DOM
      */
-	public function generateAjax() {
+    public function generateAjax() {
         /** @var FrontendTemplate|object $objTemplate */
         $objTemplate = new \FrontendTemplate($this->fe_iao_template);
         $objTemplate->setData($this->getProjectData());
@@ -130,14 +131,7 @@ class ModulePublicProjectDetails extends Module
 
         if ($objProject === null || $falseCondition)
         {
-            // Do not index or cache the page
-            $objPage->noSearch = 1;
-            $objPage->cache = 0;
-
-            // Send a 404 header
-            header('HTTP/1.1 404 Not Found');
-            $this->Template->articles = '<p class="error">' . sprintf($GLOBALS['TL_LANG']['MSC']['invalidPage'], \Input::get('items')) . '</p>';
-            return;
+            throw new PageNotFoundException('Page not found: ' . \Environment::get('uri'));
         }
 
         $projectData = $objProject->row();
