@@ -1,6 +1,4 @@
 <?php
-namespace Iao\Dca;
-
 /**
  * @copyright  Sven Rhinow 2011-2018
  * @author     sr-tag Sven Rhinow Webentwicklung <http://www.sr-tag.de>
@@ -8,11 +6,6 @@ namespace Iao\Dca;
  * @license    LGPL
  * @filesource
  */
-
-/**
- * Table tl_iao_item_units
- */
-use Iao\Backend\IaoBackend;
 
 $GLOBALS['TL_DCA']['tl_iao_item_units'] = array
 (
@@ -43,7 +36,7 @@ $GLOBALS['TL_DCA']['tl_iao_item_units'] = array
 		'label' => array
 		(
 			'fields'                  => array('name', 'default_value'),
-            'label_callback'          => array('Iao\Dca\ItemUnits', 'listEntries'),
+            'label_callback'          => array('srhinow.projectmanager.listener.dca.item_unit', 'listEntries'),
 		),
 		'global_operations' => array
 		(
@@ -172,30 +165,3 @@ $GLOBALS['TL_DCA']['tl_iao_item_units'] = array
 
 	)
 );
-/**
- * Class TaxRates
- * @package Iao\Dca
- */
-class ItemUnits extends IaoBackend
-{
-    /**
-     * TaxRates constructor.
-     */
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
-    /**
-     * List a particular record
-     * @param array
-     * @return string
-     */
-    public function listEntries($arrRow)
-    {
-        $return = $arrRow['name'];
-        if($arrRow['default_value']) $return .= ' <span style="color:#b3b3b3; padding-left:3px;">[Standart]</span>';
-
-        return $return;
-    }
-}

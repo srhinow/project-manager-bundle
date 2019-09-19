@@ -17,7 +17,7 @@ use Contao\Input;
 use Iao\Backend\IaoBackend;
 use Srhinow\IaoReminderModel;
 
-class Agreements extends IaoBackend
+class Agreement extends IaoBackend
 {
     protected $settings = array();
 

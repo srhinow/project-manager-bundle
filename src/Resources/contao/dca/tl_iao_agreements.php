@@ -22,16 +22,16 @@ $GLOBALS['TL_DCA']['tl_iao_agreements'] = array
 		'enableVersioning'            => false,
 		'onload_callback' => array
 		(
-			array('srhinow.projectmanager.listener.dca.agreements','IAOSettings'),
-			array('srhinow.projectmanager.listener.dca.agreements', 'checkPermission'),
+			array('srhinow.projectmanager.listener.dca.agreement','IAOSettings'),
+			array('srhinow.projectmanager.listener.dca.agreement', 'checkPermission'),
 		),
 		'onsubmit_callback'	    => array
 		(
-		    array('srhinow.projectmanager.listener.dca.agreements','saveNettoAndBrutto')
+		    array('srhinow.projectmanager.listener.dca.agreement','saveNettoAndBrutto')
 		),
         'oncreate_callback' => array
         (
-            array('srhinow.projectmanager.listener.dca.agreements', 'setMemberfieldsFromProject'),
+            array('srhinow.projectmanager.listener.dca.agreement', 'setMemberfieldsFromProject'),
         ),
 		'sql' => array
 		(
@@ -57,7 +57,7 @@ $GLOBALS['TL_DCA']['tl_iao_agreements'] = array
 		(
 			'fields'                  => array('title','beginn_date','end_date','price_brutto'),
 			'format'                  => '%s (aktuelle Laufzeit: %s - %s)',
-			'label_callback'          => array('srhinow.projectmanager.listener.dca.agreements', 'listEntries'),
+			'label_callback'          => array('srhinow.projectmanager.listener.dca.agreement', 'listEntries'),
 		),
 		'global_operations' => array
 		(
@@ -90,14 +90,14 @@ $GLOBALS['TL_DCA']['tl_iao_agreements'] = array
 				'label'               => &$GLOBALS['TL_LANG']['tl_iao_agreements']['invoice'],
 				'href'                => 'key=addInvoice',
 				'icon'                => 'bundles/srhinowprojectmanager/icons/kontact_todo.png',
-				'button_callback'     => array('srhinow.projectmanager.listener.dca.agreements', 'addInvoice')
+				'button_callback'     => array('srhinow.projectmanager.listener.dca.agreement', 'addInvoice')
 			),
 			'pdf' => array
 			(
 				'label'               => &$GLOBALS['TL_LANG']['tl_iao_agreements']['pdf'],
 				'href'                => 'key=pdf',
 				'icon'                => 'iconPDF.gif',
-				'button_callback'     => array('srhinow.projectmanager.listener.dca.agreements', 'showPDF')
+				'button_callback'     => array('srhinow.projectmanager.listener.dca.agreement', 'showPDF')
 			),
 			'delete' => array
 			(
@@ -157,7 +157,7 @@ $GLOBALS['TL_DCA']['tl_iao_agreements'] = array
 			'sorting'                 => true,
 			'flag'                    => 11,
 			'inputType'               => 'select',
-			'options_callback'        => array('srhinow.projectmanager.listener.dca.agreements', 'getSettingOptions'),
+			'options_callback'        => array('srhinow.projectmanager.listener.dca.agreement', 'getSettingOptions'),
 			'eval'                    => array('tl_class'=>'w50','includeBlankOption'=>false, 'chosen'=>true),
 			'sql'                     => "int(10) unsigned NOT NULL default '0'"
 		),
@@ -181,7 +181,7 @@ $GLOBALS['TL_DCA']['tl_iao_agreements'] = array
 			'inputType'               => 'text',
 			'eval'                    => array('rgxp'=>'date', 'datepicker'=>$this->getDatePickerString(), 'tl_class'=>'w50 wizard'),
 			'load_callback'			=> array (
-				array('srhinow.projectmanager.listener.dca.agreements','getAgreementValue')
+				array('srhinow.projectmanager.listener.dca.agreement','getAgreementValue')
 			),
 			'sql'                     => "int(10) unsigned NOT NULL default '0'"
 		),
@@ -193,7 +193,7 @@ $GLOBALS['TL_DCA']['tl_iao_agreements'] = array
 			'inputType'               => 'text',
 			'eval'                    => array('mandatory'=>true, 'maxlength'=>255,'tl_class'=>'w50'),
 			'load_callback'			=> array (
-				array('srhinow.projectmanager.listener.dca.agreements','getPeriodeValue')
+				array('srhinow.projectmanager.listener.dca.agreement','getPeriodeValue')
 			),
 			'sql'                     => "varchar(255) NOT NULL default ''"
 		),
@@ -205,7 +205,7 @@ $GLOBALS['TL_DCA']['tl_iao_agreements'] = array
 			'eval'                    => array('rgxp'=>'date', 'datepicker'=>$this->getDatePickerString(), 'tl_class'=>'w50 wizard'),
 			'load_callback'				=> array
 			(
-				array('srhinow.projectmanager.listener.dca.agreements','getBeginnDateValue')
+				array('srhinow.projectmanager.listener.dca.agreement','getBeginnDateValue')
 			),
 			'sql'                     => "varchar(255) NOT NULL default ''"
 		),
@@ -217,7 +217,7 @@ $GLOBALS['TL_DCA']['tl_iao_agreements'] = array
 			'eval'                    => array('rgxp'=>'date', 'datepicker'=>$this->getDatePickerString(), 'tl_class'=>'w50 wizard'),
 			'load_callback'				=> array
 			(
-				array('srhinow.projectmanager.listener.dca.agreements','getEndDateValue')
+				array('srhinow.projectmanager.listener.dca.agreement','getEndDateValue')
 			),
 			'sql'                     => "varchar(255) NOT NULL default ''"
 		),
@@ -229,7 +229,7 @@ $GLOBALS['TL_DCA']['tl_iao_agreements'] = array
 			'eval'                    => array('tl_class'=>'clr'),
 			'save_callback'				=> array
 			(
-				array('srhinow.projectmanager.listener.dca.agreements','setNewCycle')
+				array('srhinow.projectmanager.listener.dca.agreement','setNewCycle')
 			),
 			'sql'                     => "char(1) NOT NULL default ''"
 		),
@@ -266,7 +266,7 @@ $GLOBALS['TL_DCA']['tl_iao_agreements'] = array
 			'filter'                  => true,
 			'flag'                    => 1,
 			'inputType'               => 'select',
-			'options_callback'        => array('srhinow.projectmanager.listener.dca.agreements', 'getTaxRatesOptions'),
+			'options_callback'        => array('srhinow.projectmanager.listener.dca.agreement', 'getTaxRatesOptions'),
 			'eval'                    => array('tl_class'=>'w50'),
 			'sql'					  => "int(10) unsigned NOT NULL default '19'"
 		),
@@ -297,7 +297,7 @@ $GLOBALS['TL_DCA']['tl_iao_agreements'] = array
 			'filter'                  => true,
 			'flag'                    => 1,
 			'inputType'               => 'select',
-			'options_callback'        => array('srhinow.projectmanager.listener.dca.agreements', 'getItemUnitsOptions'),
+			'options_callback'        => array('srhinow.projectmanager.listener.dca.agreement', 'getItemUnitsOptions'),
             'eval'                    => array('tl_class'=>'w50','submitOnChange'=>false),
 			'sql'					  => "varchar(64) NOT NULL default ''"
 		),
@@ -310,7 +310,7 @@ $GLOBALS['TL_DCA']['tl_iao_agreements'] = array
 			'sorting'                 => true,
 			'flag'                    => 11,
 			'inputType'               => 'select',
-			'options_callback'        => array('srhinow.projectmanager.listener.dca.agreements', 'getMemberOptions'),
+			'options_callback'        => array('srhinow.projectmanager.listener.dca.agreement', 'getMemberOptions'),
 			'eval'                    => array('tl_class'=>'w50','includeBlankOption'=>true, 'chosen'=>true),
 			'sql'                     => "varbinary(128) NOT NULL default ''"
 		),
@@ -322,7 +322,7 @@ $GLOBALS['TL_DCA']['tl_iao_agreements'] = array
             'eval'                    => array('tl_class'=>'clr','submitOnChange'=>true),
             'save_callback' => array
             (
-                array('srhinow.projectmanager.listener.dca.agreements', 'fillAddressText')
+                array('srhinow.projectmanager.listener.dca.agreement', 'fillAddressText')
             ),
             'sql'                     => "char(1) NOT NULL default ''"
         ),
@@ -412,7 +412,7 @@ $GLOBALS['TL_DCA']['tl_iao_agreements'] = array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_iao_agreements']['before_template'],
 			'inputType'               => 'select',
-			'options_callback'        => array('srhinow.projectmanager.listener.dca.agreements', 'getBeforeTemplate'),
+			'options_callback'        => array('srhinow.projectmanager.listener.dca.agreement', 'getBeforeTemplate'),
 			'eval'                    => array('tl_class'=>'w50','includeBlankOption'=>true,'submitOnChange'=>false, 'chosen'=>true),
 			'sql'					  => "int(10) unsigned NOT NULL default '0'"
 		),
@@ -420,7 +420,7 @@ $GLOBALS['TL_DCA']['tl_iao_agreements'] = array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_iao_agreements']['after_template'],
 			'inputType'               => 'select',
-			'options_callback'        => array('srhinow.projectmanager.listener.dca.agreements', 'getAfterTemplate'),
+			'options_callback'        => array('srhinow.projectmanager.listener.dca.agreement', 'getAfterTemplate'),
 			'eval'                    => array('tl_class'=>'w50','includeBlankOption'=>true, 'submitOnChange'=>false, 'chosen'=>true),
 			'sql'					  => "int(10) unsigned NOT NULL default '0'"
 		),
@@ -428,7 +428,7 @@ $GLOBALS['TL_DCA']['tl_iao_agreements'] = array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_iao_agreements']['posten_template'],
 			'inputType'               => 'select',
-			'options_callback'        => array('srhinow.projectmanager.listener.dca.agreements', 'getPostenTemplate'),
+			'options_callback'        => array('srhinow.projectmanager.listener.dca.agreement', 'getPostenTemplate'),
 			'eval'                    => array('tl_class'=>'w50', 'includeBlankOption'=>true, 'submitOnChange'=>false, 'chosen'=>true),
 			'sql'					  => "int(10) unsigned NOT NULL default '0'"
 		),

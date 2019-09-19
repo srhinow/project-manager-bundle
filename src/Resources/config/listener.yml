@@ -16,8 +16,98 @@ services:
             - "@contao.framework"
         public: true
 
-    srhinow.projectmanager.listener.dca.agreements:
-        class: Srhinow\ProjectManagerBundle\EventListener\Dca\Agreements
+    srhinow.projectmanager.listener.dca.agreement:
+        class: Srhinow\ProjectManagerBundle\EventListener\Dca\Agreement
+        arguments:
+            - "@contao.framework"
+        public: true
+
+    srhinow.projectmanager.listener.dca.credit:
+        class: Srhinow\ProjectManagerBundle\EventListener\Dca\Credit
+        arguments:
+            - "@contao.framework"
+        public: true
+
+    srhinow.projectmanager.listener.dca.credit_item:
+        class: Srhinow\ProjectManagerBundle\EventListener\Dca\CreditItem
+        arguments:
+            - "@contao.framework"
+        public: true
+
+    srhinow.projectmanager.listener.dca.invoice:
+        class: Srhinow\ProjectManagerBundle\EventListener\Dca\Invoice
+        arguments:
+            - "@contao.framework"
+        public: true
+
+    srhinow.projectmanager.listener.dca.invoice_item:
+        class: Srhinow\ProjectManagerBundle\EventListener\Dca\InvoiceItem
+        arguments:
+            - "@contao.framework"
+        public: true
+
+    srhinow.projectmanager.listener.dca.item_unit:
+        class: Srhinow\ProjectManagerBundle\EventListener\Dca\ItemUnit
+        arguments:
+            - "@contao.framework"
+        public: true
+
+    srhinow.projectmanager.listener.dca.offer:
+        class: Srhinow\ProjectManagerBundle\EventListener\Dca\Offer
+        arguments:
+            - "@contao.framework"
+        public: true
+
+    srhinow.projectmanager.listener.dca.offer_item:
+        class: Srhinow\ProjectManagerBundle\EventListener\Dca\OfferItem
+        arguments:
+            - "@contao.framework"
+        public: true
+
+    srhinow.projectmanager.listener.dca.project:
+        class: Srhinow\ProjectManagerBundle\EventListener\Dca\Project
+        arguments:
+            - "@contao.framework"
+        public: true
+
+    srhinow.projectmanager.listener.dca.reminder:
+        class: Srhinow\ProjectManagerBundle\EventListener\Dca\Reminder
+        arguments:
+            - "@contao.framework"
+        public: true
+
+    srhinow.projectmanager.listener.dca.settings:
+        class: Srhinow\ProjectManagerBundle\EventListener\Dca\Settings
+        arguments:
+            - "@contao.framework"
+        public: true
+
+    srhinow.projectmanager.listener.dca.tax_rate:
+        class: Srhinow\ProjectManagerBundle\EventListener\Dca\TaxRate
+        arguments:
+            - "@contao.framework"
+        public: true
+
+    srhinow.projectmanager.listener.dca.template:
+        class: Srhinow\ProjectManagerBundle\EventListener\Dca\Template
+        arguments:
+            - "@contao.framework"
+        public: true
+
+    srhinow.projectmanager.listener.dca.template_item:
+        class: Srhinow\ProjectManagerBundle\EventListener\Dca\TemplateItem
+        arguments:
+            - "@contao.framework"
+        public: true
+
+    srhinow.projectmanager.listener.dca.member:
+        class: Srhinow\ProjectManagerBundle\EventListener\Dca\Member
+        arguments:
+            - "@contao.framework"
+        public: true
+
+    srhinow.projectmanager.listener.dca.module:
+        class: Srhinow\ProjectManagerBundle\EventListener\Dca\Module
         arguments:
             - "@contao.framework"
         public: true

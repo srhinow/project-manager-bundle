@@ -1,12 +1,6 @@
 <?php
-namespace Iao\Dca;
-
-use Iao\Backend\IaoBackend;
-use Contao\Image;
-use Contao\DataContainer;
-
 /**
- * @copyright  Sven Rhinow 2011-2018
+ * @copyright  Sven Rhinow 2011-2019
  * @author     sr-tag Sven Rhinow Webentwicklung <http://www.sr-tag.de>
  * @package    project-manager-bundle
  * @license    LGPL
@@ -26,7 +20,7 @@ $GLOBALS['TL_DCA']['tl_iao_settings'] = array
 		'enableVersioning'            => true,
 		'onload_callback'		=> array
 		(
-			array('Iao\Dca\Settings', 'checkPermission'),
+			array('srhinow.projectmanager.listener.dca.settings', 'checkPermission'),
 		),
 		'sql' => array
 		(
@@ -535,42 +529,3 @@ $GLOBALS['TL_DCA']['tl_iao_settings'] = array
 	    ),
 	)
 );
-
-
-/**
- * Class Settings
- * @package Iao\Dca
- */
-class Settings extends IaoBackend
-{
-
-	protected $settings = array();
-
-    /**
-     * Settings constructor.
-     */
-	public function __construct()
-	{
-		parent::__construct();
-	}
-
-    /**
-     * Check permissions to edit table tl_iao_settings
-     */
-	public function checkPermission()
-	{
-		$this->checkIaoSettingsPermission('tl_iao_settings');
-	}
-
-
-    /**
-     * Return the link picker wizard
-     * @param DataContainer $dc
-     * @return string
-     */
-	public function pagePicker(DataContainer $dc)
-	{
-		$strField = 'ctrl_' . $dc->field . ((\Contao\Input::get('act') == 'editAll') ? '_' . $dc->id : '');
-		return ' ' . Image::getHtml('pickpage.gif', $GLOBALS['TL_LANG']['MSC']['pagepicker'], 'style="vertical-align:top; cursor:pointer;" onclick="Backend.pickPage(\'' . $strField . '\')"');
-	}
-}

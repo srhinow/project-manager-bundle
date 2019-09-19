@@ -1,10 +1,6 @@
 <?php
-namespace Iao\Dca;
-
-use Iao\Backend\IaoBackend;
-
 /**
- * @copyright  Sven Rhinow 2011-2018
+ * @copyright  Sven Rhinow 2011-2019
  * @author     sr-tag Sven Rhinow Webentwicklung <http://www.sr-tag.de>
  * @package    project-manager-bundle
  * @license    LGPL
@@ -24,7 +20,7 @@ $GLOBALS['TL_DCA']['tl_iao_tax_rates'] = array
 		'enableVersioning'            => true,
 		'onload_callback'		=> array
 		(
-			array('Iao\Dca\TaxRates', 'checkPermission'),
+			array('srhinow.projectmanager.listener.dca.tax_rate', 'checkPermission'),
 		),
 		'sql' => array
 		(
@@ -47,7 +43,7 @@ $GLOBALS['TL_DCA']['tl_iao_tax_rates'] = array
 		'label' => array
 		(
 			'fields'                  => array('name', 'default_value'),
-            'label_callback'          => array('Iao\Dca\TaxRates', 'listEntries'),
+            'label_callback'          => array('srhinow.projectmanager.listener.dca.tax_rate', 'listEntries'),
 		),
 		'global_operations' => array
 		(
@@ -157,39 +153,3 @@ $GLOBALS['TL_DCA']['tl_iao_tax_rates'] = array
         ),
 	)
 );
-
-/**
- * Class TaxRates
- * @package Iao\Dca
- */
-class TaxRates extends IaoBackend
-{
-    /**
-     * TaxRates constructor.
-     */
-	public function __construct()
-	{
-		parent::__construct();
-	}
-	
-	/**
-	 * Check permissions to edit table tl_iao_tax_rates
-	 */
-	public function checkPermission()
-	{
-		$this->checkIaoSettingsPermission('tl_iao_tax_rates');
-	}
-
-    /**
-     * List a particular record
-     * @param array
-     * @return string
-     */
-    public function listEntries($arrRow)
-    {
-        $return = $arrRow['name'];
-        if($arrRow['default_value']) $return .= ' <span style="color:#b3b3b3; padding-left:3px;">[Standart]</span>';
-
-        return $return;
-    }
-}

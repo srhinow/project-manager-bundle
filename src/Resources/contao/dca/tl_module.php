@@ -1,16 +1,11 @@
 <?php
-namespace Iao\Dca;
-
 /**
- * @copyright  Sven Rhinow 2011-2018
+ * @copyright  Sven Rhinow 2011-2019
  * @author     sr-tag Sven Rhinow Webentwicklung <http://www.sr-tag.de>
  * @package    project-manager-bundle
  * @license    LGPL
  * @filesource
  */
-
-use Contao\DataContainer;
-use Iao\Backend\IaoBackend;
 
 $this->loadLanguageFile('tl_iao_invoice');
 $this->loadLanguageFile('tl_iao_credit');
@@ -36,7 +31,7 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['fe_iao_template'] = array
 	'default'                 => 'bbk_default',
 	'exclude'                 => true,
 	'inputType'               => 'select',
-	'options_callback'        => array('Iao\Dca\Module', 'getIaoTemplates'),
+	'options_callback'        => array('srhinow.projectmanager.listener.dca.module', 'getIaoTemplates'),
 	'eval'                    => array('tl_class'=>'w50'),
 	'sql'					  => "varchar(32) NOT NULL default ''"
 );
@@ -108,23 +103,4 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['agreement_status'] = array
 	'sql'					=> "char(1) NOT NULL default ''"
 );
 
-/**
- * Class Module
- * @package Iao\Dca
- */
-class Module extends IaoBackend {
-
-    /**
-     * Return all info templates as array
-     *
-     * @param DataContainer $dc
-     * @return array
-     */
-	public function getIaoTemplates(DataContainer $dc)
-	{
-        $arrTemplates = \Controller::getTemplateGroup('iao_');
-
-		return $arrTemplates;
-	}
-}
 
