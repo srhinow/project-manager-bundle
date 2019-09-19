@@ -15,3 +15,9 @@ services:
         arguments:
             - "@contao.framework"
         public: true
+
+    srhinow.projectmanager.listener.dca.agreements:
+        class: Srhinow\ProjectManagerBundle\EventListener\Dca\Agreements
+        arguments:
+            - "@contao.framework"
+        public: true
