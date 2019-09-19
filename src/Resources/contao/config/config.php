@@ -172,12 +172,12 @@ $GLOBALS['FE_MOD']['iao_fe'] = array
 /**
  * HOOKS
  */
-$GLOBALS['TL_HOOKS']['replaceInsertTags'][] = array('Iao\Hooks\iaoHooks', 'replaceFrontendIaoTags');
+$GLOBALS['TL_HOOKS']['replaceInsertTags'][] = array('srhinow.projectmanager.listener.hooks.insert_tags', 'replaceFrontendIaoTags');
 
 /**
  * Cron jobs
  */
-$GLOBALS['TL_CRON']['daily'][] = array('Iao\Cron\iaoCrons', 'sendAgreementRemindEmail');
+$GLOBALS['TL_CRON']['weekly'][] = array('srhinow.projectmanager.listener.cron.crons', 'sendAgreementRemindEmail');
 
 /**
  * Permissions are access settings for user and groups (fields in tl_user and tl_user_group)
