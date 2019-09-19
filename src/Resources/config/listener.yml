@@ -1,6 +1,17 @@
 services:
-    srhinow_projectmanager.listener.insert_tags:
-        class: Srhinow\ProjectManagerBundle\EventListener\InsertTagsListener
+    _defaults:
+        public: false
+        autowire: false
+        autoconfigure: false
+
+    srhinow.projectmanager.listener.hooks.insert_tags:
+        class: Srhinow\ProjectManagerBundle\EventListener\Hooks\InsertTagsListener
+        arguments:
+            - "@contao.framework"
+        public: true
+
+    srhinow.projectmanager.listener.cron.crons:
+        class: Srhinow\ProjectManagerBundle\EventListener\Cron\CronListener
         arguments:
             - "@contao.framework"
         public: true
