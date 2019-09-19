@@ -1,38 +1,52 @@
 <?php
-namespace Iao\Hooks;
 
-use Contao\Frontend;
-/**
- * @copyright  Sven Rhinow 2011-2018
- * @author     sr-tag Sven Rhinow Webentwicklung <http://www.sr-tag.de>
- * @package    project-manager-bundle
- * @license    LGPL
- * @filesource
+/*
+ * This file is part of project-manager-bundle.
+ *
+ * Copyright (c) 2004-2019 Sven Rhinow
+ *
+ * @license LGPL-3.0+
  */
-class iaoHooks extends Frontend
+
+namespace Srhinow\ProjectManagerBundle\EventListener\Hooks;
+
+use Contao\CoreBundle\Framework\ContaoFrameworkInterface;
+
+class InsertTagsListener
 {
-    public function __construct()
+    /**
+     * @var ContaoFrameworkInterface
+     */
+    private $framework;
+
+
+    /**
+     * Constructor.
+     *
+     * @param ContaoFrameworkInterface $framework
+     */
+    public function __construct(ContaoFrameworkInterface $framework)
     {
-		parent::__construct();
+        $this->framework = $framework;
     }
 
     /**
-    * replace iao-specific inserttag if get-paramter isset
+     * replace iao-specific inserttag if get-paramter isset
      * {{iao::BEREICH::COLUMN[::ID|ALIAS]}}
      * z.B. {{iao::invoice::title}} oder {{iao::invoice::title::4}}
      *
-    * @param string
-    * @return string
-    */
+     * @param string
+     * @return string
+     */
     public function replaceFrontendIaoTags($strTag)
-	{
+    {
 
-	    if (substr($strTag,0,5) == 'iao::')
-	    {
-	        //inserttag in Stuecke teilen
-	        $split = explode('::',$strTag);
+        if (substr($strTag,0,5) == 'iao::')
+        {
+            //inserttag in Stuecke teilen
+            $split = explode('::',$strTag);
 
-	        //wenn die ID nicht mit übergeben wurde die Detailseite vorraussetzen
+            //wenn die ID nicht mit übergeben wurde die Detailseite vorraussetzen
             $idAlias = (strlen($split[3]) > 0) ? $split[3] : \Input::get('auto_item');
 
             switch($split[1]){
@@ -68,9 +82,9 @@ class iaoHooks extends Frontend
             {
                 return $objResult->{$split[2]};
             }
-	    }
+        }
 
-	    return false;
-	}
+        return false;
+    }
 
 }
