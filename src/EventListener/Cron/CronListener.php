@@ -24,7 +24,7 @@ class CronListener
 
 	public function sendAgreementRemindEmail()
 	{
-        $agrObj = IaoAgreementsModel::findBy('sendEmail',1);
+        $agrObj = IaoAgreementsModel::findBy(['sendEmail=?','status=?'],[1, 1]); //Email-senden und status aktiv
         if(null === $agrObj) return;
 
         $today = time();
