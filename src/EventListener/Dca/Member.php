@@ -7,7 +7,6 @@
 
 namespace Srhinow\ProjectManagerBundle\EventListener\Dca;
 
-
 use Contao\Controller;
 use Contao\Database;
 use Contao\DataContainer;
