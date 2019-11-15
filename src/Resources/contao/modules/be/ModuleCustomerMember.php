@@ -11,7 +11,6 @@ namespace Iao\Modules\Be;
 
 use Contao\Backend;
 use Iao\Iao;
-use Iao\Dca\IaoMember;
 use Contao\BackendModule;
 
 /**
@@ -33,7 +32,7 @@ class ModuleCustomerMember extends BackendModule
         $IaoClass = Iao::getInstance();
         $this->settings = $IaoClass->getSettings($GLOBALS['IAO']['default_settings_id']);
 
-        $GLOBALS['TL_DCA'][$this->table]['config']['onsubmit_callback'][] = array('Iao\Dca\IaoMember', 'setCustomerGroup');
+        $GLOBALS['TL_DCA'][$this->table]['config']['onsubmit_callback'][] = array('srhinow.projectmanager.listener.dca.member', 'setCustomerGroup');
 
         $GLOBALS['TL_DCA'][$this->table]['palettes'] = array
         (

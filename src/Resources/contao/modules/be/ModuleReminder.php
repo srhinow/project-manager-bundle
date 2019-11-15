@@ -35,7 +35,7 @@ class ModuleArrears extends BackendModule
 	{
 		$this->import('BackendUser', 'User');               
 
-                #$GLOBALS['TL_DCA'][$this->table]['config']['onsubmit_callback'][] = array('Iao\Dca\IaoMember', 'setCustomerGroup');
+                #$GLOBALS['TL_DCA'][$this->table]['config']['onsubmit_callback'][] = array('srhinow.projectmanager.listener.dca.member', 'setCustomerGroup');
 		$GLOBALS['TL_DCA'][$this->table]['palettes'] = array
 		(
 			'__selector__' => $GLOBALS['TL_DCA'][$this->table]['palettes']['__selector__'],
